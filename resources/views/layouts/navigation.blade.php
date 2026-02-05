@@ -19,36 +19,42 @@
                     </x-nav-link>
 
                     @can('manage assessments')
-                        <x-nav-link :href="route('admin.assessments.index')"
-                                    :active="request()->routeIs('admin.assessments.*')">
+                        <x-nav-link :href="route('admin.assessments.index')" :active="request()->routeIs('admin.assessments.*')">
                             {{ __('Admin: Assessments') }}
                         </x-nav-link>
                     @endcan
+                @can('manage preparations')
+    <x-nav-link :href="route('admin.preparations.index')"
+                :active="request()->routeIs('admin.preparations.*')">
+        {{ __('Admin: Preparations') }}
+    </x-nav-link>
+@endcan
 
-                    @can('manage preparations')
-                        <x-nav-link :href="route('internal.preparations.index')"
-                                    :active="request()->routeIs('internal.preparations.*')">
-                            {{ __('Internal: Persiapan') }}
-                        </x-nav-link>
-                    @endcan
+
+
 
                     @can('manage questions')
-                        <x-nav-link :href="route('admin.questions.index')"
-                                    :active="request()->routeIs('admin.questions.*')">
+                        <x-nav-link :href="route('admin.questions.index')" :active="request()->routeIs('admin.questions.*')">
                             {{ __('Admin: Soal') }}
                         </x-nav-link>
                     @endcan
 
+                    @can('manage questions')
+    <x-nav-link :href="route('admin.question-categories.index')"
+                :active="request()->routeIs('admin.question-categories.*')">
+        {{ __('Admin: Kategori Soal') }}
+    </x-nav-link>
+@endcan
+
+
                     @can('manage users')
-                        <x-nav-link :href="route('admin.users.index')"
-                                    :active="request()->routeIs('admin.users.*')">
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             {{ __('Admin: Users') }}
                         </x-nav-link>
                     @endcan
 
                     @can('fill assessment')
-                        <x-nav-link :href="route('assessor.assessments.index')"
-                                    :active="request()->routeIs('assessor.*')">
+                        <x-nav-link :href="route('assessor.assessments.index')" :active="request()->routeIs('assessor.*')">
                             {{ __('Asesor') }}
                         </x-nav-link>
                     @endcan
@@ -99,9 +105,8 @@
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
+                        <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -117,36 +122,32 @@
             </x-responsive-nav-link>
 
             @can('manage assessments')
-                <x-responsive-nav-link :href="route('admin.assessments.index')"
-                    :active="request()->routeIs('admin.assessments.*')">
+                <x-responsive-nav-link :href="route('admin.assessments.index')" :active="request()->routeIs('admin.assessments.*')">
                     {{ __('Admin: Assessments') }}
                 </x-responsive-nav-link>
             @endcan
 
             @can('manage preparations')
-                <x-responsive-nav-link :href="route('internal.preparations.index')"
-                    :active="request()->routeIs('internal.preparations.*')">
-                    {{ __('Internal: Persiapan') }}
+                <x-responsive-nav-link :href="route('admin.preparations.index')" :active="request()->routeIs('admin.preparations.*')">
+                    {{ __('Admin: Preparations') }}
                 </x-responsive-nav-link>
             @endcan
 
+
             @can('manage questions')
-                <x-responsive-nav-link :href="route('admin.questions.index')"
-                    :active="request()->routeIs('admin.questions.*')">
+                <x-responsive-nav-link :href="route('admin.questions.index')" :active="request()->routeIs('admin.questions.*')">
                     {{ __('Admin: Soal') }}
                 </x-responsive-nav-link>
             @endcan
 
             @can('manage users')
-                <x-responsive-nav-link :href="route('admin.users.index')"
-                    :active="request()->routeIs('admin.users.*')">
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                     {{ __('Admin: Users') }}
                 </x-responsive-nav-link>
             @endcan
 
             @can('fill assessment')
-                <x-responsive-nav-link :href="route('assessor.assessments.index')"
-                    :active="request()->routeIs('assessor.*')">
+                <x-responsive-nav-link :href="route('assessor.assessments.index')" :active="request()->routeIs('assessor.*')">
                     {{ __('Asesor') }}
                 </x-responsive-nav-link>
             @endcan

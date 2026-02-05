@@ -26,6 +26,18 @@
                     </select>
                     @error('standard_id')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
                 </div>
+                <div>
+    <label class="block mb-1">Kategori</label>
+    <select name="category_id" class="w-full border rounded p-2">
+        <option value="">-</option>
+        @foreach($categories as $c)
+            <option value="{{ $c->id }}" @selected(old('category_id', $question->category_id ?? null) == $c->id)>
+                {{ $c->code ? $c->code.' - ' : '' }}{{ $c->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
                 <div>
                     <label class="block mb-1">Label</label>

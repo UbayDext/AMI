@@ -10,7 +10,7 @@
 
             <div class="flex items-center gap-2">
                 {{-- Filter tahun (opsional kalau kamu pakai query ?year=ID) --}}
-                <form method="GET" action="{{ route('internal.preparations.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('admin.preparations.index') }}" class="flex items-center gap-2">
                     <input type="hidden" name="stage" value="{{ request('stage') }}">
                     <input
                         name="year"
@@ -19,7 +19,7 @@
                         class="border rounded px-3 py-2 text-sm w-40"
                     />
                     <button class="px-3 py-2 text-sm border rounded">Terapkan</button>
-                    <a href="{{ route('internal.preparations.index') }}" class="px-3 py-2 text-sm border rounded">Reset</a>
+                    <a href="{{ route('admin.preparations.index') }}" class="px-3 py-2 text-sm border rounded">Reset</a>
                 </form>
             </div>
         </div>
