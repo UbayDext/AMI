@@ -18,7 +18,8 @@ class FindingController extends Controller
 
         $data = $request->validate([
             'standard_id' => ['required', 'exists:standards,id'],
-            'audit_area_id' => ['required', 'exists:audit_areas,id'],
+            'audit_area_ids' => ['required', 'array'],
+            'audit_area_ids.*' => ['exists:audit_areas,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'severity' => ['required', 'in:minor,major,critical'],
@@ -26,7 +27,10 @@ class FindingController extends Controller
 
         $finding = DB::transaction(function () use ($assessment, $data) {
             $standard = Standard::findOrFail($data['standard_id']);
-            $area = AuditArea::findOrFail($data['audit_area_id']);
+
+            // Use the first area for the code generation
+            $firstAreaId = $data['audit_area_ids'][0];
+            $area = AuditArea::findOrFail($firstAreaId);
 
             // ambil urutan terakhir dalam assessment ini (lock biar aman)
             $lastSeq = Finding::where('assessment_id', $assessment->id)->lockForUpdate()->max('sequence');
@@ -49,7 +53,7 @@ class FindingController extends Controller
             return Finding::create([
                 'assessment_id' => $assessment->id,
                 'standard_id' => $standard->id,
-                'audit_area_id' => $area->id,
+                'audit_area_ids' => $data['audit_area_ids'],
                 'sequence' => $nextSeq,
                 'code' => $code,
                 'title' => $data['title'],

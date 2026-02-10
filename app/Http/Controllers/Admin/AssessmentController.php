@@ -12,7 +12,7 @@ class AssessmentController extends Controller
 {
     public function index()
     {
-        $assessments = Assessment::with(['accreditationYear','assessor'])
+        $assessments = Assessment::with(['accreditationYear', 'assessor'])
             ->latest()->paginate(20);
 
         return view('admin.assessments.index', compact('assessments'));
@@ -20,18 +20,18 @@ class AssessmentController extends Controller
 
     public function create()
     {
-        $years = AccreditationYear::orderBy('year','desc')->get();
+        $years = AccreditationYear::orderBy('year', 'desc')->get();
         $assessors = User::role('asesor')->orderBy('name')->get();
 
-        return view('admin.assessments.create', compact('years','assessors'));
+        return view('admin.assessments.create', compact('years', 'assessors'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'accreditation_year_id' => ['required','exists:accreditation_years,id'],
-            'assessor_id' => ['required','exists:users,id'],
-            'unit_name' => ['required','string','max:255'],
+            'accreditation_year_id' => ['required', 'exists:accreditation_years,id'],
+            'assessor_id' => ['required', 'exists:users,id'],
+            'unit_name' => ['required', 'string', 'max:255'],
         ]);
 
         $assessment = Assessment::create($data);
@@ -42,7 +42,7 @@ class AssessmentController extends Controller
 
     public function show(Assessment $assessment)
     {
-        $assessment->load(['accreditationYear','assessor','findings.auditArea','findings.standard']);
+        $assessment->load(['accreditationYear', 'assessor', 'findings.standard']);
         return view('admin.assessments.show', compact('assessment'));
     }
 
@@ -51,6 +51,5 @@ class AssessmentController extends Controller
         $assessment->delete();
 
         return back()->with('success', 'assessments asesor dihapus');
-
     }
 }

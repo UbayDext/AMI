@@ -1,137 +1,128 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-xl">Detail Assessment</h2>
-                <div class="text-sm text-gray-600">
-                    Tahun: <b>{{ $assessment->accreditationYear->year ?? '-' }}</b> |
-                    Unit: <b>{{ $assessment->unit_name }}</b> |
-                    Status: <b>{{ $assessment->status }}</b>
-                </div>
-            </div>
-
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Assessment Details') }}
+            </h2>
             <div class="flex gap-2">
-                <a href="{{ route('assessor.assessments.fill', $assessment) }}"
-                   class="px-4 py-2 bg-black text-white rounded">
-                    Isi
+                <a href="{{ route('assessor.assessments.report', $assessment) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    Print Report
                 </a>
-                <a href="{{ route('assessor.assessments.index') }}"
-                   class="px-4 py-2 border rounded">
-                    Kembali
+                <a href="{{ route('assessor.assessments.fill', $assessment) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Continue Filling
+                </a>
+                <a href="{{ route('assessor.assessments.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                    Back to List
                 </a>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        <div class="bg-white p-6 rounded shadow">
-            <h3 class="font-semibold mb-3">Ringkasan Temuan</h3>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="p-3 text-left">Kode</th>
-                            <th class="p-3 text-left">Standar</th>
-                            <th class="p-3 text-left">Area</th>
-                            <th class="p-3 text-left">Judul</th>
-                            <th class="p-3 text-left">Severity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($assessment->findings as $f)
-                            <tr class="border-t">
-                                <td class="p-3">{{ $f->code }}</td>
-                                <td class="p-3">{{ $f->standard->code }}</td>
-                                <td class="p-3">{{ $f->auditArea->code }}</td>
-                                <td class="p-3">{{ $f->title }}</td>
-                                <td class="p-3">{{ $f->severity }}</td>
+            <!-- Assessment Info -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-100">
+                    <h3 class="text-lg font-medium text-gray-900">Information</h3>
+                </div>
+                <div class="px-6 py-5 bg-gray-50">
+                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Unit Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 font-semibold">{{ $assessment->unit_name }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Accreditation Year</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $assessment->accreditationYear->year ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $assessment->status === 'submitted' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                    {{ ucfirst($assessment->status) }}
+                                </span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Findings Summary -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-100">
+                    <h3 class="text-lg font-medium text-gray-900">Recorded Findings</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Standard</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
                             </tr>
-                        @empty
-                            <tr class="border-t">
-                                <td class="p-3" colspan="5">Belum ada temuan.</td>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($assessment->findings as $f)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $f->code }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $f->standard->code }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $f->audit_area_names }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $f->title }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {{ $f->severity === 'major' ? 'bg-red-100 text-red-800' : ($f->severity === 'critical' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                        {{ ucfirst($f->severity) }}
+                                    </span>
+                                </td>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No findings recorded.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <div class="bg-white p-6 rounded shadow">
-            <h3 class="font-semibold mb-3">Jawaban (Ringkas)</h3>
-            <div class="space-y-3">
-                @forelse($assessment->answers as $ans)
-    @php
-        $q = $ans->question;
-        $ptk = $ptks[$ans->question_id] ?? null;
-
-        // untuk select/radio tampil label option
-        $displayValue = $ans->value_text;
-        if ($q && in_array($q->type, ['select','radio'], true) && $ans->value_text) {
-            $displayValue = optional($q->options->firstWhere('value', $ans->value_text))->label ?? $ans->value_text;
-        }
-    @endphp
-
-    <div class="border rounded p-3">
-        <div class="font-medium">{{ $q->label ?? '-' }}</div>
-
-        <div class="mt-1 text-xs text-gray-600">
-            Keterangan: <b>{{ $ans->status ?? '-' }}</b>
-        </div>
-
-        {{-- bukti/jawaban --}}
-        <div class="mt-2">
-            @if($ans->file_path)
-                <a class="underline text-sm" target="_blank" href="{{ asset('storage/'.$ans->file_path) }}">
-                    {{ basename($ans->file_path) }}
-                </a>
-            @elseif($displayValue)
-                <div class="text-sm text-gray-700 whitespace-pre-line">{{ $displayValue }}</div>
-            @elseif($ans->value_json)
-                <div class="text-sm text-gray-700">{{ json_encode($ans->value_json) }}</div>
-            @else
-                <div class="text-sm text-gray-400">-</div>
-            @endif
-        </div>
-
-        {{-- alasan --}}
-        @if(in_array($ans->status, ['sebagian','tidak'], true))
-            <div class="mt-3 bg-emerald-50 border rounded p-3">
-                <div class="text-sm font-semibold mb-1">Alasan / Catatan</div>
-                <div class="text-sm text-gray-700 whitespace-pre-line">{{ $ans->reason ?: '-' }}</div>
-            </div>
-        @endif
-
-        {{-- PTK --}}
-        @if($ans->status === 'tidak')
-            <div class="mt-3 bg-gray-50 border rounded p-3">
-                <div class="text-sm font-semibold mb-2">PTK</div>
-
-                @if($ptk)
-                    <div class="text-sm mb-2">
-                        Area Audit: <b>{{ $ptk->auditArea->name ?? $ptk->audit_area_id }}</b>
+            <!-- Responses Summary -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Responses Overview</h3>
+                    <span class="text-xs text-gray-500">Showing snippet of responses</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    @forelse($assessment->answers->take(5) as $ans)
+                    <div class="border rounded-md p-4 bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900 mb-2">{{ $ans->question->label ?? 'Question deleted' }}</div>
+                        <div class="flex items-center gap-4 text-xs text-gray-500">
+                            <span>Status: <strong class="text-gray-700">{{ ucfirst($ans->status) }}</strong></span>
+                            @if($ans->file_path)
+                            <span>Attachment: <a href="{{ asset('storage/'.$ans->file_path) }}" target="_blank" class="text-indigo-600 hover:underline">View File</a></span>
+                            @endif
+                        </div>
                     </div>
+                    @empty
+                    <div class="text-sm text-gray-500 text-center">No responses yet.</div>
+                    @endforelse
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                        <div><b>Deskripsi Kondisi:</b><div class="whitespace-pre-line">{{ $ptk->condition_desc }}</div></div>
-                        <div><b>Akar Penyebab:</b><div class="whitespace-pre-line">{{ $ptk->root_cause }}</div></div>
-                        <div><b>Akibat:</b><div class="whitespace-pre-line">{{ $ptk->impact }}</div></div>
-                        <div><b>Rekomendasi:</b><div class="whitespace-pre-line">{{ $ptk->recommendation }}</div></div>
-                        <div><b>Kategori:</b> {{ $ptk->category }}</div>
-                        <div><b>Due Date:</b> {{ optional($ptk->due_date)->format('d/m/Y') ?? '-' }}</div>
-                        <div class="md:col-span-2"><b>Rencana Perbaikan:</b><div class="whitespace-pre-line">{{ $ptk->corrective_plan }}</div></div>
+                    @if($assessment->answers->count() > 5)
+                    <div class="text-center mt-4">
+                        <a href="{{ route('assessor.assessments.fill', $assessment) }}" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">View all responses in Fill Mode &rarr;</a>
                     </div>
-                @else
-                    <div class="text-sm text-gray-600">Belum ada PTK untuk jawaban ini.</div>
-                @endif
+                    @endif
+                </div>
             </div>
-        @endif
-    </div>
-@empty
-    <div class="text-sm text-gray-500">Belum ada jawaban.</div>
-@endforelse
 
-            </div>
         </div>
     </div>
 </x-app-layout>

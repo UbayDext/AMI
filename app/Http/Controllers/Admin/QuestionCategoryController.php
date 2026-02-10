@@ -12,7 +12,8 @@ class QuestionCategoryController extends Controller
     {
         $categories = QuestionCategory::query()
             ->with('parent')
-            ->orderBy('sort_order')
+            ->with('parent')
+            ->orderBy('name')
             ->orderBy('id')
             ->get();
 
@@ -25,8 +26,8 @@ class QuestionCategoryController extends Controller
     public function create()
     {
         $parents = QuestionCategory::query()
-            ->where('is_active', true)
-            ->orderBy('sort_order')
+            ->where('id', '!=', 0) // dummy condition to keep query builder
+            ->orderBy('name')
             ->orderBy('id')
             ->get();
 
@@ -39,14 +40,8 @@ class QuestionCategoryController extends Controller
     {
         $data = $request->validate([
             'parent_id'   => ['nullable', 'exists:question_categories,id'],
-            'code'        => ['nullable', 'string', 'max:50'],
             'name'        => ['required', 'string', 'max:255'],
-            'sort_order'  => ['nullable', 'integer', 'min:0'],
-            'is_active'   => ['nullable', 'boolean'],
         ]);
-
-        $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
-        $data['is_active']  = (bool) ($data['is_active'] ?? true);
 
         QuestionCategory::create($data);
 
@@ -59,7 +54,8 @@ class QuestionCategoryController extends Controller
     {
         $parents = QuestionCategory::query()
             ->where('id', '!=', $question_category->id) // cegah parent ke dirinya sendiri
-            ->orderBy('sort_order')
+            ->where('id', '!=', $question_category->id) // cegah parent ke dirinya sendiri
+            ->orderBy('name')
             ->orderBy('id')
             ->get();
 
@@ -76,10 +72,7 @@ class QuestionCategoryController extends Controller
     {
         $data = $request->validate([
             'parent_id'   => ['nullable', 'exists:question_categories,id'],
-            'code'        => ['nullable', 'string', 'max:50'],
             'name'        => ['required', 'string', 'max:255'],
-            'sort_order'  => ['nullable', 'integer', 'min:0'],
-            'is_active'   => ['nullable', 'boolean'],
         ]);
 
         // cegah parent jadi anaknya sendiri (cycle sederhana)
@@ -88,10 +81,7 @@ class QuestionCategoryController extends Controller
         }
 
         $question_category->parent_id  = $data['parent_id'] ?? null;
-        $question_category->code       = $data['code'] ?? null;
         $question_category->name       = $data['name'];
-        $question_category->sort_order = (int) ($data['sort_order'] ?? 0);
-        $question_category->is_active  = (bool) ($data['is_active'] ?? true);
         $question_category->save();
 
         return back()->with('success', 'Kategori diupdate.');

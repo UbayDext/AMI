@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuestionCategory extends Model
 {
-    protected $fillable = ['parent_id', 'code', 'name', 'sort_order', 'is_active'];
+    protected $fillable = ['parent_id', 'name'];
 
     public function parent(): BelongsTo
     {
@@ -17,7 +17,7 @@ class QuestionCategory extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order');
+        return $this->hasMany(self::class, 'parent_id')->orderBy('name');
     }
 
     public function questions(): HasMany

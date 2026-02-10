@@ -35,9 +35,20 @@ class Assessment extends Model
         return $this->hasMany(Finding::class);
     }
 
+    public function questions()
+{
+    return $this->belongsToMany(
+        \App\Models\Question::class,
+        'assessment_answers',   // nama tabel pivot/jawaban
+        'assessment_id',
+        'question_id'
+    )->distinct();
+}
+
     public function ptks()
 {
     return $this->hasMany(\App\Models\Ptk::class);
 }
+
 
 }

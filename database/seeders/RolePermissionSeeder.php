@@ -23,7 +23,12 @@ class RolePermissionSeeder extends Seeder
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $asesor = Role::firstOrCreate(['name' => 'asesor']);
 
-        $admin->syncPermissions($perms);
+        $admin->syncPermissions([
+            'manage users',
+            'manage questions',
+            'manage assessments',
+            'view dashboard',
+        ]);
         $asesor->syncPermissions(['fill assessment', 'view dashboard']);
     }
 }

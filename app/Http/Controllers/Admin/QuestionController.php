@@ -10,24 +10,28 @@ use App\Models\QuestionCategory;
 
 class QuestionController extends Controller
 {
-   public function index()
-{
-    $questions = Question::with(['standard', 'category'])
-        ->orderBy('category_id')
-        ->orderBy('sort_order')
-        ->latest('id')
-        ->paginate(30);
+    public function index()
+    {
+        $questions = Question::with(['standard', 'category'])
+            ->orderBy('category_id')
+            ->orderBy('sort_order')
+            ->latest('id')
+            ->paginate(30);
 
-    $grouped = $questions->getCollection()->groupBy(fn ($q) => $q->category_id ?? 0);
+        $grouped = $questions->getCollection()->groupBy(fn($q) => $q->category_id ?? 0);
 
-    return view('admin.questions.index', compact('questions', 'grouped'));
-}
+        return view('admin.questions.index', compact('questions', 'grouped'));
+    }
 
 
     public function create()
     {
-        $standards = Standard::orderBy('code')->get();
-        $categories = QuestionCategory::where('is_active', true)->orderBy('sort_order')->get();
+        // Manual sorting to ensure ST1, ST2... ST10 order
+        $standards = Standard::all()->sortBy(function ($s) {
+            return (int) filter_var($s->code, FILTER_SANITIZE_NUMBER_INT);
+        });
+
+        $categories = QuestionCategory::orderBy('name')->orderBy('id')->get();
 
         $types = ['text', 'textarea', 'number', 'select', 'radio', 'checkbox', 'file'];
 
@@ -62,8 +66,13 @@ class QuestionController extends Controller
     public function edit(Question $question)
     {
         $question->load('options');
-        $standards = Standard::orderBy('code')->get();
-        $categories = QuestionCategory::where('is_active', true)->orderBy('sort_order')->get();
+
+        // Manual sorting to ensure ST1, ST2... ST10 order
+        $standards = Standard::all()->sortBy(function ($s) {
+            return (int) filter_var($s->code, FILTER_SANITIZE_NUMBER_INT);
+        });
+
+        $categories = QuestionCategory::orderBy('name')->orderBy('id')->get();
         $types = ['text', 'textarea', 'number', 'select', 'radio', 'checkbox', 'file'];
 
         return view('admin.questions.edit', compact('question', 'standards', 'categories', 'types'));
@@ -73,6 +82,7 @@ class QuestionController extends Controller
     {
         $data = $request->validate([
             'standard_id' => ['nullable', 'exists:standards,id'],
+            'category_id' => ['nullable', 'exists:question_categories,id'], // ✅ TAMBAH INI
             'label' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:text,textarea,number,select,radio,checkbox,file'],
             'reference' => ['nullable', 'string', 'max:5000'],
@@ -82,13 +92,13 @@ class QuestionController extends Controller
         ]);
 
         $question->standard_id = $data['standard_id'] ?? null;
-        $question->category_id = $data['category_id'] ?? null;
-        $question->label = $data['label'];
-        $question->type = $data['type'];
-        $question->reference = $data['reference'] ?? null; // ✅ penting
+        $question->category_id = $data['category_id'] ?? null; // ✅ sekarang ada isinya
+        $question->label       = $data['label'];
+        $question->type        = $data['type'];
+        $question->reference   = $data['reference'] ?? null;
         $question->is_required = (bool) ($data['is_required'] ?? false);
-        $question->is_active = (bool) ($data['is_active'] ?? true);
-        $question->sort_order = (int) ($data['sort_order'] ?? 0);
+        $question->is_active   = (bool) ($data['is_active'] ?? true);
+        $question->sort_order  = (int) ($data['sort_order'] ?? 0);
 
         $question->save();
 
@@ -100,6 +110,7 @@ class QuestionController extends Controller
 
         return back()->with('success', 'Soal diupdate.');
     }
+
 
     public function destroy(Question $question)
     {

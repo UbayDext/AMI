@@ -11,7 +11,21 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard');
+        $totalAssessments = Assessment::count();
+        $submittedAssessments = Assessment::where('status', 'submitted')->count();
+        $totalFindings = Finding::count();
+        
+        $recentAssessments = Assessment::with(['accreditationYear', 'assessor'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'totalAssessments', 
+            'submittedAssessments', 
+            'totalFindings', 
+            'recentAssessments'
+        ));
     }
 
     public function data(): JsonResponse

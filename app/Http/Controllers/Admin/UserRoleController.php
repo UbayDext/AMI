@@ -46,14 +46,31 @@ class UserRoleController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User berhasil dibuat.');
     }
 
+    public function edit(User $user)
+    {
+        $roles = Role::query()->orderBy('name')->pluck('name');
+        return view('admin.users.edit', compact('user', 'roles'));
+    }
+
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'exists:roles,name'],
         ]);
 
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+
+        if (!empty($data['password'])) {
+            $user->password = Hash::make($data['password']);
+        }
+
+        $user->save();
         $user->syncRoles([$data['role']]);
 
-        return back()->with('success', 'Role user berhasil diupdate.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
     }
 }

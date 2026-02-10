@@ -15,19 +15,19 @@ class AssessmentShowController extends Controller
         $assessment->load([
             'accreditationYear',
             'findings.standard',
-            'findings.auditArea',
+            // 'findings.auditArea', // Removed relationship
 
             // penting: load question + options + standard
             'answers' => function ($q) {
                 $q->with([
-                    'question' => fn ($qq) => $qq->with(['standard', 'options']),
+                    'question' => fn($qq) => $qq->with(['standard', 'options']),
                 ])->orderBy('question_id');
             },
         ]);
 
         // ambil PTK per question_id
         $ptks = Ptk::where('assessment_id', $assessment->id)
-            ->with(['auditArea', 'standard']) // kalau relasi ada
+            ->with(['standard']) // 'auditArea' removed
             ->get()
             ->keyBy('question_id');
 
