@@ -5,30 +5,36 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('findings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('question_id')->nullable()->constrained('questions')->nullOnDelete();
             $table->foreignId('standard_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('audit_area_id')->constrained('audit_areas')->cascadeOnDelete();
+            $table->json('audit_area_ids')->nullable();
 
-            $table->unsignedInteger('sequence'); // 2,3,4...
-            $table->string('code')->unique(); // PTK/002/ST1/WK2
+            $table->unsignedInteger('sequence');
+            $table->string('code');
 
             $table->string('title');
             $table->text('description')->nullable();
+            $table->text('condition_desc')->nullable();
+            $table->text('root_cause')->nullable();
+            $table->text('impact')->nullable();
+            $table->text('recommendation')->nullable();
+            $table->string('category', 50)->nullable();
+            $table->text('corrective_plan')->nullable();
+            $table->date('due_date')->nullable();
             $table->enum('severity', ['minor', 'major', 'critical'])->default('minor');
             $table->timestamps();
+
+            $table->unique(['assessment_id', 'question_id']);
+            $table->unique(['assessment_id', 'code'], 'findings_assessment_code_unique');
+            $table->unique(['assessment_id', 'sequence'], 'findings_assessment_sequence_unique');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('findings');

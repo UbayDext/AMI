@@ -22,8 +22,9 @@ class AssessmentController extends Controller
     {
         $years = AccreditationYear::orderBy('year', 'desc')->get();
         $assessors = User::role('asesor')->orderBy('name')->get();
+        $categories = \App\Models\QuestionCategory::orderBy('name')->get();
 
-        return view('admin.assessments.create', compact('years', 'assessors'));
+        return view('admin.assessments.create', compact('years', 'assessors', 'categories'));
     }
 
     public function store(Request $request)

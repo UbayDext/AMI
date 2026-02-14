@@ -37,4 +37,9 @@ class Ptk extends Model
     {
         return $this->belongsTo(\App\Models\Standard::class);
     }
+
+    public function pts()
+    {
+        return $this->hasOne(\App\Models\Pts::class);
+    }
 }

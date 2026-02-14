@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\UserRoleController;
 use App\Http\Controllers\Assessor\AssessmentFillController;
 use App\Http\Controllers\Assessor\AssessmentReportController;
 use App\Http\Controllers\Assessor\FindingController;
+use App\Http\Controllers\Assessor\PtsController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -69,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/assessments/{assessment}/fill', [AssessmentFillController::class, 'update'])->name('assessments.fill.update');
             Route::post('/assessments/{assessment}/findings', [FindingController::class, 'store'])->name('findings.store');
             Route::get('/assessments/{assessment}/report', [AssessmentReportController::class, 'show'])->name('assessments.report');
+            Route::post('/assessments/{assessment}/pts', [PtsController::class, 'update'])->name('assessments.pts.update');
             Route::get('/assessments/{assessment}', [AssessmentShowController::class, 'show'])->name('assessments.show');
         });
 });

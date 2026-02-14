@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,16 +13,16 @@ return new class extends Migration {
             $table->foreignId('question_id')->constrained()->cascadeOnDelete();
 
             $table->foreignId('standard_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('audit_area_id')->nullable()->constrained()->nullOnDelete();
+            $table->json('audit_area_ids')->nullable();
 
-            $table->string('code')->nullable(); // optional kalau mau kode PTK
-            $table->unsignedInteger('sequence')->nullable(); // optional
+            $table->string('code')->nullable();
+            $table->unsignedInteger('sequence')->nullable();
 
             $table->text('condition_desc')->nullable();
             $table->text('root_cause')->nullable();
             $table->text('impact')->nullable();
             $table->text('recommendation')->nullable();
-            $table->string('category')->nullable(); // Observasi/Ketidaksesuaian/OFI
+            $table->string('category')->nullable();
             $table->text('corrective_plan')->nullable();
             $table->date('due_date')->nullable();
 
@@ -36,4 +37,3 @@ return new class extends Migration {
         Schema::dropIfExists('ptks');
     }
 };
-

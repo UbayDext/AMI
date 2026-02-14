@@ -40,10 +40,17 @@
                             <x-input-error :messages="$errors->get('assessor_id')" class="mt-2" />
                         </div>
 
-                        <!-- Unit Name -->
+                        <!-- Unit (Kategori Soal) -->
                         <div>
-                            <x-input-label for="unit_name" :value="__('Unit Name')" />
-                            <x-text-input id="unit_name" class="block mt-1 w-full" type="text" name="unit_name" :value="old('unit_name')" required autofocus />
+                            <x-input-label for="unit_name" :value="__('Kategori Soal')" />
+                            <select id="unit_name" name="unit_name" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <option value="" disabled selected>Pilih Kategori Soal</option>
+                                @foreach($categories as $cat)
+                                <option value="{{ $cat->name }}" {{ old('unit_name') == $cat->name ? 'selected' : '' }}>
+                                    {{ $cat->code ? $cat->code.' - ' : '' }}{{ $cat->name }}
+                                </option>
+                                @endforeach
+                            </select>
                             <x-input-error :messages="$errors->get('unit_name')" class="mt-2" />
                         </div>
 

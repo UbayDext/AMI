@@ -68,173 +68,177 @@
                             </h4>
                         </div>
 
-                        <div class="space-y-8">
-                            @foreach ($items as $q)
-                            @php
-                            $id = $q->id;
-                            $ans = $answers[$id] ?? null;
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 border">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">No</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Pertanyaan</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Referensi</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Bukti</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach ($items as $q)
+                                    @php
+                                    $id = $q->id;
+                                    $ans = $answers[$id] ?? null;
 
-                            $bukti = old("bukti_$id", $ans?->value_text);
-                            $ket = old("ket_$id", $ans?->status ?? 'sesuai');
-                            $alasan = old("alasan_$id", $ans?->reason);
+                                    $bukti = old("bukti_$id", $ans?->value_text);
+                                    $ket = old("ket_$id", $ans?->status ?? 'sesuai');
+                                    $alasan = old("alasan_$id", $ans?->reason);
 
-                            $ptk = $ptks[$id] ?? null;
+                                    $ptk = $ptks[$id] ?? null;
 
-                            $ptkArea = old("ptk_area_$id", $ptk?->audit_area_ids ?? []);
-                            $ptkKondisi = old("ptk_kondisi_$id", $ptk?->condition_desc);
-                            $ptkAkar = old("ptk_akar_$id", $ptk?->root_cause);
-                            $ptkAkibat = old("ptk_akibat_$id", $ptk?->impact);
-                            $ptkRekom = old("ptk_rekom_$id", $ptk?->recommendation);
-                            $ptkKategori= old("ptk_kategori_$id", $ptk?->category);
-                            $ptkRencana = old("ptk_rencana_$id", $ptk?->corrective_plan);
-                            $ptkDue = old("ptk_due_$id", optional($ptk?->due_date)->format('Y-m-d'));
-                            @endphp
+                                    $ptkArea = old("ptk_area_$id", $ptk?->audit_area_ids ?? []);
+                                    $ptkKondisi = old("ptk_kondisi_$id", $ptk?->condition_desc);
+                                    $ptkAkar = old("ptk_akar_$id", $ptk?->root_cause);
+                                    $ptkAkibat = old("ptk_akibat_$id", $ptk?->impact);
+                                    $ptkRekom = old("ptk_rekom_$id", $ptk?->recommendation);
+                                    $ptkKategori= old("ptk_kategori_$id", $ptk?->category);
+                                    $ptkRencana = old("ptk_rencana_$id", $ptk?->corrective_plan);
+                                    $ptkDue = old("ptk_due_$id", optional($ptk?->due_date)->format('Y-m-d'));
+                                    @endphp
 
-                            <div class="bg-gray-50 rounded-lg p-5 border border-gray-200 shadow-sm question-block" data-qid="{{ $id }}">
-                                <!-- Question Header -->
-                                <div class="flex justify-between items-start mb-4">
-                                    <div class="flex gap-3">
-                                        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm">
-                                            {{ $no++ }}
-                                        </span>
-                                        <div>
-                                            <div class="font-medium text-gray-900">{{ $q->label }}</div>
+                                    <!-- Main Row -->
+                                    <tr class="hover:bg-gray-50 transition-colors" data-qid="{{ $id }}">
+                                        <td class="px-3 py-4 text-sm font-medium text-gray-900 border-r align-top text-center">{{ $no++ }}</td>
+
+                                        <td class="px-3 py-4 text-sm text-gray-800 border-r align-top">
+                                            <div class="font-semibold">{{ $q->label }}</div>
                                             @if($q->standard)
-                                            <div class="text-xs text-gray-500 mt-1">Standard: {{ $q->standard->code }}</div>
+                                            <div class="text-xs text-gray-500 mt-1">{{ $q->standard->code }}</div>
                                             @endif
-                                            @if($q->reference)
-                                            <div class="text-sm text-gray-600 mt-2 p-2 bg-white rounded border border-gray-100">
-                                                Reference: {{ $q->reference }}
+                                        </td>
+
+                                        <td class="px-3 py-4 text-sm text-gray-600 border-r align-top">
+                                            {{ $q->reference ?? '-' }}
+                                        </td>
+
+                                        <td class="px-3 py-4 text-sm border-r align-top space-y-2">
+                                            <!-- Evidence Input -->
+                                            @if ($q->type === 'select' || $q->type === 'radio')
+                                            <select name="bukti_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
+                                                <option value="">Select option...</option>
+                                                @foreach ($q->options->sortBy('sort_order') as $opt)
+                                                <option value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
+                                                @endforeach
+                                            </select>
+                                            @elseif ($q->type === 'file')
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            @else
+                                            <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            @endif
+
+                                            @if ($ans?->file_path)
+                                            <div class="text-xs">
+                                                <a href="{{ asset('storage/' . $ans->file_path) }}" target="_blank" class="text-indigo-600 hover:underline flex items-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                                    </svg>
+                                                    {{ basename($ans->file_path) }}
+                                                </a>
                                             </div>
                                             @endif
-                                        </div>
-                                    </div>
+                                            @error("bukti_$id") <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                                        </td>
 
-                                    <div class="w-48">
-                                        <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm" data-qid="{{ $id }}">
-                                            <option value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
-                                            <option value="sebagian" @selected($ket==='sebagian' )>Sebagian Sesuai</option>
-                                            <option value="tidak_bukti_tidak_memadai" @selected($ket==='tidak_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
-                                            <option value="tidak_ada_bukti_tidak_dilaksanakan" @selected($ket==='tidak_ada_bukti_tidak_dilaksanakan' )>Tidak Sesuai - Ada bukti - Tidak dilaksanakan</option>
-                                            <option value="tidak_bukti_tidak_memadai_tidak_konsisten" @selected($ket==='tidak_bukti_tidak_memadai_tidak_konsisten' )>Tidak Sesuai - Bukti tidak memadai - Tidak konsisten</option>
-                                            <option value="tidak_tidak_ada_bukti" @selected($ket==='tidak_tidak_ada_bukti' )>Tidak Sesuai - Tidak ada bukti</option>
-                                            <option value="tidak_dilaksanakan_tidak_ada_bukti" @selected($ket==='tidak_dilaksanakan_tidak_ada_bukti' )>Tidak dilaksanakan - Tidak ada bukti</option>
-                                        </select>
-                                        @error("ket_$id")
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                        <td class="px-3 py-4 text-sm align-top">
+                                            <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" data-qid="{{ $id }}">
+                                                <option value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
+                                                <option value="sebagian" @selected($ket==='sebagian' )>Sebagian Sesuai</option>
+                                                <option value="tidak_bukti_tidak_memadai" @selected($ket==='tidak_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
+                                                <option value="tidak_ada_bukti_tidak_dilaksanakan" @selected($ket==='tidak_ada_bukti_tidak_dilaksanakan' )>Tidak Sesuai - Ada bukti - Tidak dilaksanakan</option>
+                                                <option value="tidak_bukti_tidak_memadai_tidak_konsisten" @selected($ket==='tidak_bukti_tidak_memadai_tidak_konsisten' )>Tidak Sesuai - Bukti tidak memadai - Tidak konsisten</option>
+                                                <option value="tidak_tidak_ada_bukti" @selected($ket==='tidak_tidak_ada_bukti' )>Tidak Sesuai - Tidak ada bukti</option>
+                                                <option value="tidak_dilaksanakan_tidak_ada_bukti" @selected($ket==='tidak_dilaksanakan_tidak_ada_bukti' )>Tidak dilaksanakan - Tidak ada bukti</option>
+                                            </select>
+                                            @error("ket_$id")
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </td>
+                                    </tr>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-11">
-                                    <!-- Evidence Column -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Evidence / Proof</label>
+                                    <!-- Expandable PTK/Detail Row -->
+                                    <tr id="detail-row-{{ $id }}" class="{{ $ket === 'sesuai' ? 'hidden' : '' }} bg-gray-50">
+                                        <td colspan="5" class="px-4 py-4 border-b">
+                                            <div class="space-y-4">
+                                                <!-- Reason/Notes -->
+                                                <div id="alasan-box-{{ $id }}">
+                                                    <label class="block text-xs font-medium text-gray-700 mb-1">Notes / Reason (Optional)</label>
+                                                    <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ $alasan }}</textarea>
+                                                </div>
 
-                                        @if ($q->type === 'select' || $q->type === 'radio')
-                                        <select name="bukti_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm">
-                                            <option value="">Select option...</option>
-                                            @foreach ($q->options->sortBy('sort_order') as $opt)
-                                            <option value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
-                                            @endforeach
-                                        </select>
-                                        @elseif ($q->type === 'file')
-                                        <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                                        @if ($ans?->file_path)
-                                        <div class="mt-2 text-xs">
-                                            Running File: <a href="{{ asset('storage/' . $ans->file_path) }}" target="_blank" class="text-indigo-600 hover:underline">{{ basename($ans->file_path) }}</a>
-                                        </div>
-                                        @endif
-                                        @else
-                                        <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm" placeholder="Describe evidence...">{{ $bukti }}</textarea>
-                                        <div class="mt-2">
-                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500" />
-                                        </div>
-                                        @if ($ans?->file_path)
-                                        <div class="mt-1 text-xs">
-                                            Attached: <a href="{{ asset('storage/' . $ans->file_path) }}" target="_blank" class="text-indigo-600 hover:underline">{{ basename($ans->file_path) }}</a>
-                                        </div>
-                                        @endif
-                                        @endif
-                                        @error("bukti_$id") <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                        @error("bukti_file_$id") <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                    </div>
+                                                <!-- PTK Form -->
+                                                <div id="ptk-box-{{ $id }}" class="pt-4 border-t border-gray-200 {{ $ket === 'sesuai' ? 'hidden' : '' }}">
+                                                    <h5 class="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                        </svg>
+                                                        Detail PTK (Temuan)
+                                                    </h5>
 
-                                    <!-- Reason Column (Always visible but highlighted if needed) -->
-                                    <div id="alasan-box-{{ $id }}" class="{{ $ket !== 'sesuai' ? '' : 'opacity-50' }} transition-opacity duration-200">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes / Reason (Required if not Compliant)</label>
-                                        <textarea name="alasan_{{ $id }}" rows="3" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm" placeholder="Enter notes here...">{{ $alasan }}</textarea>
-                                        @error("alasan_$id") <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                    </div>
-                                </div>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <!-- Left Column -->
+                                                        <div class="space-y-3">
+                                                            <div>
+                                                                <x-multi-select
+                                                                    name="ptk_area_{{ $id }}"
+                                                                    label="Audit Area"
+                                                                    :options="$areaOptions"
+                                                                    :selected="$ptkArea"
+                                                                    placeholder="Select Areas..." />
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Deskripsi Kondisi</label>
+                                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Akibat</label>
+                                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
+                                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs bg-gray-100 cursor-not-allowed" readonly>
+                                                                    <option value="">Auto-detected...</option>
+                                                                    <option value="Observasi" @selected($ptkKategori==='Observasi' )>Observasi</option>
+                                                                    <option value="KTS Minor" @selected($ptkKategori==='KTS Minor' )>KTS Minor</option>
+                                                                    <option value="KTS Mayor" @selected($ptkKategori==='KTS Mayor' )>KTS Mayor</option>
+                                                                    <option value="OFI" @selected($ptkKategori==='OFI' )>OFI</option>
+                                                                </select>
+                                                                <p class="text-[10px] text-gray-500 mt-1">* Automatic based on Keterangan</p>
+                                                            </div>
+                                                        </div>
 
-                                <!-- PTK Section (Hidden by default) -->
-                                <div id="ptk-box-{{ $id }}" class="mt-6 pt-4 border-t border-gray-200 {{ $ket === 'tidak' ? '' : 'hidden' }}">
-                                    <div class="bg-red-50 rounded-md p-4 border border-red-100">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <h5 class="text-sm font-bold text-red-800 flex items-center gap-2">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                                </svg>
-                                                Corrective Action Request (PTK)
-                                            </h5>
-                                            @if ($ptk?->code)
-                                            <span class="text-xs font-mono bg-white px-2 py-1 rounded border border-red-200">{{ $ptk->code }}</span>
-                                            @endif
-                                        </div>
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                            <div class="col-span-2">
-                                                <x-multi-select
-                                                    name="ptk_area_{{ $id }}"
-                                                    label="Audit Area (Select Multiple)"
-                                                    :options="$areaOptions"
-                                                    :selected="$ptkArea"
-                                                    placeholder="Search & Select Areas..." />
-                                                @error("ptk_area_$id") <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                                        <!-- Right Column -->
+                                                        <div class="space-y-3">
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Akar Penyebab</label>
+                                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Rekomendasi</label>
+                                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Rencana Perbaikan (Auditee)</label>
+                                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
+                                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
-                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
-                                            </div>
-                                        </div>
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Condition Description</label>
-                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
-                                                @error("ptk_kondisi_$id") <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Root Cause</label>
-                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Impact</label>
-                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Recommendation</label>
-                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Category</label>
-                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">
-                                                    <option value="">Select...</option>
-                                                    <option value="Observasi" @selected($ptkKategori==='Observasi' )>Observasi</option>
-                                                    <option value="Ketidaksesuaian" @selected($ptkKategori==='Ketidaksesuaian' )>Ketidaksesuaian</option>
-                                                    <option value="OFI" @selected($ptkKategori==='OFI' )>OFI</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-gray-700 mb-1">Corrective Plan (Auditee)</label>
-                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                         @empty
                         <div class="text-center py-10 text-gray-500">
@@ -355,9 +359,13 @@
             const selects = document.querySelectorAll('.ket-select');
 
             function toggleRows(qid, val) {
-                const alasanBox = document.getElementById('alasan-box-' + qid);
+                // Find relative to the row or by ID, but IDs are unique so ID selector is fine.
+                // However, since we moved things into a detail row, we need to toggle that row.
+
+                const detailRow = document.getElementById('detail-row-' + qid);
                 const ptkBox = document.getElementById('ptk-box-' + qid);
                 const selectEl = document.querySelector(`.ket-select[data-qid="${qid}"]`);
+                const categorySelect = document.querySelector(`select[name="ptk_kategori_${qid}"]`);
 
                 // Update Select Styling
                 selectEl.classList.remove('bg-red-50', 'text-red-700', 'border-red-300', 'bg-yellow-50', 'text-yellow-700', 'border-yellow-300', 'bg-green-50', 'text-green-700', 'border-green-300');
@@ -370,20 +378,25 @@
                     selectEl.classList.add('bg-green-50', 'text-green-700', 'border-green-300');
                 }
 
-                // Toggle visibility
-                if (alasanBox) {
-                    if (val !== 'sesuai') {
-                        alasanBox.classList.remove('opacity-50');
-                    } else {
-                        alasanBox.classList.add('opacity-50');
-                    }
-                }
+                // Show/Hide Detail Row based on Compliance
+                if (val === 'sesuai') {
+                    if (detailRow) detailRow.classList.add('hidden');
+                    if (ptkBox) ptkBox.classList.add('hidden');
+                } else {
+                    if (detailRow) detailRow.classList.remove('hidden');
+                    if (ptkBox) ptkBox.classList.remove('hidden');
 
-                if (ptkBox) {
-                    if (val && val.startsWith('tidak')) {
-                        ptkBox.classList.remove('hidden');
-                    } else {
-                        ptkBox.classList.add('hidden');
+                    // Auto-set Category Logic
+                    if (categorySelect) {
+                        if (val === 'sebagian') {
+                            categorySelect.value = 'Observasi';
+                        } else if (val === 'tidak_tidak_ada_bukti' || val === 'tidak_dilaksanakan_tidak_ada_bukti') {
+                            // "Tidak Sesuai - Tidak ada bukti" OR "Tidak dilaksanakan - Tidak ada bukti" -> KTS Mayor
+                            categorySelect.value = 'KTS Mayor';
+                        } else if (val.startsWith('tidak')) {
+                            // Other "Tidak Sesuai" -> KTS Minor
+                            categorySelect.value = 'KTS Minor';
+                        }
                     }
                 }
             }

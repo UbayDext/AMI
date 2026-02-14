@@ -10,17 +10,32 @@ use App\Models\QuestionCategory;
 
 class QuestionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $questions = Question::with(['standard', 'category'])
+        $query = Question::with(['standard', 'category'])
             ->orderBy('category_id')
             ->orderBy('sort_order')
-            ->latest('id')
-            ->paginate(30);
+            ->latest('id');
 
-        $grouped = $questions->getCollection()->groupBy(fn($q) => $q->category_id ?? 0);
+        // Apply filters
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->filled('standard_id')) {
+            $query->where('standard_id', $request->standard_id);
+        }
 
-        return view('admin.questions.index', compact('questions', 'grouped'));
+        $questions = $query->paginate(100)->appends($request->query());
+
+        // Nested grouping: Category -> Standard -> Questions
+        $nestedGroups = $questions->getCollection()
+            ->groupBy(fn($q) => $q->category_id ?? 0)
+            ->map(fn($catItems) => $catItems->groupBy(fn($q) => $q->standard_id ?? 0));
+
+        $categories = QuestionCategory::orderBy('name')->get();
+        $standards = Standard::all()->sortBy(fn($s) => (int) filter_var($s->code, FILTER_SANITIZE_NUMBER_INT));
+
+        return view('admin.questions.index', compact('questions', 'nestedGroups', 'categories', 'standards'));
     }
 
 

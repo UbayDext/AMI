@@ -18,6 +18,11 @@ class AssessmentFillController extends Controller
 
         $questions = Question::with(['standard', 'options', 'category'])
             ->where('is_active', true)
+            ->when($assessment->unit_name, function ($query) use ($assessment) {
+                $query->whereHas('category', function ($q) use ($assessment) {
+                    $q->where('name', $assessment->unit_name);
+                });
+            })
             ->orderByRaw('COALESCE(category_id, 0) asc')
             ->orderBy('sort_order')
             ->get();
@@ -63,10 +68,15 @@ class AssessmentFillController extends Controller
         $questionIds = $keys->filter(fn($k) => str_starts_with($k, 'ket_'))
             ->map(fn($k) => str_replace('ket_', '', $k));
 
+        // Pre-fetch questions to get standard_id and other details efficiently
+        $questions = Question::whereIn('id', $questionIds)->get()->keyBy('id');
+
         foreach ($questionIds as $qid) {
             $status = $request->input("ket_$qid");
             $valueText = $request->input("bukti_$qid");
             $reason = $request->input("alasan_$qid");
+
+            $question = $questions[$qid] ?? null;
 
             // Handle File Upload
             $filePath = null;
@@ -88,25 +98,40 @@ class AssessmentFillController extends Controller
                 $answer->update(['file_path' => $filePath]);
             }
 
-            // Handle PTK logic
-            if ($status === 'tidak' || $status === 'sebagian') {
+            // Handle PTK logic - save PTK if category is present (includes "Sesuai" -> "Observasi")
+            $ptkCategory = $request->input("ptk_kategori_$qid");
+
+            \Log::info("Processing question $qid", [
+                'status' => $status,
+                'ptk_category' => $ptkCategory,
+                'question_standard_id' => $question?->standard_id ?? 'null',
+            ]);
+
+            // Check if there is a category OR if status indicates non-compliance
+            // We trust the category logic mostly, but as a fallback, if not 'sesuai', we generally expect a PTK.
+            // However, relying on ptkCategory is safer given the new "Sesuai -> Observasi" rule.
+            if ($ptkCategory || $status !== 'sesuai') {
                 $ptkData = [
-                    'audit_area_ids' => $request->input("ptk_area_$qid", []), // Now Array
+                    'standard_id' => $question?->standard_id, // Add Standard ID
+                    'audit_area_ids' => $request->input("ptk_area_$qid", []),
                     'condition_desc' => $request->input("ptk_kondisi_$qid"),
                     'root_cause' => $request->input("ptk_akar_$qid"),
                     'impact' => $request->input("ptk_akibat_$qid"),
                     'recommendation' => $request->input("ptk_rekom_$qid"),
-                    'category' => $request->input("ptk_kategori_$qid"),
+                    'category' => $ptkCategory,
                     'corrective_plan' => $request->input("ptk_rencana_$qid"),
                     'due_date' => $request->input("ptk_due_$qid"),
                 ];
+
+                \Log::info("Saving PTK for $qid", $ptkData);
 
                 Ptk::updateOrCreate(
                     ['assessment_id' => $assessment->id, 'question_id' => $qid],
                     $ptkData
                 );
             } else {
-                // Remove PTK if status became compliant
+                // If NO Category and Status IS Sesuai (and logic implies no PTK), delete.
+                // But with Sesuai->Observasi, this branch might rarely be hit unless user manually clears category?
                 Ptk::where(['assessment_id' => $assessment->id, 'question_id' => $qid])->delete();
             }
         }
