@@ -20,6 +20,9 @@ class Ptk extends Model
         'category',
         'corrective_plan',
         'due_date',
+        'realisasi',
+        'efektifitas',
+        'tl_status',
     ];
 
     protected $casts = [

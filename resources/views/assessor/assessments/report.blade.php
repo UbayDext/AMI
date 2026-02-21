@@ -85,7 +85,7 @@
                 <th rowspan="2" class="w-24">Bukti / Referensi</th>
                 <th rowspan="2" class="w-16">Hasil (Kesesuaian)</th>
                 <th rowspan="2" class="w-32">Keterangan / Temuan</th>
-                <th colspan="7">Audit Tindak Lanjut (PTK)</th>
+                <th colspan="9">Audit Tindak Lanjut (PTK)</th>
             </tr>
             <tr class="bg-gray-200 text-center font-bold">
                 <th class="w-24">Akar Penyebab</th>
@@ -94,6 +94,8 @@
                 <th class="w-16">Kategori</th>
                 <th class="w-24">Rencana Perbaikan</th>
                 <th class="w-16">Due Date</th>
+                <th class="w-24">Realisasi</th>
+                <th class="w-16">Efektifitas</th>
                 <th class="w-16">Status</th>
             </tr>
         </thead>
@@ -102,7 +104,7 @@
             @foreach($groupedQuestions as $categoryId => $questions)
             <!-- Category Row -->
             <tr class="bg-gray-100">
-                <td colspan="13" class="font-bold px-2 py-1">
+                <td colspan="15" class="font-bold px-2 py-1">
                     {{ $questions->first()->category->code }} - {{ $questions->first()->category->name }}
                 </td>
             </tr>
@@ -156,7 +158,11 @@
                 <td class="text-center">{{ $ptk?->category }}</td>
                 <td>{{ $ptk?->corrective_plan }}</td>
                 <td class="text-center">{{ $ptk?->due_date ? date('d-m-Y', strtotime($ptk->due_date)) : '' }}</td>
-                <td class="text-center">{{ $ptk?->status_resolved ? 'Close' : 'Open' }}</td>
+                <td>{{ $ptk?->realisasi }}</td>
+                <td class="text-center">{{ $ptk?->efektifitas }}</td>
+                <td class="text-center font-bold {{ $ptk?->tl_status === 'Close' ? 'text-teal-600' : ($ptk?->tl_status === 'Open' ? 'text-red-600' : 'text-orange-600') }}">
+                    {{ $ptk?->tl_status ?? '-' }}
+                </td>
             </tr>
             @endforeach
             @endforeach
@@ -164,7 +170,7 @@
             <!-- Independent Findings -->
             @if($independentFindings->count() > 0)
             <tr class="bg-gray-100">
-                <td colspan="13" class="font-bold px-2 py-1 text-center">Temuan Tambahan (Independent Findings)</td>
+                <td colspan="15" class="font-bold px-2 py-1 text-center">Temuan Tambahan (Independent Findings)</td>
             </tr>
             @foreach($independentFindings as $f)
             <tr class="bg-red-50">
@@ -174,7 +180,7 @@
                 <td>{{ $f->audit_area_names }}</td>
                 <td class="text-center font-bold text-red-600">TEMUAN</td>
                 <td>Severity: {{ ucfirst($f->severity) }}</td>
-                <td colspan="7" class="bg-gray-100 text-center text-gray-400 italic">Independent finding - No structered PTK</td>
+                <td colspan="9" class="bg-gray-100 text-center text-gray-400 italic">Independent finding - No structered PTK</td>
             </tr>
             @endforeach
             @endif

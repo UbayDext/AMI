@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class AssessmentFillController extends Controller
 {
-    public function edit(Assessment $assessment)
+    public function edit(Request $request, Assessment $assessment)
     {
         abort_unless($assessment->assessor_id === auth()->id(), 403);
 
@@ -22,6 +22,9 @@ class AssessmentFillController extends Controller
                 $query->whereHas('category', function ($q) use ($assessment) {
                     $q->where('name', $assessment->unit_name);
                 });
+            })
+            ->when($request->filled('standard_id'), function ($query) use ($request) {
+                $query->where('standard_id', $request->standard_id);
             })
             ->orderByRaw('COALESCE(category_id, 0) asc')
             ->orderBy('sort_order')
@@ -64,9 +67,13 @@ class AssessmentFillController extends Controller
     {
         abort_unless($assessment->assessor_id === auth()->id(), 403);
 
+
+
         $keys = collect($request->all())->keys();
         $questionIds = $keys->filter(fn($k) => str_starts_with($k, 'ket_'))
             ->map(fn($k) => str_replace('ket_', '', $k));
+
+        \Log::info("Derived Question IDs:", $questionIds->toArray());
 
         // Pre-fetch questions to get standard_id and other details efficiently
         $questions = Question::whereIn('id', $questionIds)->get()->keyBy('id');
@@ -121,6 +128,9 @@ class AssessmentFillController extends Controller
                     'category' => $ptkCategory,
                     'corrective_plan' => $request->input("ptk_rencana_$qid"),
                     'due_date' => $request->input("ptk_due_$qid"),
+                    'realisasi' => $request->input("ptk_realisasi_$qid"),
+                    'efektifitas' => $request->input("ptk_efektifitas_$qid"),
+                    'tl_status' => $request->input("ptk_tl_status_$qid"),
                 ];
 
                 \Log::info("Saving PTK for $qid", $ptkData);

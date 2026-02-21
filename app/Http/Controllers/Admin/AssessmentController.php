@@ -44,7 +44,23 @@ class AssessmentController extends Controller
     public function show(Assessment $assessment)
     {
         $assessment->load(['accreditationYear', 'assessor', 'findings.standard']);
-        return view('admin.assessments.show', compact('assessment'));
+
+        // Fetch questions related to this assessment's category (unit_name)
+        // Replicating logic from AssessmentReportController/AssessmentFillController
+        $groupedQuestions = \App\Models\Question::with(['standard', 'category', 'options'])
+            ->where('is_active', true)
+            ->whereHas('category', function ($q) use ($assessment) {
+                $q->where('name', $assessment->unit_name);
+            })
+            ->orderByRaw('COALESCE(category_id, 0) asc')
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy(fn($q) => $q->category_id ?? 0);
+
+        $answers = $assessment->answers()->get()->keyBy('question_id');
+        $ptks = $assessment->ptks()->get()->keyBy('question_id');
+
+        return view('admin.assessments.show', compact('assessment', 'groupedQuestions', 'answers', 'ptks'));
     }
 
     public function destroy(Assessment $assessment)

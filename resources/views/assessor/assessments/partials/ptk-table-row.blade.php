@@ -50,6 +50,7 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
     {{-- No --}}
     <td class="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap align-top text-center border-r">
         {{ $no }}
+        <input type="hidden" name="q_ids[]" value="{{ $question->id }}">
     </td>
 
     {{-- Pertanyaan --}}
@@ -208,5 +209,16 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
                     </div>
                 </div>
             </div>
+
+            {{-- Audit Tindak Lanjut (FM-AMI/06) --}}
+            @include('assessor.assessments.partials.audit-tindak-lanjut', [
+            'ptk' => $ptk,
+            'question' => $question,
+            'assessment' => $assessment,
+            'id' => $id,
+            'ptkArea' => $ptkArea,
+            'areas' => $areas
+            ])
+        </div>
     </td>
 </tr>

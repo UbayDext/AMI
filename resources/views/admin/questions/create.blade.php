@@ -48,25 +48,17 @@
                             <x-input-error :messages="$errors->get('label')" class="mt-2" />
                         </div>
 
-                        <!-- Type & Sort Order -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="type" :value="__('Type')" />
-                                <select id="type" name="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                    @foreach($types as $t)
-                                    <option value="{{ $t }}" {{ old('type') == $t ? 'selected' : '' }}>
-                                        {{ ucfirst($t) }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('type')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="sort_order" :value="__('Sort Order')" />
-                                <x-text-input id="sort_order" class="block mt-1 w-full" type="number" name="sort_order" :value="old('sort_order', 0)" />
-                                <x-input-error :messages="$errors->get('sort_order')" class="mt-2" />
-                            </div>
+                        <!-- Type -->
+                        <div>
+                            <x-input-label for="type" :value="__('Type')" />
+                            <select id="type" name="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                @foreach($types as $t)
+                                <option value="{{ $t }}" {{ old('type') == $t ? 'selected' : '' }}>
+                                    {{ ucfirst($t) }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('type')" class="mt-2" />
                         </div>
 
                         <!-- Reference -->

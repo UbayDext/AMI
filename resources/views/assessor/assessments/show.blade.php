@@ -258,6 +258,25 @@
                                                     <label class="block text-xs font-medium text-gray-500 mb-1">Due Date</label>
                                                     <div class="text-sm text-gray-900">{{ $ptk->due_date ? $ptk->due_date->format('d/m/Y') : '-' }}</div>
                                                 </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-500 mb-1">Realisasi (Tindak Lanjut)</label>
+                                                    <div class="text-sm text-gray-900 bg-gray-50 rounded p-2 border border-gray-100 min-h-[2rem]">{{ $ptk->realisasi ?: '-' }}</div>
+                                                </div>
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label class="block text-xs font-medium text-gray-500 mb-1">Efektifitas</label>
+                                                        <div class="text-sm text-gray-900">{{ $ptk->efektifitas ?: '-' }}</div>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-md border
+                                                                {{ $ptk->tl_status === 'Close' ? 'bg-teal-100 text-teal-800 border-teal-200' :
+                                                                  ($ptk->tl_status === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                                                  ($ptk->tl_status === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-200' : 'bg-gray-100 text-gray-800 border-gray-200')) }}">
+                                                            {{ $ptk->tl_status ?: '-' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

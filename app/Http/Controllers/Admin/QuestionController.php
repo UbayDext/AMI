@@ -56,18 +56,21 @@ class QuestionController extends Controller
     {
         $data = $request->validate([
             'standard_id' => ['nullable', 'exists:standards,id'],
-            'category_id' => ['nullable', 'exists:question_categories,id'], // ✅
+            'category_id' => ['nullable', 'exists:question_categories,id'],
             'label' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:text,textarea,number,select,radio,checkbox,file'],
             'reference' => ['nullable', 'string', 'max:5000'],
             'is_required' => ['nullable', 'boolean'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $data['is_required'] = (bool) ($data['is_required'] ?? false);
         $data['is_active'] = (bool) ($data['is_active'] ?? true);
-        $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
+
+        // Auto-assign sort_order: append after the last question in the same standard
+        $maxOrder = Question::where('standard_id', $data['standard_id'] ?? null)
+            ->max('sort_order') ?? 0;
+        $data['sort_order'] = $maxOrder + 1;
 
         $q = Question::create($data);
 

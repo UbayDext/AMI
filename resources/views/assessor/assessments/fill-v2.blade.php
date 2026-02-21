@@ -57,6 +57,26 @@
                     </div>
                 </div>
 
+                <!-- Questions Filter -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-medium text-gray-900">Filter Pertanyaan</h3>
+                        <form method="GET" action="{{ route('assessor.assessments.fill', $assessment) }}" class="flex items-center gap-2">
+                            <select name="standard_id" class="text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="this.form.submit()">
+                                <option value="">Semua Standar</option>
+                                @foreach($standards as $std)
+                                <option value="{{ $std->id }}" {{ request('standard_id') == $std->id ? 'selected' : '' }}>
+                                    {{ $std->code }} - {{ $std->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @if(request('standard_id'))
+                            <a href="{{ route('assessor.assessments.fill', $assessment) }}" class="text-sm text-red-600 hover:text-red-900 underline">Reset</a>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Questions Table -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
@@ -81,36 +101,67 @@
                         </h4>
                     </div>
 
-                    <!-- Table with horizontal scroll -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-100 sticky top-0 z-10">
-                                <tr>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">No</th>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 250px;">Pertanyaan</th>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 100px;">Referensi</th>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 200px;">Bukti</th>
-                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 150px;">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach ($items as $q)
-                                @php
-                                $ans = $answers[$q->id] ?? null;
-                                $ptk = $ptks[$q->id] ?? null;
-                                @endphp
-                                @include('assessor.assessments.partials.ptk-table-row', [
-                                'question' => $q,
-                                'answer' => $ans,
-                                'ptk' => $ptk,
-                                'no' => $no,
-                                'areas' => $areas
-                                ])
-                                @php $no++; @endphp
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <!-- Group by Standard -->
+                    @php
+                    $standardGroups = $items->groupBy(fn($q) => $q->standard_id ?? 0);
+                    @endphp
+
+                    @foreach($standardGroups as $standardId => $standardQuestions)
+                    @php
+                    $std = $standardQuestions->first()->standard;
+                    $standardLabel = $std ? $std->code : 'No Standard';
+                    @endphp
+
+                    <div x-data="{ open: true }" class="border-b border-gray-100 last:border-b-0">
+                        <button type="button" @click="open = !open"
+                            class="w-full flex items-center justify-between px-6 py-3 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 text-left border-l-4 border-indigo-300">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 text-indigo-400 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                                <span class="text-sm font-semibold text-gray-700">{{ $standardLabel }}</span>
+                                @if($std && $std->name)
+                                <span class="text-xs text-gray-500 hidden sm:inline">— {{ Str::limit($std->name, 60) }}</span>
+                                @endif
+                                <span class="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">{{ $standardQuestions->count() }} Pertanyaan</span>
+                            </div>
+                        </button>
+
+                        <div x-show="open" x-collapse>
+                            <!-- Table with horizontal scroll -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-white sticky top-0 z-10">
+                                        <tr>
+                                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider whitespace-nowrap">No</th>
+                                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 250px;">Pertanyaan</th>
+                                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 100px;">Referensi</th>
+                                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 200px;">Bukti</th>
+                                            <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style="min-width: 150px;">Keterangan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach ($standardQuestions as $q)
+                                        @php
+                                        $ans = $answers[$q->id] ?? null;
+                                        $ptk = $ptks[$q->id] ?? null;
+                                        @endphp
+                                        @include('assessor.assessments.partials.ptk-table-row', [
+                                        'question' => $q,
+                                        'answer' => $ans,
+                                        'ptk' => $ptk,
+                                        'no' => $no,
+                                        'areas' => $areas,
+                                        'assessment' => $assessment
+                                        ])
+                                        @php $no++; @endphp
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+                    @endforeach
                     @empty
                     <div class="px-6 py-12 text-center text-gray-500">
                         <p>No questions available for this assessment.</p>
@@ -139,167 +190,10 @@
                     </button>
                 </div>
 
-                {{-- Hidden submit flag --}}
-                <input type="hidden" name="submit" id="submitFlag" value="0">
+                @include('assessor.assessments.partials.submit-modal')
             </form>
-
-            {{-- Confirmation Modal --}}
-            <div id="submitModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-                <div class="flex items-center justify-center min-h-screen px-4">
-                    {{-- Backdrop --}}
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="document.getElementById('submitModal').classList.add('hidden')"></div>
-
-                    {{-- Modal --}}
-                    <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6 z-10">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Submit</h3>
-                        </div>
-
-                        <p class="text-sm text-gray-600 mb-2">Apakah Anda yakin ingin <strong>submit</strong> assessment ini?</p>
-                        <p class="text-sm text-gray-500 mb-6">Setelah di-submit, assessment tidak dapat diedit lagi.</p>
-
-                        <div class="flex items-center justify-end gap-3">
-                            <button type="button" onclick="document.getElementById('submitModal').classList.add('hidden')" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 transition">
-                                Batal
-                            </button>
-                            <button type="button" onclick="confirmSubmit()" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 transition">
-                                Ya, Submit
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    @push('scripts')
-    <script>
-        // Category color map
-        const categoryColors = {
-            'Sesuai': {
-                bg: 'bg-green-100',
-                text: 'text-green-800',
-                border: 'border-green-300'
-            },
-            'Observasi': {
-                bg: 'bg-yellow-100',
-                text: 'text-yellow-800',
-                border: 'border-yellow-300'
-            },
-            'KTS Minor': {
-                bg: 'bg-orange-100',
-                text: 'text-orange-800',
-                border: 'border-orange-300'
-            },
-            'KTS Mayor': {
-                bg: 'bg-red-500',
-                text: 'text-white',
-                border: 'border-red-700'
-            },
-            'OFI': {
-                bg: 'bg-blue-100',
-                text: 'text-blue-800',
-                border: 'border-blue-300'
-            },
-        };
-
-        function applyCategoryStyle(displayEl, catValue) {
-            // Remove all category color classes
-            const allClasses = ['bg-green-100', 'text-green-800', 'border-green-300',
-                'bg-yellow-100', 'text-yellow-800', 'border-yellow-300',
-                'bg-orange-100', 'text-orange-800', 'border-orange-300',
-                'bg-red-500', 'text-white', 'border-red-700',
-                'bg-blue-100', 'text-blue-800', 'border-blue-300',
-                'bg-gray-100', 'text-gray-800', 'border-gray-300'
-            ];
-            displayEl.classList.remove(...allClasses);
-
-            const colors = categoryColors[catValue];
-            if (colors) {
-                displayEl.classList.add(colors.bg, colors.text, colors.border);
-            } else {
-                displayEl.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-300');
-            }
-        }
-
-        // Determine category from keterangan value
-        function autoDetectCategory(val) {
-            if (val === 'sesuai') {
-                return 'Sesuai';
-            } else if (val === 'sebagian_sesuai') {
-                return 'Observasi';
-            } else if (val === 'tidak_sesuai_tidak_ada_bukti' || val === 'tidak_dilaksanakan_tidak_ada_bukti') {
-                return 'KTS Mayor';
-            } else if (val && val.startsWith('tidak')) {
-                return 'KTS Minor';
-            }
-            return '';
-        }
-
-        // Toggle PTK row when keterangan changes
-        function togglePtkRow(qid, val) {
-            const row = document.getElementById('ptk-row-' + qid);
-            const selectEl = document.querySelector(`.ket-select[data-qid="${qid}"]`);
-
-            // Update Keterangan select styling (same colors as Kategori)
-            if (selectEl) {
-                selectEl.classList.remove(
-                    'bg-green-100', 'text-green-800', 'border-green-300',
-                    'bg-yellow-100', 'text-yellow-800', 'border-yellow-300',
-                    'bg-orange-100', 'text-orange-800', 'border-orange-300',
-                    'bg-red-100', 'text-red-800', 'border-red-300',
-                    'bg-red-500', 'text-white', 'border-red-700',
-                    'bg-blue-100', 'text-blue-800', 'border-blue-300',
-                    'bg-gray-100', 'text-gray-800', 'border-gray-300'
-                );
-                const catValue = autoDetectCategory(val);
-                const colors = categoryColors[catValue];
-                if (colors) {
-                    selectEl.classList.add(colors.bg, colors.text, colors.border);
-                }
-            }
-
-            if (row) {
-                if (!val || val === 'sesuai') {
-                    row.classList.add('hidden');
-                } else {
-                    row.classList.remove('hidden');
-
-                    // Auto-set Category
-                    const catValue = autoDetectCategory(val);
-                    const categoryInput = document.getElementById('ptk_kategori_' + qid);
-                    const categoryDisplay = document.getElementById('ptk_kategori_display_' + qid);
-
-                    if (categoryInput) {
-                        categoryInput.value = catValue;
-                    }
-                    if (categoryDisplay) {
-                        categoryDisplay.value = catValue;
-                        applyCategoryStyle(categoryDisplay, catValue);
-                    }
-                }
-            }
-        }
-
-        // Confirm and submit assessment
-        function confirmSubmit() {
-            document.getElementById('submitFlag').value = '1';
-            document.getElementById('submitModal').classList.add('hidden');
-            document.getElementById('assessmentForm').submit();
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const selects = document.querySelectorAll('.ket-select');
-            selects.forEach(select => {
-                togglePtkRow(select.dataset.qid, select.value);
-            });
-        });
-    </script>
-    @endpush
+    @include('assessor.assessments.partials.scripts')
 </x-app-layout>
