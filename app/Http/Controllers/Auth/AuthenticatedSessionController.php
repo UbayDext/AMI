@@ -26,6 +26,19 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $user = Auth::user();
+
+        // Non-admin accounts require admin approval before access is granted.
+        if (! $user->hasRole('admin') && ! $user->is_active) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')
+                ->with('error', 'Akun Anda belum diaktifkan. Silakan hubungi admin.');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

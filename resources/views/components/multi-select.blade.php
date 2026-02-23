@@ -64,17 +64,17 @@ $selectedJson = json_encode($selected);
     class="relative"
     @click.away="close()">
     <!-- Label -->
-    <label for="{{ $id }}" class="block text-xs font-medium text-gray-700 mb-1">
+    <label for="{{ $id }}" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
         {{ $label }}
     </label>
 
     <!-- Trigger / Container -->
     <div
         @click="toggle()"
-        class="min-h-[38px] w-full bg-white border border-gray-300 rounded-md shadow-sm px-2 py-1 flex items-center flex-wrap gap-1 cursor-text focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
+        class="min-h-[38px] w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm px-2 py-1 flex items-center flex-wrap gap-1 cursor-text focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
         <!-- Selected Items (Tags) -->
         <template x-for="(value, index) in selected" :key="value">
-            <div class="bg-indigo-100 text-indigo-700 rounded px-1.5 py-0.5 text-xs font-medium flex items-center gap-1">
+            <div class="bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400 rounded px-1.5 py-0.5 text-xs font-medium flex items-center gap-1">
                 <span x-text="options.find(o => o.value == value)?.label"></span>
                 <button type="button" @click.stop="remove(index)" class="hover:text-indigo-900 focus:outline-none">
                     <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
@@ -97,15 +97,15 @@ $selectedJson = json_encode($selected);
     <div
         x-show="show"
         x-transition
-        class="absolute z-50 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200 max-h-60 overflow-auto"
+        class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 max-h-60 overflow-auto"
         style="display: none;">
         <template x-for="option in filteredOptions" :key="option.value">
             <div
                 @click="select(option.value)"
-                class="px-3 py-2 text-xs hover:bg-gray-100 cursor-pointer text-gray-700"
+                class="px-3 py-2 text-xs hover:bg-gray-100 cursor-pointer text-gray-700 dark:text-gray-300"
                 x-text="option.label"></div>
         </template>
-        <div x-show="filteredOptions.length === 0" class="px-3 py-2 text-xs text-gray-500">
+        <div x-show="filteredOptions.length === 0" class="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
             No results found.
         </div>
     </div>

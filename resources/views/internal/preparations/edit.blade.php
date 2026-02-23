@@ -8,7 +8,7 @@
             <div class="p-3 bg-green-100 rounded">{{ session('success') }}</div>
         @endif
 
-        <div class="bg-white p-6 rounded shadow">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
             <form method="POST" action="{{ route('admin.question-categories.update', $category) }}" class="space-y-4">
                 @csrf
                 @method('PUT')

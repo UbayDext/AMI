@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ptk extends Model
 {
@@ -13,12 +15,14 @@ class Ptk extends Model
         'audit_area_ids',
         'code',
         'sequence',
+        'category',
         'condition_desc',
         'root_cause',
         'impact',
         'recommendation',
-        'category',
         'corrective_plan',
+        'start_date',
+        'end_date',
         'due_date',
         'realisasi',
         'efektifitas',
@@ -26,23 +30,40 @@ class Ptk extends Model
     ];
 
     protected $casts = [
-        'due_date' => 'date',
         'audit_area_ids' => 'array',
+        'start_date'     => 'date',
+        'end_date'       => 'date',
+        'due_date'       => 'date',
     ];
 
-    public function getAuditAreaNamesAttribute()
+    public function assessment(): BelongsTo
     {
-        if (empty($this->audit_area_ids)) return '-';
-        return \App\Models\AuditArea::whereIn('id', $this->audit_area_ids)->pluck('name')->join(', ');
+        return $this->belongsTo(Assessment::class);
     }
 
-    public function standard()
+    public function question(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Standard::class);
+        return $this->belongsTo(Question::class);
     }
 
-    public function pts()
+    public function standard(): BelongsTo
     {
-        return $this->hasOne(\App\Models\Pts::class);
+        return $this->belongsTo(Standard::class);
+    }
+
+    public function pts(): HasOne
+    {
+        return $this->hasOne(Pts::class);
+    }
+
+    public function getAuditAreaNamesAttribute(): string
+    {
+        if (empty($this->audit_area_ids)) {
+            return '-';
+        }
+
+        return AuditArea::whereIn('id', $this->audit_area_ids)
+            ->pluck('name')
+            ->join(', ');
     }
 }

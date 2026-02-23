@@ -9,12 +9,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Question extends Model
 {
     protected $fillable = [
-        'standard_id','category_id','label','refrence','type','is_required','sort_order','is_active'
+        'standard_id',
+        'category_id',
+        'label',
+        'reference',
+        'type',
+        'is_required',
+        'sort_order',
+        'is_active',
     ];
 
     protected $casts = [
         'is_required' => 'boolean',
-        'is_active' => 'boolean',
+        'is_active'   => 'boolean',
     ];
 
     public function standard(): BelongsTo
@@ -22,12 +29,13 @@ class Question extends Model
         return $this->belongsTo(Standard::class);
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(QuestionCategory::class, 'category_id');
+    }
+
     public function options(): HasMany
     {
         return $this->hasMany(QuestionOption::class)->orderBy('sort_order');
-    }
-     public function category(): BelongsTo
-    {
-        return $this->belongsTo(QuestionCategory::class, 'category_id');
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     /**
@@ -44,10 +46,12 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'         => 'hashed',
+            'is_active'        => 'boolean',
         ];
     }
-     public function canAccessPanel(Panel $panel): bool
+
+    public function canAccessPanel(Panel $panel): bool
     {
         // admin bisa masuk panel admin
         if ($panel->getId() === 'admin') {

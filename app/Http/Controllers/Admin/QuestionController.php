@@ -24,6 +24,9 @@ class QuestionController extends Controller
         if ($request->filled('standard_id')) {
             $query->where('standard_id', $request->standard_id);
         }
+        if ($request->filled('search')) {
+            $query->where('label', 'like', '%' . $request->search . '%');
+        }
 
         $questions = $query->paginate(100)->appends($request->query());
 

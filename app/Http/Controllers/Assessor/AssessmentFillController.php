@@ -16,6 +16,11 @@ class AssessmentFillController extends Controller
     {
         abort_unless($assessment->assessor_id === auth()->id(), 403);
 
+        if ($assessment->status === 'submitted') {
+            return redirect()->route('assessor.assessments.index')
+                ->with('error', 'Assessment ini sudah disubmit dan tidak dapat diedit lagi.');
+        }
+
         $questions = Question::with(['standard', 'options', 'category'])
             ->where('is_active', true)
             ->when($assessment->unit_name, function ($query) use ($assessment) {
@@ -66,6 +71,10 @@ class AssessmentFillController extends Controller
     public function update(Request $request, Assessment $assessment)
     {
         abort_unless($assessment->assessor_id === auth()->id(), 403);
+
+        if ($assessment->status === 'submitted') {
+            abort(403, 'Assessment ini sudah disubmit dan tidak dapat diubah lagi.');
+        }
 
 
 
@@ -127,7 +136,9 @@ class AssessmentFillController extends Controller
                     'recommendation' => $request->input("ptk_rekom_$qid"),
                     'category' => $ptkCategory,
                     'corrective_plan' => $request->input("ptk_rencana_$qid"),
-                    'due_date' => $request->input("ptk_due_$qid"),
+                    'start_date'      => $request->input("ptk_start_date_$qid") ?: null,
+                    'end_date'        => $request->input("ptk_end_date_$qid") ?: null,
+                    'due_date'        => $request->input("ptk_due_$qid") ?: null,
                     'realisasi' => $request->input("ptk_realisasi_$qid"),
                     'efektifitas' => $request->input("ptk_efektifitas_$qid"),
                     'tl_status' => $request->input("ptk_tl_status_$qid"),
@@ -148,8 +159,24 @@ class AssessmentFillController extends Controller
 
         // Handle Submit Final
         if ($request->input('submit') == '1') {
+            $standardId = (int) $request->input('submit_standard_id');
+
+            if ($standardId) {
+                // Per-standard submit: only mark this standard as submitted
+                $submitted = $assessment->submitted_standards ?? [];
+                if (!in_array($standardId, $submitted)) {
+                    $submitted[] = $standardId;
+                }
+                $assessment->update(['submitted_standards' => $submitted]);
+
+                return redirect()->route('assessor.assessments.index')
+                    ->with('success', 'Standar berhasil disubmit.');
+            }
+
+            // No specific standard → full assessment submit (fallback)
             $assessment->update(['status' => 'submitted']);
-            return redirect()->route('assessor.assessments.index')->with('success', 'Assessment submitted successfully.');
+            return redirect()->route('assessor.assessments.index')
+                ->with('success', 'Assessment submitted successfully.');
         }
 
         return back()->with('success', 'Draft saved successfully.');

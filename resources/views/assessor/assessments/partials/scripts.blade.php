@@ -36,7 +36,7 @@
             'bg-orange-100', 'text-orange-800', 'border-orange-300',
             'bg-red-500', 'text-white', 'border-red-700',
             'bg-blue-100', 'text-blue-800', 'border-blue-300',
-            'bg-gray-100', 'text-gray-800', 'border-gray-300'
+            'bg-gray-100 dark:bg-gray-800/80', 'text-gray-800 dark:text-gray-200', 'border-gray-300 dark:border-gray-600'
         ];
         displayEl.classList.remove(...allClasses);
 
@@ -44,7 +44,7 @@
         if (colors) {
             displayEl.classList.add(colors.bg, colors.text, colors.border);
         } else {
-            displayEl.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-300');
+            displayEl.classList.add('bg-gray-100 dark:bg-gray-800/80', 'text-gray-800 dark:text-gray-200', 'border-gray-300 dark:border-gray-600');
         }
     }
 
@@ -76,7 +76,7 @@
                 'bg-red-100', 'text-red-800', 'border-red-300',
                 'bg-red-500', 'text-white', 'border-red-700',
                 'bg-blue-100', 'text-blue-800', 'border-blue-300',
-                'bg-gray-100', 'text-gray-800', 'border-gray-300'
+                'bg-gray-100 dark:bg-gray-800/80', 'text-gray-800 dark:text-gray-200', 'border-gray-300 dark:border-gray-600'
             );
             const catValue = autoDetectCategory(val);
             const colors = categoryColors[catValue];
@@ -128,7 +128,7 @@
             'bg-teal-600', 'text-white', 'border-teal-700',
             'bg-yellow-100', 'text-yellow-800', 'border-yellow-300',
             'bg-orange-100', 'text-orange-800', 'border-orange-300',
-            'border-gray-300'
+            'border-gray-300 dark:border-gray-600'
         );
         switch (el.value) {
             case 'Close':
@@ -141,7 +141,7 @@
                 el.classList.add('bg-orange-100', 'text-orange-800', 'border-orange-300');
                 break;
             default:
-                el.classList.add('border-gray-300');
+                el.classList.add('border-gray-300 dark:border-gray-600');
         }
     }
 

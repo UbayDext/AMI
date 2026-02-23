@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Tahun Akreditasi {{ $accreditation_year->year }}
             </h2>
             <div class="mt-4 sm:mt-0 flex gap-2">
                 <a href="{{ route('admin.accreditation-years.edit', $accreditation_year) }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium transition">Edit Tahun</a>
-                <a href="{{ route('admin.accreditation-years.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm font-medium transition">
+                <a href="{{ route('admin.accreditation-years.index') }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 text-sm font-medium transition">
                     &larr; Kembali
                 </a>
             </div>
@@ -33,7 +33,7 @@
 
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
@@ -42,14 +42,14 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <dt class="text-sm font-medium text-gray-500 truncate">Total Assessment</dt>
-                                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $accreditation_year->assessments->count() }}</dd>
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Assessment</dt>
+                                <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $accreditation_year->assessments->count() }}</dd>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-green-100 rounded-md p-3">
@@ -58,14 +58,14 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <dt class="text-sm font-medium text-gray-500 truncate">Selesai</dt>
-                                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $accreditation_year->assessments->where('status', 'submitted')->count() }}</dd>
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Selesai</dt>
+                                <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $accreditation_year->assessments->where('status', 'submitted')->count() }}</dd>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-yellow-100 rounded-md p-3">
@@ -74,8 +74,8 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <dt class="text-sm font-medium text-gray-500 truncate">Draft</dt>
-                                <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ $accreditation_year->assessments->where('status', 'draft')->count() }}</dd>
+                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Draft</dt>
+                                <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-100">{{ $accreditation_year->assessments->where('status', 'draft')->count() }}</dd>
                             </div>
                         </div>
                     </div>
@@ -83,48 +83,48 @@
             </div>
 
             <!-- Assessments List -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
                         Daftar Assessment
                     </h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
                         Semua assessment untuk tahun {{ $accreditation_year->year }}
                     </p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-gray-900/50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asesor</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dibuat</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Unit</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Asesor</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dibuat</th>
                                 <th scope="col" class="relative px-6 py-3">
                                     <span class="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                             @forelse($accreditation_year->assessments as $assessment)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $assessment->unit_name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">{{ $assessment->assessor->name ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $assessment->unit_name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $assessment->assessor->name ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $assessment->status === 'submitted' ? 'bg-green-100 text-green-800' : 
-                                          ($assessment->status === 'draft' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                          ($assessment->status === 'draft' ? 'bg-gray-100 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200' : 'bg-yellow-100 text-yellow-800') }}">
                                         {{ ucfirst($assessment->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $assessment->created_at->format('d M Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $assessment->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
                                     <a href="{{ route('admin.assessments.show', $assessment) }}" class="text-indigo-600 hover:text-indigo-900">Detail</a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                     <p class="text-sm font-medium">Belum ada assessment untuk tahun ini</p>
                                 </td>
                             </tr>

@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="py-8 max-w-3xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white p-6 rounded shadow">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
             <form method="POST" action="{{ route('admin.auditor-decrees.store') }}" enctype="multipart/form-data" class="space-y-4">
                 @csrf
 

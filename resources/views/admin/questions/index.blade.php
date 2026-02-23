@@ -1,104 +1,270 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Questions Bank') }}
-            </h2>
-            <a href="{{ route('admin.questions.create') }}" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Bank Soal</h1>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Kelola database pertanyaan untuk akreditasi dengan mudah.</p>
+            </div>
+            <a href="{{ route('admin.questions.create') }}"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-150">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                 </svg>
-                {{ __('Create New') }}
+                Buat Soal Baru
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if(session('success'))
-            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)" class="mb-4 bg-green-50 border-l-4 border-green-400 p-4 rounded-r shadow-sm">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-green-700">{{ session('success') }}</p>
-                    </div>
-                </div>
+            <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)"
+                class="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm">
+                <svg class="h-5 w-5 text-emerald-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                {{ session('success') }}
             </div>
             @endif
 
-            <!-- Filters -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <form method="GET" action="{{ route('admin.questions.index') }}" class="flex flex-wrap items-end gap-4">
-                        <div class="flex-1 min-w-[180px]">
-                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Kategori</label>
-                            <select name="category_id" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                <option value="">Semua Kategori</option>
-                                @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}" @selected(request('category_id')==$cat->id)>
-                                    {{ $cat->code ? $cat->code.' - ' : '' }}{{ $cat->name }}
-                                </option>
-                                @endforeach
-                            </select>
+            <!-- Filter Bar -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-4">
+                <form method="GET" action="{{ route('admin.questions.index') }}"
+                    class="flex flex-wrap items-center gap-3">
+
+                    {{-- Category filter --}}
+                    <div class="relative">
+                        <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
                         </div>
-                        <div class="flex-1 min-w-[180px]">
-                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Standar</label>
-                            <select name="standard_id" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
-                                <option value="">Semua Standar</option>
-                                @foreach($standards as $std)
-                                <option value="{{ $std->id }}" @selected(request('standard_id')==$std->id)>
-                                    {{ $std->code }} - {{ $std->name }}
-                                </option>
-                                @endforeach
-                            </select>
+                        <select name="category_id"
+                            class="pl-9 pr-8 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:outline-none appearance-none cursor-pointer">
+                            <option value="" class="dark:bg-gray-900">Semua Kategori</option>
+                            @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" class="dark:bg-gray-900" @selected(request('category_id')==$cat->id)>
+                                {{ $cat->code ? $cat->code.' - ' : '' }}{{ $cat->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                                </svg>
-                                Filter
-                            </button>
-                            @if(request('category_id') || request('standard_id'))
-                            <a href="{{ route('admin.questions.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 transition">
-                                Reset
-                            </a>
-                            @endif
+                    </div>
+
+                    {{-- Standard filter --}}
+                    <div class="relative">
+                        <select name="standard_id"
+                            class="pl-4 pr-8 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:outline-none appearance-none cursor-pointer">
+                            <option value="" class="dark:bg-gray-900">Semua Standar</option>
+                            @foreach($standards as $std)
+                            <option value="{{ $std->id }}" class="dark:bg-gray-900" @selected(request('standard_id')==$std->id)>
+                                {{ $std->code }} - {{ $std->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </div>
-                    </form>
-                </div>
-                <div class="px-6 py-2 bg-gray-50 text-sm text-gray-600">
-                    Menampilkan <strong>{{ $questions->total() }}</strong> soal
-                    @if(request('category_id') || request('standard_id'))
-                    (filtered)
+                    </div>
+
+                    {{-- Search --}}
+                    <div class="flex-1 min-w-[200px] relative">
+                        <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari soal..."
+                            class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:outline-none" />
+                    </div>
+
+                    <button type="submit"
+                        class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors">
+                        Terapkan
+                    </button>
+                    @if(request('category_id') || request('standard_id') || request('search'))
+                    <a href="{{ route('admin.questions.index') }}"
+                        class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800/80 rounded-xl hover:bg-gray-200 transition-colors">
+                        Reset
+                    </a>
                     @endif
+
+                    <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">
+                        <strong class="text-gray-600 dark:text-gray-400">{{ $questions->total() }}</strong> soal
+                        @if(request('category_id') || request('standard_id')) (difilter) @endif
+                    </span>
+                </form>
+            </div>
+
+            <!-- Category Groups -->
+            <div class="space-y-4">
+                @forelse($nestedGroups as $catId => $standardGroups)
+                @php
+                $firstQ = $standardGroups->first()->first();
+                $cat = $firstQ?->category;
+                $categoryName = $cat ? (($cat->code ? $cat->code.' - ' : '').$cat->name) : 'Uncategorized';
+                $totalInCategory = $standardGroups->flatten()->count();
+                $stdCount = $standardGroups->count();
+                @endphp
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
+                    x-data="{ openCat: {{ request('category_id') == $catId ? 'true' : 'false' }} }">
+
+                    <!-- Category Header -->
+                    <button type="button" @click="openCat = !openCat"
+                        class="w-full flex items-center justify-between px-6 py-4 transition-colors text-left"
+                        :class="openCat ? 'bg-indigo-50 dark:bg-indigo-900/40' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'">
+                        <div class="flex items-center gap-4">
+                            <!-- Category icon / avatar -->
+                            <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+                                :class="openCat ? 'bg-indigo-100 dark:bg-indigo-900/60' : 'bg-gray-100 dark:bg-gray-800/80'">
+                                <svg class="w-5 h-5 transition-colors" :class="openCat ? 'text-indigo-600' : 'text-gray-400 dark:text-gray-500'"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-gray-900 dark:text-gray-100 text-sm">{{ $categoryName }}</div>
+                                <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ $stdCount }} Standar • {{ $totalInCategory }} Pertanyaan</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <!-- 3-dot menu -->
+                            <div class="w-7 h-7 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                                @click.stop>
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                            </div>
+                            <!-- Chevron -->
+                            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform duration-200"
+                                :class="{ 'rotate-180': openCat }"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    <!-- Category Content (Standards + Questions) -->
+                    <div x-show="openCat" x-collapse class="border-t border-gray-100 dark:border-gray-700">
+                        @foreach($standardGroups as $stdId => $items)
+                        @php
+                        $std = $items->first()?->standard;
+                        $standardLabel = $std ? $std->code : 'No Standard';
+                        $standardName = $std?->name ?? '';
+                        @endphp
+
+                        <div class="border-b border-gray-50 last:border-b-0"
+                            x-data="{ openStd: {{ request('standard_id') == $stdId ? 'true' : 'false' }} }">
+
+                            <!-- Standard sub-header -->
+                            <button type="button" @click="openStd = !openStd"
+                                class="w-full flex items-center justify-between px-6 py-3 pl-[4.5rem] transition-colors text-left"
+                                :class="openStd ? 'bg-indigo-50/50 dark:bg-indigo-900/20' : 'hover:bg-gray-50/70 dark:hover:bg-gray-700/30'">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2 h-2 rounded-full flex-shrink-0"
+                                        :class="openStd ? 'bg-indigo-500' : 'bg-gray-300'"></span>
+                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $standardLabel }}</span>
+                                    @if($standardName)
+                                    <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide font-medium">{{ Str::limit($standardName, 40) }}</span>
+                                    @endif
+                                </div>
+                                <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 mr-1"
+                                    :class="{ 'rotate-180': openStd }"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <!-- Questions list -->
+                            <div x-show="openStd" x-collapse>
+                                <div class="pl-[4.5rem] pr-6 pb-3 space-y-2">
+                                    @foreach($items as $index => $q)
+                                    <div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-4 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:shadow-sm transition-all group">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
+                                                    {{ $index + 1 }}. {{ $q->label }}
+                                                </p>
+                                                <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                                    <!-- Type badge -->
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                        @if($q->type === 'select' || $q->type === 'radio') bg-purple-50 text-purple-700 border border-purple-100
+                                                        @elseif($q->type === 'textarea') bg-blue-50 text-blue-700 border border-blue-100
+                                                        @elseif($q->type === 'number') bg-amber-50 text-amber-700 border border-amber-100
+                                                        @elseif($q->type === 'checkbox') bg-pink-50 text-pink-700 border border-pink-100
+                                                        @else bg-gray-50 dark:bg-gray-900/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700
+                                                        @endif">
+                                                        {{ strtoupper($q->type) }}
+                                                    </span>
+                                                    <!-- Status badge -->
+                                                    @if($q->is_active)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                        AKTIF
+                                                    </span>
+                                                    @else
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                                                        DRAFT
+                                                    </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <!-- Actions -->
+                                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <a href="{{ route('admin.questions.edit', $q) }}"
+                                                    class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                    title="Edit">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </a>
+                                                <button type="button"
+                                                    @click="$dispatch('open-delete-modal', '{{ route('admin.questions.destroy', $q) }}')"
+                                                    class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Hapus">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
+                @empty
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm px-6 py-16 text-center">
+                    <div class="mx-auto w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800/80 flex items-center justify-center mb-4">
+                        <svg class="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium">Tidak ada soal ditemukan.</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Coba ubah filter atau buat soal baru.</p>
+                    <a href="{{ route('admin.questions.create') }}"
+                        class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Buat Soal Pertama
+                    </a>
+                </div>
+                @endforelse
             </div>
-
-            <!-- Nested Collapsible: Category → Standard → Questions -->
-            @forelse($nestedGroups as $catId => $standardGroups)
-            @php
-            $firstQ = $standardGroups->first()->first();
-            $cat = $firstQ?->category;
-            $categoryName = $cat ? ($cat->code ? $cat->code.' - ' : '').$cat->name : 'Uncategorized';
-            $totalInCategory = $standardGroups->flatten()->count();
-            @endphp
-
-            @include('admin.questions.partials.category-group', [
-            'categoryName' => $categoryName,
-            'totalInCategory' => $totalInCategory,
-            'standardGroups' => $standardGroups,
-            ])
-            @empty
-            <div class="bg-white shadow-sm sm:rounded-lg px-6 py-10 text-center text-gray-500">
-                No questions found.
-            </div>
-            @endforelse
 
             {{-- Pagination --}}
             @if($questions->hasPages())
@@ -109,4 +275,63 @@
 
         </div>
     </div>
+
+    {{-- ============================================================
+         Global Delete Confirmation Modal (beautiful pink card)
+         triggered by: $dispatch('open-delete-modal', url)
+    ============================================================ --}}
+    <div
+        x-data="{ show: false, url: '' }"
+        @open-delete-modal.window="show = true; url = $event.detail"
+        x-show="show"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 z-50 flex items-center justify-center"
+        style="display: none;">
+
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-gray-200 dark:bg-gray-700/60 backdrop-blur-sm" @click="show = false"></div>
+
+        {{-- Card --}}
+        <div class="relative z-10 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 max-w-xs w-full mx-4 text-center">
+
+            {{-- Pink trash icon --}}
+            <div class="flex justify-center mb-5">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </div>
+            </div>
+
+            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Hapus Soal ini?</h2>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mb-7">
+                Tindakan ini tidak bisa dibatalkan dan data<br>akan hilang selamanya.
+            </p>
+
+            {{-- Dynamic delete form --}}
+            <form :action="url" method="POST" id="global-delete-form">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-400 hover:bg-red-500 text-white text-sm font-semibold rounded-full shadow-sm transition-colors mb-3">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Ya, Hapus
+                </button>
+            </form>
+
+            <button type="button" @click="show = false"
+                class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">
+                Batal
+            </button>
+        </div>
+    </div>
+
 </x-app-layout>

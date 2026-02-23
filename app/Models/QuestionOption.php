@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuestionOption extends Model
 {
-    protected $fillable = ['question_id','label','value','sort_order'];
+    protected $fillable = [
+        'question_id',
+        'label',
+        'value',
+        'sort_order',
+    ];
 
     public function question(): BelongsTo
     {

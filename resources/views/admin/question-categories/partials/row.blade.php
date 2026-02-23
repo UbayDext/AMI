@@ -1,10 +1,10 @@
 @props(['item', 'level' => 0])
 
-<tr class="bg-white border-b hover:bg-gray-50 transition-colors duration-200">
-    <td class="px-6 py-4 text-sm text-gray-900">
+<tr class="bg-white dark:bg-gray-800 border-b hover:bg-gray-50 transition-colors duration-200">
+    <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
         <div style="padding-left: {{ $level * 20 }}px" class="flex items-center">
             @if($level > 0)
-            <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             @endif

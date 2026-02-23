@@ -9,6 +9,11 @@ class Standard extends Model
 {
     protected $fillable = ['code', 'name'];
 
+    public function preparationStages(): HasMany
+    {
+        return $this->hasMany(PreparationStage::class);
+    }
+
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);

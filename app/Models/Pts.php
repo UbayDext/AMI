@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pts extends Model
 {
@@ -13,7 +14,7 @@ class Pts extends Model
         'status',
     ];
 
-    public function ptk()
+    public function ptk(): BelongsTo
     {
         return $this->belongsTo(Ptk::class);
     }

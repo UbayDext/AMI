@@ -23,8 +23,18 @@ class AssessmentController extends Controller
         $years = AccreditationYear::orderBy('year', 'desc')->get();
         $assessors = User::role('asesor')->orderBy('name')->get();
         $categories = \App\Models\QuestionCategory::orderBy('name')->get();
+        $standards = \App\Models\Standard::orderByRaw('LENGTH(code), code')->get();
 
-        return view('admin.assessments.create', compact('years', 'assessors', 'categories'));
+        // Build a map: standard_id => array of category ids that have questions for that standard
+        $standardCategoryMap = \App\Models\Question::select('standard_id', 'category_id')
+            ->whereNotNull('standard_id')
+            ->whereNotNull('category_id')
+            ->distinct()
+            ->get()
+            ->groupBy('standard_id')
+            ->map(fn($rows) => $rows->pluck('category_id')->unique()->values());
+
+        return view('admin.assessments.create', compact('years', 'assessors', 'categories', 'standards', 'standardCategoryMap'));
     }
 
     public function store(Request $request)

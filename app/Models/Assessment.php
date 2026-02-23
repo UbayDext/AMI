@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Assessment extends Model
@@ -13,6 +14,11 @@ class Assessment extends Model
         'assessor_id',
         'unit_name',
         'status',
+        'submitted_standards',
+    ];
+
+    protected $casts = [
+        'submitted_standards' => 'array',
     ];
 
     public function accreditationYear(): BelongsTo
@@ -35,20 +41,18 @@ class Assessment extends Model
         return $this->hasMany(Finding::class);
     }
 
-    public function questions()
-{
-    return $this->belongsToMany(
-        \App\Models\Question::class,
-        'assessment_answers',   // nama tabel pivot/jawaban
-        'assessment_id',
-        'question_id'
-    )->distinct();
-}
+    public function ptks(): HasMany
+    {
+        return $this->hasMany(Ptk::class);
+    }
 
-    public function ptks()
-{
-    return $this->hasMany(\App\Models\Ptk::class);
-}
-
-
+    public function questions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Question::class,
+            'assessment_answers',
+            'assessment_id',
+            'question_id'
+        )->distinct();
+    }
 }

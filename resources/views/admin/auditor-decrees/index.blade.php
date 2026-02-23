@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-semibold text-xl">Unggah SK dan Tambahkan Data Auditor</h2>
-                <p class="text-sm text-gray-600">Upload dokumen SK Auditor dan kelola periode pelaksanaan.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Upload dokumen SK Auditor dan kelola periode pelaksanaan.</p>
             </div>
 
             <a href="{{ route('admin.auditor-decrees.create') }}"
@@ -19,7 +19,7 @@
         @endif
 
         {{-- Filter bar --}}
-        <div class="bg-white rounded shadow p-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+        <div class="bg-white dark:bg-gray-800 rounded shadow p-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
             <form method="GET" class="flex flex-col md:flex-row gap-3 md:items-center w-full">
                 <input name="search" value="{{ request('search') }}"
                        placeholder="Cari data..."
@@ -50,9 +50,9 @@
         </div>
 
         {{-- Table --}}
-        <div class="bg-white rounded shadow overflow-x-auto">
+        <div class="bg-white dark:bg-gray-800 rounded shadow overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-50 dark:bg-gray-900/50">
                     <tr>
                         <th class="p-3 text-left">Periode AMI</th>
                         <th class="p-3 text-left">Nomor Surat Keputusan</th>
@@ -68,7 +68,7 @@
                             <td class="p-3">
                                 {{ $row->year?->year ?? '-' }}
                                 @if($row->period_label)
-                                    <div class="text-xs text-gray-500">{{ $row->period_label }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $row->period_label }}</div>
                                 @endif
                             </td>
 
@@ -96,7 +96,7 @@
                                         {{ $row->original_name ?? 'File' }}
                                     </a>
                                 @else
-                                    <span class="text-gray-500">-</span>
+                                    <span class="text-gray-500 dark:text-gray-400">-</span>
                                 @endif
                             </td>
 
@@ -132,7 +132,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td class="p-6 text-center text-gray-500" colspan="6">Belum ada data.</td>
+                            <td class="p-6 text-center text-gray-500 dark:text-gray-400" colspan="6">Belum ada data.</td>
                         </tr>
                     @endforelse
                 </tbody>

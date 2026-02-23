@@ -2,16 +2,16 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ __('Fill Assessment') }}
                 </h2>
-                <div class="text-xs text-gray-500 mt-1">
-                    Unit: <span class="font-medium text-gray-700">{{ $assessment->unit_name }}</span> |
-                    Status: <span class="font-medium text-gray-700">{{ ucfirst($assessment->status) }}</span>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Unit: <span class="font-medium text-gray-700 dark:text-gray-300">{{ $assessment->unit_name }}</span> |
+                    Status: <span class="font-medium text-gray-700 dark:text-gray-300">{{ ucfirst($assessment->status) }}</span>
                 </div>
             </div>
 
-            <a href="{{ route('assessor.assessments.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+            <a href="{{ route('assessor.assessments.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                 Back
             </a>
         </div>
@@ -42,9 +42,9 @@
                 @csrf
 
                 <!-- Questions Form -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
-                        <h3 class="text-lg font-medium text-gray-900">Assessment Questions</h3>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 px-6 py-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Assessment Questions</h3>
                     </div>
 
                     <div class="p-6">
@@ -63,23 +63,23 @@
 
                         <!-- Category Header -->
                         <div class="mb-6 mt-8">
-                            <h4 class="text-md font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+                            <h4 class="text-md font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
                                 {{ $catTitle }}
                             </h4>
                         </div>
 
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 border">
-                                <thead class="bg-gray-100">
+                                <thead class="bg-gray-100 dark:bg-gray-800/80">
                                     <tr>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-10">No</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Pertanyaan</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Referensi</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Bukti</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Keterangan</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-10">No</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">Pertanyaan</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/6">Referensi</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">Bukti</th>
+                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/6">Keterangan</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                                     @foreach ($items as $q)
                                     @php
                                     $id = $q->id;
@@ -103,33 +103,33 @@
 
                                     <!-- Main Row -->
                                     <tr class="hover:bg-gray-50 transition-colors" data-qid="{{ $id }}">
-                                        <td class="px-3 py-4 text-sm font-medium text-gray-900 border-r align-top text-center">{{ $no++ }}</td>
+                                        <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 border-r align-top text-center">{{ $no++ }}</td>
 
-                                        <td class="px-3 py-4 text-sm text-gray-800 border-r align-top">
+                                        <td class="px-3 py-4 text-sm text-gray-800 dark:text-gray-200 border-r align-top">
                                             <div class="font-semibold">{{ $q->label }}</div>
                                             @if($q->standard)
-                                            <div class="text-xs text-gray-500 mt-1">{{ $q->standard->code }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $q->standard->code }}</div>
                                             @endif
                                         </td>
 
-                                        <td class="px-3 py-4 text-sm text-gray-600 border-r align-top">
+                                        <td class="px-3 py-4 text-sm text-gray-600 dark:text-gray-400 border-r align-top">
                                             {{ $q->reference ?? '-' }}
                                         </td>
 
                                         <td class="px-3 py-4 text-sm border-r align-top space-y-2">
                                             <!-- Evidence Input -->
                                             @if ($q->type === 'select' || $q->type === 'radio')
-                                            <select name="bukti_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
+                                            <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
                                                 <option value="">Select option...</option>
                                                 @foreach ($q->options->sortBy('sort_order') as $opt)
                                                 <option value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
                                                 @endforeach
                                             </select>
                                             @elseif ($q->type === 'file')
-                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                                             @else
-                                            <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
-                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
                                             @endif
 
                                             @if ($ans?->file_path)
@@ -146,7 +146,7 @@
                                         </td>
 
                                         <td class="px-3 py-4 text-sm align-top">
-                                            <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" data-qid="{{ $id }}">
+                                            <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" data-qid="{{ $id }}">
                                                 <option value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
                                                 <option value="sebagian" @selected($ket==='sebagian' )>Sebagian Sesuai</option>
                                                 <option value="tidak_bukti_tidak_memadai" @selected($ket==='tidak_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
@@ -162,17 +162,17 @@
                                     </tr>
 
                                     <!-- Expandable PTK/Detail Row -->
-                                    <tr id="detail-row-{{ $id }}" class="{{ $ket === 'sesuai' ? 'hidden' : '' }} bg-gray-50">
+                                    <tr id="detail-row-{{ $id }}" class="{{ $ket === 'sesuai' ? 'hidden' : '' }} bg-gray-50 dark:bg-gray-900/50">
                                         <td colspan="5" class="px-4 py-4 border-b">
                                             <div class="space-y-4">
                                                 <!-- Reason/Notes -->
                                                 <div id="alasan-box-{{ $id }}">
-                                                    <label class="block text-xs font-medium text-gray-700 mb-1">Notes / Reason (Optional)</label>
-                                                    <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ $alasan }}</textarea>
+                                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Notes / Reason (Optional)</label>
+                                                    <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ $alasan }}</textarea>
                                                 </div>
 
                                                 <!-- PTK Form -->
-                                                <div id="ptk-box-{{ $id }}" class="pt-4 border-t border-gray-200 {{ $ket === 'sesuai' ? 'hidden' : '' }}">
+                                                <div id="ptk-box-{{ $id }}" class="pt-4 border-t border-gray-200 dark:border-gray-700 {{ $ket === 'sesuai' ? 'hidden' : '' }}">
                                                     <h5 class="text-sm font-bold text-red-800 mb-3 flex items-center gap-2">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -192,43 +192,43 @@
                                                                     placeholder="Select Areas..." />
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Deskripsi Kondisi</label>
-                                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Kondisi</label>
+                                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Akibat</label>
-                                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akibat</label>
+                                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
-                                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs bg-gray-100 cursor-not-allowed" readonly>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
+                                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs bg-gray-100 dark:bg-gray-800/80 cursor-not-allowed" readonly>
                                                                     <option value="">Auto-detected...</option>
                                                                     <option value="Observasi" @selected($ptkKategori==='Observasi' )>Observasi</option>
                                                                     <option value="KTS Minor" @selected($ptkKategori==='KTS Minor' )>KTS Minor</option>
                                                                     <option value="KTS Mayor" @selected($ptkKategori==='KTS Mayor' )>KTS Mayor</option>
                                                                     <option value="OFI" @selected($ptkKategori==='OFI' )>OFI</option>
                                                                 </select>
-                                                                <p class="text-[10px] text-gray-500 mt-1">* Automatic based on Keterangan</p>
+                                                                <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-1">* Automatic based on Keterangan</p>
                                                             </div>
                                                         </div>
 
                                                         <!-- Right Column -->
                                                         <div class="space-y-3">
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Akar Penyebab</label>
-                                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akar Penyebab</label>
+                                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Rekomendasi</label>
-                                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rekomendasi</label>
+                                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Rencana Perbaikan (Auditee)</label>
-                                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rencana Perbaikan (Auditee)</label>
+                                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
-                                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
+                                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -241,14 +241,14 @@
                             </table>
                         </div>
                         @empty
-                        <div class="text-center py-10 text-gray-500">
+                        <div class="text-center py-10 text-gray-500 dark:text-gray-400">
                             No questions found for this assessment.
                         </div>
                         @endforelse
                     </div>
 
-                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-3 sticky bottom-0 z-10 shadow-inner">
-                        <button type="submit" name="submit" value="0" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-end gap-3 sticky bottom-0 z-10 shadow-inner">
+                        <button type="submit" name="submit" value="0" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                             Save Draft
                         </button>
                         <x-primary-button name="submit" value="1" onclick="return confirm('Are you sure you want to submit? This status will change to Submitted.')">
@@ -259,9 +259,9 @@
             </form>
 
             <!-- Additional Findings Form -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-8">
-                <div class="border-b border-gray-200 bg-gray-50 px-6 py-4 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Additional Findings (Independent)</h3>
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-8">
+                <div class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Additional Findings (Independent)</h3>
                 </div>
                 <div class="p-6">
                     <form method="POST" action="{{ route('assessor.findings.store', $assessment) }}" class="space-y-4">
@@ -269,7 +269,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <x-input-label for="standard_id" value="Standard" />
-                                <select id="standard_id" name="standard_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <select id="standard_id" name="standard_id" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="">Select Standard...</option>
                                     @foreach ($standards as $s)
                                     <option value="{{ $s->id }}">{{ $s->code }} - {{ $s->name }}</option>
@@ -296,12 +296,12 @@
 
                         <div>
                             <x-input-label for="description" value="Description" />
-                            <textarea id="description" name="description" rows="3" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                            <textarea id="description" name="description" rows="3" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                         </div>
 
                         <div>
                             <x-input-label for="severity" value="Severity" />
-                            <select id="severity" name="severity" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="severity" name="severity" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="minor">Minor</option>
                                 <option value="major">Major</option>
                                 <option value="critical">Critical</option>
@@ -314,25 +314,25 @@
                     </form>
 
                     <div class="mt-8">
-                        <h4 class="font-semibold text-gray-800 mb-4">Recorded Independent Findings</h4>
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">Recorded Independent Findings</h4>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 border">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gray-50 dark:bg-gray-900/50">
                                     <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Standard</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Audit Area</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Severity</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Code</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Standard</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Audit Area</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Title</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Severity</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                                     @forelse($assessment->findings as $f)
                                     <tr>
-                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ $f->code }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{{ $f->standard->code }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{{ $f->audit_area_names }}</td>
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $f->title }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $f->code }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $f->standard->code }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $f->audit_area_names }}</td>
+                                        <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $f->title }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap text-sm">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                     {{ $f->severity === 'major' ? 'bg-red-100 text-red-800' : ($f->severity === 'critical' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800') }}">
@@ -342,7 +342,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="4" class="px-4 py-2 text-center text-sm text-gray-500">No independent findings recorded yet.</td>
+                                        <td colspan="4" class="px-4 py-2 text-center text-sm text-gray-500 dark:text-gray-400">No independent findings recorded yet.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>

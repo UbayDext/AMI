@@ -1,7 +1,7 @@
 @props(['categoryName', 'totalInCategory', 'standardGroups'])
 
 {{-- CATEGORY LEVEL --}}
-<div class="bg-white shadow-sm sm:rounded-lg mb-4 overflow-hidden" x-data="{ openCat: false }">
+<div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-4 overflow-hidden" x-data="{ openCat: false }">
     <button type="button" @click="openCat = !openCat"
         class="w-full flex items-center justify-between px-6 py-4 bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 text-left">
         <div class="flex items-center gap-3">
@@ -22,38 +22,38 @@
         @endphp
 
         {{-- STANDARD LEVEL --}}
-        <div x-data="{ openStd: false }" class="border-b border-gray-100 last:border-b-0">
+        <div x-data="{ openStd: false }" class="border-b border-gray-100 dark:border-gray-700 last:border-b-0">
             <button type="button" @click="openStd = !openStd"
-                class="w-full flex items-center justify-between px-8 py-3 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 text-left border-l-4 border-indigo-300">
+                class="w-full flex items-center justify-between px-8 py-3 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 transition-colors duration-200 text-left border-l-4 border-indigo-300">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4 text-indigo-400 transition-transform duration-200" :class="{ 'rotate-90': openStd }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <span class="text-sm font-semibold text-gray-700">{{ $standardLabel }}</span>
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ $standardLabel }}</span>
                     @if($std && $std->name)
-                    <span class="text-xs text-gray-500">— {{ Str::limit($std->name, 60) }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">— {{ Str::limit($std->name, 60) }}</span>
                     @endif
-                    <span class="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">{{ $items->count() }} soal</span>
+                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ $items->count() }} soal</span>
                 </div>
             </button>
 
             <div x-show="openStd" x-collapse>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-white">
+                        <thead class="bg-white dark:bg-gray-800">
                             <tr>
-                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase w-12">No</th>
-                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase">Question Label</th>
-                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase w-24">Type</th>
-                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 uppercase w-24">Status</th>
-                                <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-400 uppercase w-28">Actions</th>
+                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-12">No</th>
+                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Question Label</th>
+                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-24">Type</th>
+                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-24">Status</th>
+                                <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-28">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach($items as $q)
                             <tr class="hover:bg-indigo-50/50 transition-colors">
-                                <td class="px-4 py-3 text-sm text-gray-400 text-center">{{ $currentNo }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900">
+                                <td class="px-4 py-3 text-sm text-gray-400 dark:text-gray-500 text-center">{{ $currentNo }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                                     <div class="line-clamp-2" title="{{ $q->label }}">{{ $q->label }}</div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
@@ -63,7 +63,7 @@
                                     @if($q->is_active)
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                                     @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200">Inactive</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-right">

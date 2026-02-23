@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Answer extends Model
 {
     protected $fillable = [
-    'assessment_id','question_id',
-    'value_text','value_json','file_path',
-    'status','reason',
-];
-
+        'assessment_id',
+        'question_id',
+        'value_text',
+        'value_json',
+        'file_path',
+        'status',
+        'reason',
+    ];
 
     protected $casts = [
         'value_json' => 'array',

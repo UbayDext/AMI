@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Internal;
+
 use App\Http\Controllers\Controller;
 use App\Models\AccreditationYear;
 use App\Models\PreparationStage;
@@ -22,7 +23,7 @@ class PreparationController extends Controller
             ->where('is_active', true)
             ->when($year, fn($q) => $q->where(function ($qq) use ($year) {
                 $qq->whereNull('accreditation_year_id')
-                   ->orWhere('accreditation_year_id', $year->id);
+                    ->orWhere('accreditation_year_id', $year->id);
             }))
             ->orderBy('sort_order')
             ->get();
@@ -35,7 +36,7 @@ class PreparationController extends Controller
         $total = $activeStage?->tasks->count() ?? 0;
         $done  = $activeStage?->tasks->where('is_done', true)->count() ?? 0;
 
-        return view('internal.preparations.index', compact('year','stages','activeStage','total','done'));
+        return view('internal.preparations.index', compact('year', 'stages', 'activeStage', 'total', 'done'));
     }
 
     public function upload(Request $request, PreparationTask $task)
@@ -66,6 +67,33 @@ class PreparationController extends Controller
         }
 
         return back()->with('success', 'Dokumen berhasil diupload.');
+    }
+
+    public function storeLink(Request $request, PreparationTask $task)
+    {
+        $request->validate([
+            'link_url'  => ['required', 'url', 'max:2048'],
+            'link_name' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $task->files()->create([
+            'uploaded_by'   => $request->user()->id,
+            'file_path'     => $request->link_url,    // store URL as path too (for compat)
+            'original_name' => $request->link_name ?: $request->link_url,
+            'mime_type'     => null,
+            'size'          => null,
+            'link_url'      => $request->link_url,
+        ]);
+
+        if (! $task->is_done) {
+            $task->forceFill([
+                'is_done' => true,
+                'done_at' => now(),
+                'done_by' => $request->user()->id,
+            ])->save();
+        }
+
+        return back()->with('success', 'Link berhasil disimpan.');
     }
 
     public function toggle(Request $request, PreparationTask $task)

@@ -11,7 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans text-gray-900 antialiased">
+<body class="font-sans text-gray-900 dark:text-gray-100 antialiased">
     <div class="min-h-screen flex">
 
         <!-- Left Side: Branding / Background -->
@@ -23,7 +23,7 @@
             </div>
 
             <div class="relative z-10">
-                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
             </div>
 
             <!-- Abstract Background Shapes -->
@@ -32,14 +32,23 @@
         </div>
 
         <!-- Right Side: Login Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center bg-white p-8">
+        <div class="w-full lg:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 p-8">
             <div class="w-full max-w-md space-y-8">
                 <div class="text-center lg:text-left">
-                    <h2 class="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
-                    <p class="mt-2 text-sm text-gray-600">Please enter your details to sign in.</p>
+                    <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome back</h2>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Please enter your details to sign in.</p>
                 </div>
 
                 <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                @if (session('error'))
+                <div class="mb-4 p-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>{{ session('error') }}</span>
+                </div>
+                @endif
 
                 <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-6">
                     @csrf
@@ -65,8 +74,8 @@
                     <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between mt-4">
                         <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                            <span class="ms-2 text-sm text-gray-600">{{ __('Remember for 30 days') }}</span>
+                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember for 30 days') }}</span>
                         </label>
 
                         @if (Route::has('password.request'))
