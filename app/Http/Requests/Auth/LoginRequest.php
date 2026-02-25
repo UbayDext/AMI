@@ -41,11 +41,53 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
+        $user = \App\Models\User::where('email', $this->email)->first();
+
+        if ($user) {
+            if ($user->is_blocked) {
+                throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                    redirect()->route('blocked')
+                );
+            }
+
+            // Jika ganti bulan, reset attempts
+            if ($user->last_failed_login_at && $user->last_failed_login_at->format('Y-m') !== now()->format('Y-m')) {
+                $user->update([
+                    'failed_login_attempts' => 0,
+                    'last_failed_login_at' => null,
+                ]);
+            }
+        }
+
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            if ($user) {
+                $user->increment('failed_login_attempts');
+                $user->update(['last_failed_login_at' => now()]);
+
+                if ($user->failed_login_attempts >= 3) {
+                    $user->update(['is_blocked' => true]);
+                    throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                        redirect()->route('blocked')
+                    );
+                } else {
+                    $remaining = 3 - $user->failed_login_attempts;
+                    throw ValidationException::withMessages([
+                        'email' => trans('auth.failed') . " (Sisa percobaan bulan ini: {$remaining} kali)",
+                    ]);
+                }
+            }
+
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        if ($user && $user->failed_login_attempts > 0) {
+            $user->update([
+                'failed_login_attempts' => 0,
+                'last_failed_login_at' => null,
             ]);
         }
 
@@ -80,6 +122,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

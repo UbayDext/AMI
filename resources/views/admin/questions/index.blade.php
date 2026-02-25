@@ -15,7 +15,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
+    <div class="py-8" x-data="{ showDeleteModal: false, deleteTargetName: '', deleteFormAction: '' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if(session('success'))
@@ -229,7 +229,7 @@
                                                     </svg>
                                                 </a>
                                                 <button type="button"
-                                                    @click="$dispatch('open-delete-modal', '{{ route('admin.questions.destroy', $q) }}')"
+                                                    @click.prevent="deleteTargetName = '{{ addslashes($q->label) }}'; deleteFormAction = '{{ route('admin.questions.destroy', $q) }}'; showDeleteModal = true;"
                                                     class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                     title="Hapus">
                                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,64 +274,10 @@
             @endif
 
         </div>
-    </div>
-
-    {{-- ============================================================
-         Global Delete Confirmation Modal (beautiful pink card)
-         triggered by: $dispatch('open-delete-modal', url)
-    ============================================================ --}}
-    <div
-        x-data="{ show: false, url: '' }"
-        @open-delete-modal.window="show = true; url = $event.detail"
-        x-show="show"
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
-        class="fixed inset-0 z-50 flex items-center justify-center"
-        style="display: none;">
-
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-gray-200 dark:bg-gray-700/60 backdrop-blur-sm" @click="show = false"></div>
-
-        {{-- Card --}}
-        <div class="relative z-10 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 max-w-xs w-full mx-4 text-center">
-
-            {{-- Pink trash icon --}}
-            <div class="flex justify-center mb-5">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </div>
-            </div>
-
-            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Hapus Soal ini?</h2>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mb-7">
-                Tindakan ini tidak bisa dibatalkan dan data<br>akan hilang selamanya.
-            </p>
-
-            {{-- Dynamic delete form --}}
-            <form :action="url" method="POST" id="global-delete-form">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                    class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-400 hover:bg-red-500 text-white text-sm font-semibold rounded-full shadow-sm transition-colors mb-3">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Ya, Hapus
-                </button>
-            </form>
-
-            <button type="button" @click="show = false"
-                class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">
-                Batal
-            </button>
-        </div>
+        {{-- Delete Confirmation Modal --}}
+        <x-delete-modal title="Hapus Soal?">
+            Anda yakin ingin menghapus soal <span class="text-white font-medium" x-text="deleteTargetName"></span> secara permanen?
+        </x-delete-modal>
     </div>
 
 </x-app-layout>

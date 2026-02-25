@@ -119,17 +119,17 @@
                                         <td class="px-3 py-4 text-sm border-r align-top space-y-2">
                                             <!-- Evidence Input -->
                                             @if ($q->type === 'select' || $q->type === 'radio')
-                                            <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
+                                            <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
                                                 <option value="">Select option...</option>
                                                 @foreach ($q->options->sortBy('sort_order') as $opt)
                                                 <option value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
                                                 @endforeach
                                             </select>
                                             @elseif ($q->type === 'file')
-                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400 dark:hover:file:bg-indigo-900/60" />
                                             @else
-                                            <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
-                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                            <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
+                                            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400 dark:hover:file:bg-indigo-900/60" />
                                             @endif
 
                                             @if ($ans?->file_path)
@@ -146,7 +146,7 @@
                                         </td>
 
                                         <td class="px-3 py-4 text-sm align-top">
-                                            <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" data-qid="{{ $id }}">
+                                            <select name="ket_{{ $id }}" class="ket-select block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" data-qid="{{ $id }}">
                                                 <option value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
                                                 <option value="sebagian" @selected($ket==='sebagian' )>Sebagian Sesuai</option>
                                                 <option value="tidak_bukti_tidak_memadai" @selected($ket==='tidak_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
@@ -168,7 +168,7 @@
                                                 <!-- Reason/Notes -->
                                                 <div id="alasan-box-{{ $id }}">
                                                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Notes / Reason (Optional)</label>
-                                                    <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ $alasan }}</textarea>
+                                                    <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ $alasan }}</textarea>
                                                 </div>
 
                                                 <!-- PTK Form -->
@@ -193,15 +193,15 @@
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Kondisi</label>
-                                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
+                                                                <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akibat</label>
-                                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
+                                                                <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
-                                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs bg-gray-100 dark:bg-gray-800/80 cursor-not-allowed" readonly>
+                                                                <select name="ptk_kategori_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs bg-gray-100 dark:bg-gray-800/80 cursor-not-allowed" readonly>
                                                                     <option value="">Auto-detected...</option>
                                                                     <option value="Observasi" @selected($ptkKategori==='Observasi' )>Observasi</option>
                                                                     <option value="KTS Minor" @selected($ptkKategori==='KTS Minor' )>KTS Minor</option>
@@ -216,19 +216,19 @@
                                                         <div class="space-y-3">
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akar Penyebab</label>
-                                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
+                                                                <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rekomendasi</label>
-                                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
+                                                                <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rencana Perbaikan (Auditee)</label>
-                                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
+                                                                <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
-                                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                                                                <input type="date" name="ptk_due_{{ $id }}" value="{{ $ptkDue }}" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -269,7 +269,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <x-input-label for="standard_id" value="Standard" />
-                                <select id="standard_id" name="standard_id" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <select id="standard_id" name="standard_id" class="block mt-1 w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="">Select Standard...</option>
                                     @foreach ($standards as $s)
                                     <option value="{{ $s->id }}">{{ $s->code }} - {{ $s->name }}</option>
@@ -296,12 +296,12 @@
 
                         <div>
                             <x-input-label for="description" value="Description" />
-                            <textarea id="description" name="description" rows="3" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                            <textarea id="description" name="description" rows="3" class="block mt-1 w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                         </div>
 
                         <div>
                             <x-input-label for="severity" value="Severity" />
-                            <select id="severity" name="severity" class="block mt-1 w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="severity" name="severity" class="block mt-1 w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="minor">Minor</option>
                                 <option value="major">Major</option>
                                 <option value="critical">Critical</option>
@@ -368,14 +368,19 @@
                 const categorySelect = document.querySelector(`select[name="ptk_kategori_${qid}"]`);
 
                 // Update Select Styling
-                selectEl.classList.remove('bg-red-50', 'text-red-700', 'border-red-300', 'bg-yellow-50', 'text-yellow-700', 'border-yellow-300', 'bg-green-50', 'text-green-700', 'border-green-300');
+                selectEl.classList.remove(
+                    'bg-red-50', 'text-red-700', 'border-red-300', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800',
+                    'bg-yellow-50', 'text-yellow-700', 'border-yellow-300', 'dark:bg-amber-900/30', 'dark:text-amber-400', 'dark:border-amber-800',
+                    'bg-green-50', 'text-green-700', 'border-green-300', 'dark:bg-emerald-900/30', 'dark:text-emerald-400', 'dark:border-emerald-800',
+                    'dark:bg-gray-900', 'dark:text-gray-300'
+                );
 
                 if (val && val.startsWith('tidak')) {
-                    selectEl.classList.add('bg-red-50', 'text-red-700', 'border-red-300');
+                    selectEl.classList.add('bg-red-50', 'text-red-700', 'border-red-300', 'dark:bg-red-900/30', 'dark:text-red-400', 'dark:border-red-800');
                 } else if (val === 'sebagian') {
-                    selectEl.classList.add('bg-yellow-50', 'text-yellow-700', 'border-yellow-300');
+                    selectEl.classList.add('bg-yellow-50', 'text-yellow-700', 'border-yellow-300', 'dark:bg-amber-900/30', 'dark:text-amber-400', 'dark:border-amber-800');
                 } else {
-                    selectEl.classList.add('bg-green-50', 'text-green-700', 'border-green-300');
+                    selectEl.classList.add('bg-green-50', 'text-green-700', 'border-green-300', 'dark:bg-emerald-900/30', 'dark:text-emerald-400', 'dark:border-emerald-800');
                 }
 
                 // Show/Hide Detail Row based on Compliance

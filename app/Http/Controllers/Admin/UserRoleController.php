@@ -20,8 +20,9 @@ class UserRoleController extends Controller
         }
         if ($request->filled('status')) {
             match ($request->status) {
-                'active'  => $query->where('is_active', true),
-                'pending' => $query->where('is_active', false),
+                'active'  => $query->where('is_active', true)->where('is_blocked', false),
+                'pending' => $query->where('is_active', false)->where('is_blocked', false),
+                'blocked' => $query->where('is_blocked', true),
                 default   => null,
             };
         }
@@ -38,7 +39,8 @@ class UserRoleController extends Controller
         $stats = [
             'total'   => $all->count(),
             'active'  => $all->where('is_active', true)->count(),
-            'pending' => $all->where('is_active', false)->count(),
+            'pending' => $all->where('is_active', false)->where('is_blocked', false)->count(),
+            'blocked' => $all->where('is_blocked', true)->count(),
             'admin'   => $all->filter(fn($u) => $u->hasRole('admin'))->count(),
         ];
 
@@ -136,6 +138,20 @@ class UserRoleController extends Controller
 
         return back()->with('success', "Akun {$user->name} berhasil {$label}.");
     }
+    /**
+     * Unblock a user account.
+     */
+    public function unblock(User $user): RedirectResponse
+    {
+        $user->update([
+            'is_blocked' => false,
+            'failed_login_attempts' => 0,
+            'last_failed_login_at' => null,
+        ]);
+
+        return back()->with('success', "Akun {$user->name} berhasil dibuka blokirnya.");
+    }
+
     /**
      * Delete a user.
      */

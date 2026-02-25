@@ -58,7 +58,7 @@
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex flex-wrap items-center justify-between gap-4">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Filter Pertanyaan</h3>
                     <form method="GET" action="{{ route('assessor.assessments.fill', $assessment) }}" class="flex items-center gap-2">
-                        <select name="standard_id" class="text-sm border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="this.form.submit()">
+                        <select name="standard_id" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="this.form.submit()">
                             <option value="">Semua Standar</option>
                             @foreach($standards as $std)
                             <option value="{{ $std->id }}" {{ request('standard_id') == $std->id ? 'selected' : '' }}>
@@ -98,7 +98,7 @@
                     @endphp
 
                     <!-- Category Section -->
-                    <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white px-6 py-3">
+                    <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/40 dark:to-gray-800 px-6 py-3">
                         <h4 class="text-sm font-bold text-indigo-900 dark:text-indigo-200 uppercase tracking-wide">
                             {{ $catTitle }}
                         </h4>
@@ -117,7 +117,7 @@
 
                     <div x-data="{ open: true }" class="border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                         <button type="button" @click="open = !open"
-                            class="w-full flex items-center justify-between px-6 py-3 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 transition-colors duration-200 text-left border-l-4 border-indigo-300">
+                            class="w-full flex items-center justify-between px-6 py-3 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-left border-l-4 border-indigo-300">
                             <div class="flex items-center gap-3">
                                 <svg class="w-4 h-4 text-indigo-400 transition-transform duration-200" :class="{ 'rotate-90': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -133,8 +133,8 @@
                         <div x-show="open" x-collapse>
                             <!-- Table with horizontal scroll -->
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-white dark:bg-gray-800 sticky top-0 z-10">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50 dark:bg-gray-800/80 sticky top-0 z-10">
                                         <tr>
                                             <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">No</th>
                                             <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider" style="min-width: 250px;">Pertanyaan</th>
@@ -143,7 +143,7 @@
                                             <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider" style="min-width: 150px;">Keterangan</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                         @foreach ($standardQuestions as $q)
                                         @php
                                         $ans = $answers[$q->id] ?? null;

@@ -30,11 +30,11 @@ $ptkKategori = 'KTS Minor';
 
 // Color coding for category
 $categoryColors = [
-'Sesuai' => 'bg-green-100 text-green-800 border-green-300',
-'Observasi' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
-'KTS Minor' => 'bg-orange-100 text-orange-800 border-orange-300',
-'KTS Mayor' => 'bg-red-500 text-white border-red-700',
-'OFI' => 'bg-blue-100 text-blue-800 border-blue-300',
+'Sesuai' => 'bg-green-100 text-green-800 border-green-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800',
+'Observasi' => 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800',
+'KTS Minor' => 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800',
+'KTS Mayor' => 'bg-red-500 text-white border-red-700 dark:bg-red-900/60 dark:text-red-200 dark:border-red-800',
+'OFI' => 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800',
 ];
 $categoryColor = $categoryColors[$ptkKategori ?? ''] ?? 'bg-gray-100 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600';
 $ketColor = $categoryColor; // Keterangan uses same color as Kategori
@@ -46,7 +46,7 @@ $ketColor = $categoryColor; // Keterangan uses same color as Kategori
 $showPtk = !empty($ket) && $ket !== 'sesuai';
 @endphp
 
-<tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors" data-qid="{{ $id }}">
+<tr class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" data-qid="{{ $id }}">
     {{-- No --}}
     <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap align-top text-center border-r">
         {{ $no }}
@@ -75,18 +75,18 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
     <td class="px-3 py-4 text-sm align-top border-r space-y-2 min-w-[200px]">
         <!-- Evidence Input -->
         @if ($question->type === 'select' || $question->type === 'radio')
-        <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
-            <option value="">Select option...</option>
+        <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="">Select option...</option>
             @foreach ($question->options->sortBy('sort_order') as $opt)
-            <option value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
             @endforeach
         </select>
         @elseif ($question->type === 'file')
-        <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+        <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400 dark:hover:file:bg-indigo-900/60" />
         @else
-        <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
+        <textarea name="bukti_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Describe evidence...">{{ $bukti }}</textarea>
         <div class="mt-1">
-            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+            <input type="file" name="bukti_file_{{ $id }}" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/40 dark:file:text-indigo-400 dark:hover:file:bg-indigo-900/60" />
         </div>
         @endif
 
@@ -110,13 +110,13 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
             class="ket-select block w-full rounded-md shadow-sm sm:text-xs font-semibold {{ $ketColor }}"
             data-qid="{{ $id }}"
             onchange="togglePtkRow({{ $id }}, this.value)">
-            <option value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
-            <option value="sebagian_sesuai" @selected($ket==='sebagian_sesuai' )>Sebagian Sesuai</option>
-            <option value="tidak_sesuai_bukti_tidak_memadai" @selected($ket==='tidak_sesuai_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
-            <option value="tidak_sesuai_ada_bukti_tidak_dilaksanakan" @selected($ket==='tidak_sesuai_ada_bukti_tidak_dilaksanakan' )>Tidak Sesuai - Ada bukti - Tidak dilaksanakan</option>
-            <option value="tidak_sesuai_bukti_tidak_memadai_tidak_konsisten" @selected($ket==='tidak_sesuai_bukti_tidak_memadai_tidak_konsisten' )>Tidak Sesuai - Bukti tidak memadai - Tidak konsisten</option>
-            <option value="tidak_sesuai_tidak_ada_bukti" @selected($ket==='tidak_sesuai_tidak_ada_bukti' )>Tidak Sesuai - Tidak ada bukti</option>
-            <option value="tidak_dilaksanakan_tidak_ada_bukti" @selected($ket==='tidak_dilaksanakan_tidak_ada_bukti' )>Tidak dilaksanakan - Tidak ada bukti</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="sesuai" @selected($ket==='sesuai' )>Sesuai</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="sebagian_sesuai" @selected($ket==='sebagian_sesuai' )>Sebagian Sesuai</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="tidak_sesuai_bukti_tidak_memadai" @selected($ket==='tidak_sesuai_bukti_tidak_memadai' )>Tidak Sesuai - Bukti tidak memadai</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="tidak_sesuai_ada_bukti_tidak_dilaksanakan" @selected($ket==='tidak_sesuai_ada_bukti_tidak_dilaksanakan' )>Tidak Sesuai - Ada bukti - Tidak dilaksanakan</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="tidak_sesuai_bukti_tidak_memadai_tidak_konsisten" @selected($ket==='tidak_sesuai_bukti_tidak_memadai_tidak_konsisten' )>Tidak Sesuai - Bukti tidak memadai - Tidak konsisten</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="tidak_sesuai_tidak_ada_bukti" @selected($ket==='tidak_sesuai_tidak_ada_bukti' )>Tidak Sesuai - Tidak ada bukti</option>
+            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="tidak_dilaksanakan_tidak_ada_bukti" @selected($ket==='tidak_dilaksanakan_tidak_ada_bukti' )>Tidak dilaksanakan - Tidak ada bukti</option>
         </select>
         @error("ket_$id")
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -131,7 +131,7 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
             <!-- Reason/Notes -->
             <div>
                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Notes / Reason (Optional)</label>
-                <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ old("alasan_$id", $ans?->reason) }}</textarea>
+                <textarea name="alasan_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs" placeholder="Enter notes here...">{{ old("alasan_$id", $ans?->reason) }}</textarea>
             </div>
 
             <!-- PTK Form -->
@@ -152,13 +152,13 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Area Audit</label>
                             <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 bg-gray-50 dark:bg-gray-900/50">
                                 @foreach($areas ?? [] as $area)
-                                <label class="flex items-start gap-2 text-xs hover:bg-white p-1 rounded cursor-pointer transition">
+                                <label class="flex items-start gap-2 text-xs hover:bg-white dark:hover:bg-gray-800 p-1 rounded cursor-pointer transition">
                                     <input
                                         type="checkbox"
                                         name="ptk_area_{{ $id }}[]"
                                         value="{{ $area->id }}"
                                         {{ in_array($area->id, $ptkArea) ? 'checked' : '' }}
-                                        class="mt-0.5 rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        class="mt-0.5 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     <span class="flex-1">{{ $area->name }}</span>
                                 </label>
                                 @endforeach
@@ -167,11 +167,11 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
 
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Kondisi</label>
-                            <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
+                            <textarea name="ptk_kondisi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkKondisi }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akibat</label>
-                            <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
+                            <textarea name="ptk_akibat_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkibat }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
@@ -192,27 +192,27 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Akar Penyebab</label>
-                            <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
+                            <textarea name="ptk_akar_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkAkar }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rekomendasi</label>
-                            <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
+                            <textarea name="ptk_rekom_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRekom }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rencana Perbaikan (Auditee)</label>
-                            <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
+                            <textarea name="ptk_rencana_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">{{ $ptkRencana }}</textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
                             <input type="date" name="ptk_start_date_{{ $id }}"
                                 value="{{ old("ptk_start_date_$id", optional($ptk?->start_date)->format('Y-m-d')) }}"
-                                class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                                class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
                             <input type="date" name="ptk_end_date_{{ $id }}"
                                 value="{{ old("ptk_end_date_$id", optional($ptk?->end_date)->format('Y-m-d')) }}"
-                                class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                                class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
                         </div>
                     </div>
                 </div>

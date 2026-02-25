@@ -6,6 +6,7 @@ use App\Models\AccreditationYear;
 use App\Models\Assessment;
 use App\Models\Finding;
 use App\Models\Ptk;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -22,11 +23,17 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $blockedUsers = collect();
+        if (auth()->user()?->hasRole('admin')) {
+            $blockedUsers = User::where('is_blocked', true)->latest()->get();
+        }
+
         return view('dashboard', compact(
             'totalAssessments',
             'submittedAssessments',
             'totalFindings',
-            'recentAssessments'
+            'recentAssessments',
+            'blockedUsers'
         ));
     }
 

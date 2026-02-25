@@ -37,7 +37,7 @@
 
                         <div class="flex-1 min-w-[150px]">
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Tahun</label>
-                            <select name="year" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                            <select name="year" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                 <option value="">Semua Tahun</option>
                                 @foreach ($years as $y)
                                 <option value="{{ $y->id }}" @selected((string) request('year')===(string) $y->id)>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="flex-1 min-w-[150px]">
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
-                            <select name="status" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                            <select name="status" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                 <option value="">Semua Status</option>
                                 <option value="draft" @selected(request('status')==='draft' )>Draft</option>
                                 <option value="submitted" @selected(request('status')==='submitted' )>Submitted</option>
@@ -57,7 +57,7 @@
                         </div>
                         <div class="flex-1 min-w-[150px]">
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Kategori</label>
-                            <select name="category_id" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                            <select name="category_id" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                 <option value="">Semua Kategori</option>
                                 @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" @selected(request('category_id')==$cat->id)>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="flex-1 min-w-[150px]">
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Standar</label>
-                            <select name="standard_id" class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                            <select name="standard_id" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                 <option value="">Semua Standar</option>
                                 @foreach($standards as $std)
                                 <option value="{{ $std->id }}" @selected(request('standard_id')==$std->id)>
@@ -112,7 +112,7 @@
             {{-- CATEGORY LEVEL --}}
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-4 overflow-hidden" x-data="{ openCat: true }">
                 <button type="button" @click="openCat = !openCat"
-                    class="w-full flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 transition-colors duration-200 text-left border-l-4 border-indigo-300">
+                    class="w-full flex items-center justify-between px-6 py-4 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-left border-l-4 border-indigo-300">
                     <div class="flex items-center gap-3">
                         <svg class="w-5 h-5 text-indigo-400 transition-transform duration-200" :class="{ 'rotate-90': openCat }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -135,7 +135,7 @@
                         {{-- STANDARD LEVEL --}}
                         <div class="mb-4 last:mb-0 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden" x-data="{ openStd: true }">
                             <button type="button" @click="openStd = !openStd"
-                                class="w-full flex items-center justify-between px-4 py-3 bg-indigo-50 dark:bg-indigo-900/40/30 hover:bg-indigo-50 transition-colors duration-200 text-left">
+                                class="w-full flex items-center justify-between px-4 py-3 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors duration-200 text-left">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-indigo-300 transition-transform duration-200" :class="{ 'rotate-90': openStd }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -147,8 +147,8 @@
 
                             <div x-show="openStd" x-collapse>
                                 <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-100">
-                                        <thead class="bg-gray-50 dark:bg-gray-900/50/50">
+                                    <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
+                                        <thead class="bg-gray-50 dark:bg-gray-900/50">
                                             <tr>
                                                 <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-12">No</th>
                                                 <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Unit</th>
@@ -158,9 +158,9 @@
                                                 <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-28">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-100 bg-white dark:bg-gray-800">
+                                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
                                             @foreach($items as $a)
-                                            <tr class="hover:bg-indigo-50/50 transition-colors">
+                                            <tr class="hover:bg-indigo-50/50 dark:hover:bg-gray-700/50 transition-colors">
                                                 <td class="px-4 py-3 text-sm text-gray-400 dark:text-gray-500 text-center">{{ $no }}</td>
                                                 <td class="px-4 py-3 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $a->unit_name }}</div>

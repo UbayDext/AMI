@@ -11,6 +11,10 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            @if(auth()->user()->hasRole('admin'))
+            @include('dashboard.partials.blocked-users')
+            @endif
+
             @include('dashboard.partials.stat-cards')
             @include('dashboard.partials.charts')
             @include('dashboard.partials.recent-assessments')

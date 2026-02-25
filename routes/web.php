@@ -24,6 +24,7 @@ Route::get('/', function () {
 
 // Public: shown when an assessor account is deactivated mid-session
 Route::get('/deactivated', fn() => view('auth.deactivated'))->name('deactivated');
+Route::get('/blocked', fn() => view('auth.blocked'))->name('blocked');
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware('permission:view dashboard')->group(function () {
@@ -78,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('/users/{user}/edit', [UserRoleController::class, 'edit'])->name('users.edit');
                 Route::put('/users/{user}', [UserRoleController::class, 'update'])->name('users.update');
                 Route::patch('/users/{user}/toggle-active', [UserRoleController::class, 'toggleActive'])->name('users.toggle-active');
+                Route::patch('/users/{user}/unblock', [UserRoleController::class, 'unblock'])->name('users.unblock');
                 Route::delete('/users/{user}', [UserRoleController::class, 'destroy'])->name('users.destroy');
             });
         });

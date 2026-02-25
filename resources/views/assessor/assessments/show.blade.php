@@ -81,11 +81,11 @@
                 ];
 
                 $categoryColors = [
-                'Sesuai' => 'bg-green-100 text-green-800 border-green-300',
-                'Observasi' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                'KTS Minor' => 'bg-orange-100 text-orange-800 border-orange-300',
-                'KTS Mayor' => 'bg-red-500 text-white border-red-700',
-                'OFI' => 'bg-blue-100 text-blue-800 border-blue-300',
+                'Sesuai' => 'bg-green-100 text-green-800 border-green-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800',
+                'Observasi' => 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800',
+                'KTS Minor' => 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800',
+                'KTS Mayor' => 'bg-red-500 text-white border-red-700 dark:bg-red-900/60 dark:text-red-200 dark:border-red-800',
+                'OFI' => 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800',
                 ];
                 @endphp
 
@@ -96,15 +96,14 @@
                 @endphp
 
                 <!-- Category Header -->
-                <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white px-6 py-3">
+                <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/40 dark:to-gray-800 px-6 py-3">
                     <h4 class="text-sm font-bold text-indigo-900 dark:text-indigo-200 uppercase tracking-wide">
                         {{ $catTitle }}
                     </h4>
                 </div>
 
-                <!-- Table -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-100 dark:bg-gray-800/80">
                             <tr>
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap w-10">No</th>
@@ -114,7 +113,7 @@
                                 <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider" style="min-width: 150px;">Keterangan</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach ($items as $q)
                             @php
                             $id = $q->id;
@@ -161,7 +160,7 @@
                             @endphp
 
                             <!-- Main Row -->
-                            <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">
+                            <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                 <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap align-top text-center border-r">
                                     {{ $no }}
                                 </td>
@@ -274,9 +273,9 @@
                                                     <div>
                                                         <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
                                                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-md border
-                                                                {{ $ptk->tl_status === 'Close' ? 'bg-teal-100 text-teal-800 border-teal-200' :
-                                                                  ($ptk->tl_status === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                                                                  ($ptk->tl_status === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-200' : 'bg-gray-100 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700')) }}">
+                                                                {{ $ptk->tl_status === 'Close' ? 'bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-800' :
+                                                                  ($ptk->tl_status === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800' :
+                                                                  ($ptk->tl_status === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'bg-gray-100 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700')) }}">
                                                             {{ $ptk->tl_status ?: '-' }}
                                                         </span>
                                                     </div>
@@ -335,7 +334,7 @@
 
             @if($ptsItems->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-white px-6 py-4">
+                <div class="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-white dark:from-emerald-900/40 dark:to-gray-800 px-6 py-4">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
@@ -348,7 +347,7 @@
                 <form method="POST" action="{{ route('assessor.assessments.pts.update', $assessment) }}">
                     @csrf
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-100 dark:bg-gray-800/80">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap" style="min-width: 200px;">Realisasi</th>
@@ -363,7 +362,7 @@
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Kode PTK</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach ($ptsItems as $item)
                                 @php
                                 $ptk = $item['ptk'];
@@ -385,7 +384,7 @@
                                 ? $kodeStandar . '/' . implode('-', $kodeAreaParts)
                                 : '-';
                                 @endphp
-                                <tr class="hover:bg-gray-50 transition-colors">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                     {{-- Realisasi --}}
                                     <td class="px-4 py-3 align-top border-r">
                                         <textarea
@@ -399,11 +398,11 @@
                                     <td class="px-4 py-3 align-top border-r">
                                         <select
                                             name="pts_efektifitas_{{ $ptkId }}"
-                                            class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs font-semibold
-                                                {{ ($pts?->efektifitas === 'Efektif') ? 'bg-emerald-100 text-emerald-800' : (($pts?->efektifitas === 'Belum Efektif') ? 'bg-amber-100 text-amber-800' : '') }}">
-                                            <option value="">-- Pilih --</option>
-                                            <option value="Efektif" @selected($pts?->efektifitas === 'Efektif')>Efektif</option>
-                                            <option value="Belum Efektif" @selected($pts?->efektifitas === 'Belum Efektif')>Belum Efektif</option>
+                                            class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs font-semibold
+                                                {{ ($pts?->efektifitas === 'Efektif') ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : (($pts?->efektifitas === 'Belum Efektif') ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300' : '') }}">
+                                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="">-- Pilih --</option>
+                                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Efektif" @selected($pts?->efektifitas === 'Efektif')>Efektif</option>
+                                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Belum Efektif" @selected($pts?->efektifitas === 'Belum Efektif')>Belum Efektif</option>
                                         </select>
                                     </td>
 
@@ -411,10 +410,10 @@
                                     <td class="px-4 py-3 align-top border-r">
                                         <select
                                             name="pts_status_{{ $ptkId }}"
-                                            class="block w-full border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs font-semibold
+                                            class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs font-semibold
                                                 {{ ($pts?->status === 'Close') ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300' }}">
-                                            <option value="Open" @selected(($pts?->status ?? 'Open') === 'Open')>Open</option>
-                                            <option value="Close" @selected($pts?->status === 'Close')>Close</option>
+                                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Open" @selected(($pts?->status ?? 'Open') === 'Open')>Open</option>
+                                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Close" @selected($pts?->status === 'Close')>Close</option>
                                         </select>
                                     </td>
 

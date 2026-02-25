@@ -45,24 +45,24 @@
             <tbody>
                 <tr>
                     <td class="px-2 py-2 border border-gray-300 dark:border-gray-600 align-top">
-                        <textarea name="ptk_realisasi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500 rounded-md shadow-sm text-xs" placeholder="Realisasi tindak lanjut...">{{ $ptkRealisasi }}</textarea>
+                        <textarea name="ptk_realisasi_{{ $id }}" rows="2" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-md shadow-sm text-xs" placeholder="Realisasi tindak lanjut...">{{ $ptkRealisasi }}</textarea>
                     </td>
                     <td class="px-2 py-2 border border-gray-300 dark:border-gray-600 align-top">
-                        <select name="ptk_efektifitas_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500 rounded-md shadow-sm text-xs">
-                            <option value="">-- Pilih --</option>
-                            <option value="Efektif" @selected($ptkEfektifitas==='Efektif' )>Efektif</option>
-                            <option value="Kurang" @selected($ptkEfektifitas==='Kurang' )>Kurang</option>
-                            <option value="Tidak Efektif" @selected($ptkEfektifitas==='Tidak Efektif' )>Tidak Efektif</option>
+                        <select name="ptk_efektifitas_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-md shadow-sm text-xs">
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="">-- Pilih --</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Efektif" @selected($ptkEfektifitas==='Efektif' )>Efektif</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Kurang" @selected($ptkEfektifitas==='Kurang' )>Kurang</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="Tidak Efektif" @selected($ptkEfektifitas==='Tidak Efektif' )>Tidak Efektif</option>
                         </select>
                     </td>
                     <td class="px-2 py-2 border border-gray-300 dark:border-gray-600 align-top">
                         <select name="ptk_tl_status_{{ $id }}" class="ptk-tl-status block w-full rounded-md shadow-sm text-xs font-semibold
-                            {{ $ptkTlStatus === 'Close' ? 'bg-teal-600 text-white border-teal-700' : ($ptkTlStatus === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' : ($ptkTlStatus === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-300' : 'border-gray-300 dark:border-gray-600')) }}"
+                            {{ $ptkTlStatus === 'Close' ? 'bg-teal-600 text-white border-teal-700 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-800' : ($ptkTlStatus === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800' : ($ptkTlStatus === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300')) }}"
                             onchange="styleTlStatus(this)">
-                            <option value="">-- Pilih --</option>
-                            <option value="Close" @selected($ptkTlStatus==='Close' )>Close</option>
-                            <option value="Open" @selected($ptkTlStatus==='Open' )>Open</option>
-                            <option value="Toleran" @selected($ptkTlStatus==='Toleran' )>Toleran</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="">-- Pilih --</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Close" @selected($ptkTlStatus==='Close' )>Close</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Open" @selected($ptkTlStatus==='Open' )>Open</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Toleran" @selected($ptkTlStatus==='Toleran' )>Toleran</option>
                         </select>
                     </td>
                     <td class="px-2 py-2 border border-gray-300 dark:border-gray-600 text-center align-middle">

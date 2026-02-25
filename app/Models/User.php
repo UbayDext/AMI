@@ -25,6 +25,9 @@ class User extends Authenticatable
         'email',
         'password',
         'is_active',
+        'is_blocked',
+        'failed_login_attempts',
+        'last_failed_login_at',
     ];
 
     /**
@@ -47,7 +50,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password'         => 'hashed',
-            'is_active'        => 'boolean',
+            'is_active'            => 'boolean',
+            'is_blocked'           => 'boolean',
+            'last_failed_login_at' => 'datetime',
         ];
     }
 

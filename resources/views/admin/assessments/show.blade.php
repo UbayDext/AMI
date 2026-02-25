@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Assessment Details') }}
             </h2>
-            <a href="{{ route('admin.assessments.index') }}" class="mt-4 sm:mt-0 px-4 py-2 bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 text-sm font-medium transition">
+            <a href="{{ route('admin.assessments.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                 &larr; {{ __('Back to List') }}
             </a>
         </div>

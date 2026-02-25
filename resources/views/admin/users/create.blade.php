@@ -69,13 +69,6 @@
                                     </div>
                                     <h3 class="text-base font-semibold text-gray-600 dark:text-gray-400">Role & Access</h3>
                                 </div>
-
-                                <div class="flex items-center gap-2.5">
-                                    <span class="text-xs font-semibold text-emerald-500 uppercase tracking-widest">Active</span>
-                                    <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-emerald-400">
-                                        <span class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-800 shadow-sm transition"></span>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">

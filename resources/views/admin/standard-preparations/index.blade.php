@@ -8,14 +8,6 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola tahap & dokumen persiapan per standar.</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('internal.standard-preparations.show', $standard) }}"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Lihat Jawaban
-                </a>
                 <a href="{{ route('admin.standard-preparations.landing') }}"
                     class="text-sm text-indigo-600 hover:underline">← Semua Standar</a>
             </div>
@@ -23,14 +15,9 @@
     </x-slot>
 
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ showDeleteModal: false, deleteTargetName: '', deleteFormAction: '' }">
 
-        @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
-            class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm">
-            {{ session('success') }}
-        </div>
-        @endif
+        <x-alert-success :message="session('success')" />
         @if(session('error'))
         <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">{{ session('error') }}</div>
         @endif
@@ -39,7 +26,7 @@
 
             {{-- LEFT: Stage list + add stage --}}
             <div class="lg:col-span-4 space-y-4">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+                <x-card padding="p-5">
                     <div class="font-semibold text-gray-800 dark:text-gray-200 mb-4">Tahap Persiapan</div>
 
                     <div class="space-y-2 mb-4" id="stages-list">
@@ -58,17 +45,12 @@
                                     {{ $s->tasks->where('is_done', true)->count() }} selesai
                                 </div>
                             </a>
-                            <form method="POST"
-                                action="{{ route('admin.standard-preparations.stages.destroy', [$standard, $s]) }}"
-                                onsubmit="return confirm('Hapus tahap ini beserta semua task-nya?')">
-                                @csrf @method('DELETE')
-                                <button class="mt-2 p-2 text-red-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <button type="button" @click.prevent="deleteTargetName = 'Tahap: {{ addslashes($s->title) }}'; deleteFormAction = '{{ route('admin.standard-preparations.stages.destroy', [$standard, $s]) }}'; showDeleteModal = true;" class="mt-2 p-2 text-red-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors" title="Hapus Tahap">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
                         </div>
                         @empty
                         <p class="text-sm text-gray-400 dark:text-gray-500">Belum ada tahap. Tambahkan di bawah.</p>
@@ -104,13 +86,13 @@
                             </button>
                         </form>
                     </details>
-                </div>
+                </x-card>
             </div>
 
             {{-- RIGHT: Tasks for active stage --}}
             <div class="lg:col-span-8 space-y-4">
                 @if($activeStage)
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+                <x-card padding="p-5">
                     <div id="stage-header-wrapper">
                         <div class="flex items-center justify-between mb-4">
                             <div>
@@ -182,17 +164,12 @@
                                     </div>
                                     @endif
                                 </div>
-                                <form method="POST"
-                                    action="{{ route('admin.standard-preparations.tasks.destroy', [$standard, $activeStage, $t]) }}"
-                                    onsubmit="return confirm('Hapus task ini?')">
-                                    @csrf @method('DELETE')
-                                    <button class="p-1.5 text-red-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                <button type="button" @click.prevent="deleteTargetName = 'Task: {{ addslashes($t->title) }}'; deleteFormAction = '{{ route('admin.standard-preparations.tasks.destroy', [$standard, $activeStage, $t]) }}'; showDeleteModal = true;" class="p-1.5 text-red-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors" title="Hapus Task">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         @empty
@@ -240,18 +217,20 @@
                             </button>
                         </form>
                     </details>
-                </div>
+                </x-card>
                 @else
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-10 text-center text-gray-400 dark:text-gray-500">
-                    <svg class="mx-auto w-10 h-10 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                    <p class="text-sm">Pilih atau tambahkan tahap terlebih dahulu.</p>
-                </div>
+                <x-card class="text-center py-12">
+                    <x-empty-state icon="document" title="Pilih tahap" subtitle="Pilih atau tambahkan tahap terlebih dahulu di menu sebelah kiri." />
+                </x-card>
                 @endif
             </div>
 
         </div>
+
+        {{-- Delete Confirmation Modal --}}
+        <x-delete-modal title="Hapus Item?">
+            Anda yakin ingin menghapus <span class="text-white font-medium" x-text="deleteTargetName"></span> secara permanen?
+        </x-delete-modal>
     </div>
 
     @push('scripts')
