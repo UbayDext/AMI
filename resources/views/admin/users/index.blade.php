@@ -186,6 +186,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Name</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Role</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Login Time</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Since</th>
                                 <th class="px-4 py-3 w-12"></th>
                             </tr>
@@ -268,6 +269,20 @@
                                         </svg>
                                         Menunggu Persetujuan
                                     </span>
+                                    @endif
+                                </td>
+
+                                {{-- Login Time --}}
+                                <td class="px-4 py-3.5 text-sm">
+                                    @if($u->login_start_time && $u->login_end_time)
+                                    <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-800/30">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span class="font-medium tracking-wide">{{ $u->login_start_time->format('H:i') }} &mdash; {{ $u->login_end_time->format('H:i') }} WIB</span>
+                                    </div>
+                                    @else
+                                    <span class="text-gray-400 dark:text-gray-500 italic text-xs">Bebas Akses</span>
                                     @endif
                                 </td>
 
@@ -371,7 +386,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="py-16 text-center">
+                                <td colspan="7" class="py-16 text-center">
                                     <div class="mx-auto w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800/80 flex items-center justify-center mb-3">
                                         <svg class="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />

@@ -28,6 +28,8 @@ class User extends Authenticatable
         'is_blocked',
         'failed_login_attempts',
         'last_failed_login_at',
+        'login_start_time',
+        'login_end_time',
     ];
 
     /**
@@ -53,6 +55,8 @@ class User extends Authenticatable
             'is_active'            => 'boolean',
             'is_blocked'           => 'boolean',
             'last_failed_login_at' => 'datetime',
+            'login_start_time' => 'datetime:H:i',
+            'login_end_time'   => 'datetime:H:i',
         ];
     }
 

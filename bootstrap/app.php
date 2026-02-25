@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Check is_active on every authenticated web request
         $middleware->appendToGroup('web', \App\Http\Middleware\CheckUserIsActive::class);
+
+        // Apply security headers
+        $middleware->appendToGroup('web', \App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // biarkan kosong juga tidak masalah

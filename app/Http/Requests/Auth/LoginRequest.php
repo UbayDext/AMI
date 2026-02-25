@@ -46,7 +46,7 @@ class LoginRequest extends FormRequest
         if ($user) {
             if ($user->is_blocked) {
                 throw new \Illuminate\Http\Exceptions\HttpResponseException(
-                    redirect()->route('blocked')
+                    redirect()->route('login')->with('error', 'Account anda telah terblokir karena terlalu sering mencoba login')
                 );
             }
 
@@ -69,7 +69,7 @@ class LoginRequest extends FormRequest
                 if ($user->failed_login_attempts >= 3) {
                     $user->update(['is_blocked' => true]);
                     throw new \Illuminate\Http\Exceptions\HttpResponseException(
-                        redirect()->route('blocked')
+                        redirect()->route('login')->with('error', 'Account anda telah terblokir karena terlalu sering mencoba login')
                     );
                 } else {
                     $remaining = 3 - $user->failed_login_attempts;

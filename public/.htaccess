@@ -5,6 +5,21 @@
 
     RewriteEngine On
 
+    # Security Headers (Fallback for non-PHP assets)
+    <IfModule mod_headers.c>
+        Header set X-Content-Type-Options "nosniff"
+        Header set X-Frame-Options "SAMEORIGIN"
+        Header set X-XSS-Protection "1; mode=block"
+    </IfModule>
+
+    # Block access to hidden files
+    RedirectMatch 404 /\..*$
+
+    # Block access to vulnerable extensions
+    <FilesMatch "\.(env|log|sql|bak|sh|md)$">
+        Require all denied
+    </FilesMatch>
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

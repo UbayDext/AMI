@@ -189,13 +189,6 @@
             Silakan hubungi admin untuk informasi lebih lanjut.
         </p>
 
-        <a href="{{ route('login') }}" class="btn">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-            Kembali ke Login
-        </a>
-
         <p class="countdown">
             Redirect otomatis dalam <span id="sec">30</span> detik…
         </p>

@@ -63,6 +63,8 @@ class UserRoleController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', 'string', 'exists:roles,name'],
             'assigned_standard' => ['nullable', 'string', 'exists:roles,name'],
+            'login_start_time' => ['nullable', 'date_format:H:i'],
+            'login_end_time'   => ['nullable', 'date_format:H:i'],
         ]);
 
         $user = User::create([
@@ -71,6 +73,8 @@ class UserRoleController extends Controller
             'password'  => Hash::make($data['password']),
             // Admin accounts are created active; others start inactive
             'is_active' => $data['role'] === 'admin',
+            'login_start_time' => $data['login_start_time'] ?? null,
+            'login_end_time'   => $data['login_end_time'] ?? null,
         ]);
 
         $rolesToSync = [$data['role']];
@@ -101,10 +105,14 @@ class UserRoleController extends Controller
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', 'string', 'exists:roles,name'],
             'assigned_standard' => ['nullable', 'string', 'exists:roles,name'],
+            'login_start_time' => ['nullable', 'date_format:H:i'],
+            'login_end_time'   => ['nullable', 'date_format:H:i'],
         ]);
 
         $user->name  = $data['name'];
         $user->email = $data['email'];
+        $user->login_start_time = $data['login_start_time'] ?? null;
+        $user->login_end_time   = $data['login_end_time'] ?? null;
 
         if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);

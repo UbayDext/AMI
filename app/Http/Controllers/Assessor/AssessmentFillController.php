@@ -97,6 +97,9 @@ class AssessmentFillController extends Controller
             // Handle File Upload
             $filePath = null;
             if ($request->hasFile("bukti_file_$qid")) {
+                $request->validate([
+                    "bukti_file_$qid" => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,zip,rar']
+                ]);
                 $filePath = $request->file("bukti_file_$qid")->store('evidence', 'public');
             }
 

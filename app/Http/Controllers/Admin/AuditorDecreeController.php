@@ -24,8 +24,8 @@ class AuditorDecreeController extends Controller
             $s = $request->string('search')->toString();
             $q->where(function ($qq) use ($s) {
                 $qq->where('period_label', 'like', "%{$s}%")
-                   ->orWhere('decree_number', 'like', "%{$s}%")
-                   ->orWhere('original_name', 'like', "%{$s}%");
+                    ->orWhere('decree_number', 'like', "%{$s}%")
+                    ->orWhere('original_name', 'like', "%{$s}%");
             });
         }
 
@@ -49,7 +49,7 @@ class AuditorDecreeController extends Controller
             'decree_date' => ['nullable', 'date'],
             'period_start' => ['nullable', 'date'],
             'period_end' => ['nullable', 'date'],
-            'file' => ['nullable', 'file', 'max:10240'], // 10MB
+            'file' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,jpg,jpeg,png'], // 10MB
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -85,7 +85,7 @@ class AuditorDecreeController extends Controller
             'decree_date' => ['nullable', 'date'],
             'period_start' => ['nullable', 'date'],
             'period_end' => ['nullable', 'date'],
-            'file' => ['nullable', 'file', 'max:10240'],
+            'file' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,jpg,jpeg,png'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 

@@ -42,7 +42,7 @@ class PreparationController extends Controller
     public function upload(Request $request, PreparationTask $task)
     {
         $request->validate([
-            'file' => ['required', 'file', 'max:10240'], // 10MB
+            'file' => ['required', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,zip,rar'], // 10MB
         ]);
 
         $file = $request->file('file');

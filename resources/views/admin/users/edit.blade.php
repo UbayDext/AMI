@@ -148,6 +148,43 @@
                             </div>
                         </div>
 
+                        {{-- ─── Login Access Time ─── --}}
+                        <div>
+                            <div class="flex items-center justify-between mb-6 px-4 py-3 bg-indigo-50 dark:bg-indigo-900/40/50 dark:bg-indigo-900/20 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center text-indigo-500">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-semibold text-gray-600 dark:text-gray-400">Login Access Time (Optional)</h3>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 pl-4">Set empty to allow access at any time.</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Start Time -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Start Time</label>
+                                    <div class="relative">
+                                        <input type="time" name="login_start_time" value="{{ old('login_start_time', $user->login_start_time ? $user->login_start_time->format('H:i') : '') }}"
+                                            class="w-full pl-4 pr-10 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 text-sm text-gray-700 dark:text-gray-300 font-medium transition-colors" />
+                                    </div>
+                                    <x-input-error :messages="$errors->get('login_start_time')" class="mt-1" />
+                                </div>
+
+                                <!-- End Time -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">End Time</label>
+                                    <div class="relative">
+                                        <input type="time" name="login_end_time" value="{{ old('login_end_time', $user->login_end_time ? $user->login_end_time->format('H:i') : '') }}"
+                                            class="w-full pl-4 pr-10 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 text-sm text-gray-700 dark:text-gray-300 font-medium transition-colors" />
+                                    </div>
+                                    <x-input-error :messages="$errors->get('login_end_time')" class="mt-1" />
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- ─── Change Password ─── --}}
                         <div>
                             <div class="flex items-center gap-3 mb-4 px-4 py-3 bg-indigo-50 dark:bg-indigo-900/40/50 dark:bg-indigo-900/20 rounded-2xl">
