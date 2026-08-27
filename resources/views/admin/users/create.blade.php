@@ -102,44 +102,87 @@
                                         Admin
                                     </div>
                                     <div class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-colors"
-                                        :class="role === 'asesor' ? 'bg-emerald-100 text-emerald-700 border border-emerald-100 shadow-sm' : 'bg-gray-50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-500 border border-transparent'">
+                                        :class="role === 'auditor' ? 'bg-emerald-100 text-emerald-700 border border-emerald-100 shadow-sm' : 'bg-gray-50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-500 border border-transparent'">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                         </svg>
-                                        Asesor
+                                        Auditor
                                     </div>
                                     <div class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-colors"
-                                        :class="role === 'standar' ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 shadow-sm' : 'bg-gray-50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-500 border border-transparent'">
+                                        :class="role === 'auditee' ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 shadow-sm' : 'bg-gray-50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-500 border border-transparent'">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                         </svg>
-                                        Standar
+                                        Auditee
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Assigned Standard -->
-                            <div class="mt-6 p-5 border border-indigo-100 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-900/40/50 dark:bg-indigo-900/20 rounded-2xl" x-show="role === 'standar'" x-cloak x-transition>
+                            <div class="mt-6 p-5 border border-indigo-100 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl" x-show="role === 'auditee'" x-cloak x-transition
+                                x-data="{ selected: {{ json_encode(old('assigned_standards', [])) }}, max: 20 }">
                                 <label class="block text-sm font-semibold text-indigo-900 dark:text-indigo-200 mb-1">Assigned Standard <span class="text-rose-500">*</span></label>
-                                <p class="text-xs text-indigo-500 mb-4">Select the specific standard this user will manage.</p>
-                                <div class="relative">
-                                    <select name="assigned_standard" :required="role === 'standar'"
-                                        class="w-full pl-4 pr-10 py-2.5 text-sm bg-white dark:bg-gray-800 border border-indigo-200 dark:border-indigo-700/50 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 text-indigo-900 dark:text-indigo-200 font-medium appearance-none">
-                                        <option value="">-- Select Standard --</option>
-                                        @foreach($standards as $standard)
-                                        <option value="{{ $standard->code }}" @selected(old('assigned_standard')===$standard->code)>
-                                            {{ $standard->code }} - {{ $standard->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-indigo-400">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
+                                <p class="text-xs text-indigo-500 mb-4">Pilih standar yang akan dikelola user ini. <span class="font-semibold">Maksimal 20 standar.</span></p>
+
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                                        Dipilih: <span x-text="selected.length"></span>/5
+                                    </span>
+                                    <button type="button" @click="selected = []" x-show="selected.length > 0"
+                                        class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">
+                                        Reset pilihan
+                                    </button>
                                 </div>
-                                <x-input-error :messages="$errors->get('assigned_standard')" class="mt-1" />
+
+                                <div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
+                                    @foreach($standards as $standard)
+                                    <label class="flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-all"
+                                        :class="selected.includes('{{ $standard->code }}')
+                                            ? 'border-indigo-400 bg-white dark:bg-indigo-900/30 shadow-sm'
+                                            : 'border-transparent hover:border-indigo-200 hover:bg-white/60'"
+                                        @click.prevent="
+                                            if (selected.includes('{{ $standard->code }}')) {
+                                                selected = selected.filter(s => s !== '{{ $standard->code }}')
+                                            } else if (selected.length < max) {
+                                                selected = [...selected, '{{ $standard->code }}']
+                                            }
+                                        ">
+                                        <div class="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
+                                            :class="selected.includes('{{ $standard->code }}') ? 'border-indigo-500 bg-indigo-500' : 'border-gray-300'">
+                                            <svg x-show="selected.includes('{{ $standard->code }}')" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                        <input type="checkbox" name="assigned_standards[]" value="{{ $standard->code }}"
+                                            class="sr-only"
+                                            :checked="selected.includes('{{ $standard->code }}')"
+                                            @change.stop />
+                                        <div class="min-w-0">
+                                            <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300">{{ $standard->code }}</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400 ml-1">- {{ $standard->name }}</span>
+                                        </div>
+                                    </label>
+                                    @endforeach
+                                </div>
+
+                                <p x-show="selected.length >= max" class="text-xs text-amber-600 dark:text-amber-400 mt-2 font-medium">
+                                    ⚠ Maksimal 5 standar sudah dipilih.
+                                </p>
+                                <x-input-error :messages="$errors->get('assigned_standards')" class="mt-1" />
+                                <x-input-error :messages="$errors->get('assigned_standards.*')" class="mt-1" />
                             </div>
+
+                            {{-- Info: self-service role request --}}
+                            <div class="mt-4 flex items-start gap-3 p-3.5 bg-sky-50 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800 rounded-2xl">
+                                <svg class="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <p class="text-xs text-sky-700 dark:text-sky-400 leading-relaxed">
+                                    Setelah akun dibuat, user dapat mengajukan perubahan role secara mandiri melalui halaman
+                                    <strong>Permintaan Role</strong>. Admin akan menerima notifikasi untuk menyetujui atau menolak permintaan tersebut.
+                                </p>
+                            </div>
+
                         </div>
 
                         {{-- ─── Login Access Time ─── --}}

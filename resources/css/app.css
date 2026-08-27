@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Theme change: reveal the new color scheme as a wave from the toggle button. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 9999;
+    clip-path: circle(0 at var(--theme-wave-x) var(--theme-wave-y));
+    animation: theme-wave-reveal 720ms cubic-bezier(.22, .8, .25, 1) both;
+}
+
+@keyframes theme-wave-reveal {
+    0% {
+        clip-path: circle(0 at var(--theme-wave-x) var(--theme-wave-y));
+    }
+    72% {
+        clip-path: circle(calc(var(--theme-wave-radius) + 22px) at var(--theme-wave-x) var(--theme-wave-y));
+    }
+    84% {
+        clip-path: circle(calc(var(--theme-wave-radius) - 7px) at var(--theme-wave-x) var(--theme-wave-y));
+    }
+    100% {
+        clip-path: circle(var(--theme-wave-radius) at var(--theme-wave-x) var(--theme-wave-y));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none;
+    }
+}

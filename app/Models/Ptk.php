@@ -27,6 +27,7 @@ class Ptk extends Model
         'realisasi',
         'efektifitas',
         'tl_status',
+        'pic',
     ];
 
     protected $casts = [

@@ -15,9 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->boolean('is_active')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // Login security
+            $table->boolean('is_blocked')->default(false);
+            $table->integer('failed_login_attempts')->default(0);
+            $table->timestamp('last_failed_login_at')->nullable();
+            $table->time('login_start_time')->nullable();
+            $table->time('login_end_time')->nullable();
+
             $table->timestamps();
         });
 

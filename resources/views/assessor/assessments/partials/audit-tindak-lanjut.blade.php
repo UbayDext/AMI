@@ -57,11 +57,12 @@
                     </td>
                     <td class="px-2 py-2 border border-gray-300 dark:border-gray-600 align-top">
                         <select name="ptk_tl_status_{{ $id }}" class="ptk-tl-status block w-full rounded-md shadow-sm text-xs font-semibold
-                            {{ $ptkTlStatus === 'Close' ? 'bg-teal-600 text-white border-teal-700 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-800' : ($ptkTlStatus === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800' : ($ptkTlStatus === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300')) }}"
+                            {{ $ptkTlStatus === 'Close' ? 'bg-teal-600 text-white border-teal-700 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-800' : ($ptkTlStatus === 'On Progress' ? 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800' : ($ptkTlStatus === 'Open' ? 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800' : ($ptkTlStatus === 'Toleran' ? 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300'))) }}"
                             onchange="styleTlStatus(this)">
                             <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="">-- Pilih --</option>
-                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Close" @selected($ptkTlStatus==='Close' )>Close</option>
                             <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Open" @selected($ptkTlStatus==='Open' )>Open</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="On Progress" @selected($ptkTlStatus==='On Progress' )>On Progress</option>
+                            <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Close" @selected($ptkTlStatus==='Close' )>Close</option>
                             <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-normal" value="Toleran" @selected($ptkTlStatus==='Toleran' )>Toleran</option>
                         </select>
                     </td>

@@ -17,14 +17,14 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
-                        Information
+                        Assessment Information
                     </h3>
                     <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                        Basic details about the assessment.
+                        Basic information about this assessment.
                     </p>
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-0">
-                    <dl class="sm:divide-y sm:divide-gray-200">
+                    <dl class="sm:divide-y sm:divide-gray-200 dark:sm:divide-gray-700">
                         <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
                                 Accreditation Year
@@ -35,7 +35,7 @@
                         </div>
                         <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                Unit Name
+                                Study Program
                             </dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2">
                                 {{ $assessment->unit_name }}
@@ -71,7 +71,7 @@
                 <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
                     <div>
                         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
-                            Findings (Temuan)
+                            Assessment Findings
                         </h3>
                         <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
                             List of findings recorded for this assessment.
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-900/50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code</th>
@@ -89,9 +89,9 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Severity</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($assessment->findings as $f)
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $f->code }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $f->standard->code ?? '-' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $f->auditAreaNames }}</td>
@@ -150,8 +150,8 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Ringkasan Kategori Jawaban</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Distribusi kategori PTK dan keterangan berdasarkan jawaban asesor.</p>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Assessment Summary</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Summary of assessment responses and corrective actions.</p>
                 </div>
 
                 <div class="px-6 py-6">
@@ -159,19 +159,19 @@
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <div class="bg-indigo-50 dark:bg-indigo-900/40 rounded-lg p-4 text-center">
                             <div class="text-2xl font-bold text-indigo-700 dark:text-indigo-400">{{ $answers->count() }}</div>
-                            <div class="text-xs text-indigo-500 mt-1">Total Jawaban</div>
+                            <div class="text-xs text-indigo-500 mt-1">Total Questions</div>
                         </div>
-                        <div class="bg-green-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-green-700">{{ $kategoriCounts['Sesuai'] ?? 0 }}</div>
-                            <div class="text-xs text-green-500 mt-1">Sesuai</div>
+                        <div class="bg-green-50 dark:bg-green-900/40 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-green-700 dark:text-green-400">{{ $kategoriCounts['Sesuai'] ?? 0 }}</div>
+                            <div class="text-xs text-green-500 mt-1">Compliant</div>
                         </div>
-                        <div class="bg-orange-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-orange-700">{{ ($kategoriCounts['KTS Minor'] ?? 0) + ($kategoriCounts['KTS Mayor'] ?? 0) }}</div>
-                            <div class="text-xs text-orange-500 mt-1">KTS (Minor+Mayor)</div>
+                        <div class="bg-orange-50 dark:bg-orange-900/40 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-orange-700 dark:text-orange-400">{{ ($kategoriCounts['KTS Minor'] ?? 0) + ($kategoriCounts['KTS Mayor'] ?? 0) }}</div>
+                            <div class="text-xs text-orange-500 mt-1">Non-Compliant</div>
                         </div>
-                        <div class="bg-red-50 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-red-700">{{ $ptks->count() }}</div>
-                            <div class="text-xs text-red-500 mt-1">Total PTK</div>
+                        <div class="bg-red-50 dark:bg-red-900/40 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-red-700 dark:text-red-400">{{ $ptks->count() }}</div>
+                            <div class="text-xs text-red-500 mt-1">Corrective Actions</div>
                         </div>
                     </div>
 
@@ -258,7 +258,7 @@
                                 data: katData,
                                 backgroundColor: katColors,
                                 borderWidth: 2,
-                                borderColor: '#fff',
+                                borderColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
                             }]
                         },
                         options: {
@@ -292,7 +292,7 @@
                                 data: ketData,
                                 backgroundColor: ketColors.slice(0, ketData.length),
                                 borderWidth: 2,
-                                borderColor: '#fff',
+                                borderColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
                             }]
                         },
                         options: {
@@ -318,8 +318,8 @@
             <!-- Detailed Results (Answers & PTK) -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Detailed Assessment Results</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">All questions with assessor answers, evidence, and corrective actions (PTK).</p>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Assessment Results</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Assessment questions, responses, evidence, and corrective actions.</p>
                 </div>
 
                 @php
@@ -334,20 +334,20 @@
                 'tidak_dilaksanakan_tidak_ada_bukti' => 'Tidak dilaksanakan – Tidak ada bukti',
                 ];
                 $ketColors = [
-                'sesuai' => 'bg-green-100 text-green-800 border-green-300',
-                'sebagian_sesuai' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                'tidak_sesuai_bukti_tidak_memadai' => 'bg-orange-100 text-orange-800 border-orange-300',
-                'tidak_sesuai_ada_bukti_tidak_dilaksanakan' => 'bg-orange-100 text-orange-800 border-orange-300',
-                'tidak_sesuai_bukti_tidak_memadai_tidak_konsisten' => 'bg-red-100 text-red-800 border-red-300',
-                'tidak_sesuai_tidak_ada_bukti' => 'bg-red-500 text-white border-red-700',
-                'tidak_dilaksanakan_tidak_ada_bukti' => 'bg-red-500 text-white border-red-700',
+                'sesuai' => 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700',
+                'sebagian_sesuai' => 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700',
+                'tidak_sesuai_bukti_tidak_memadai' => 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 border-orange-300 dark:border-orange-700',
+                'tidak_sesuai_ada_bukti_tidak_dilaksanakan' => 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 border-orange-300 dark:border-orange-700',
+                'tidak_sesuai_bukti_tidak_memadai_tidak_konsisten' => 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 border-red-300 dark:border-red-700',
+                'tidak_sesuai_tidak_ada_bukti' => 'bg-red-500 dark:bg-red-800 text-white border-red-700',
+                'tidak_dilaksanakan_tidak_ada_bukti' => 'bg-red-500 dark:bg-red-800 text-white border-red-700',
                 ];
                 $catColors = [
-                'Sesuai' => 'bg-green-100 text-green-800 border-green-300',
-                'Observasi'=> 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                'KTS Minor'=> 'bg-orange-100 text-orange-800 border-orange-300',
-                'KTS Mayor'=> 'bg-red-500 text-white border-red-700',
-                'OFI' => 'bg-blue-100 text-blue-800 border-blue-300',
+                'Sesuai' => 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700',
+                'Observasi'=> 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700',
+                'KTS Minor'=> 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 border-orange-300 dark:border-orange-700',
+                'KTS Mayor'=> 'bg-red-500 dark:bg-red-800 text-white border-red-700',
+                'OFI' => 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700',
                 ];
                 @endphp
 
@@ -359,7 +359,7 @@
                 @endphp
 
                 <!-- Category Header -->
-                <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white px-6 py-3">
+                <div class="border-b border-gray-300 dark:border-gray-600 bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-900/40 dark:to-gray-800 px-6 py-3">
                     <h4 class="text-sm font-bold text-indigo-900 dark:text-indigo-200 uppercase tracking-wide">{{ $catTitle }}</h4>
                 </div>
 
@@ -375,17 +375,17 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-xs">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs">
                         <thead class="bg-gray-100 dark:bg-gray-800/80">
                             <tr>
                                 <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider w-8">No</th>
-                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:280px">Pertanyaan</th>
-                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:180px">Bukti / Jawaban</th>
-                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:180px">Keterangan</th>
-                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:260px">Detail PTK</th>
+                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:280px">Question</th>
+                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:180px">Evidence / Response</th>
+                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:180px">Status</th>
+                                <th class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider" style="min-width:260px">Corrective Action</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
                             @foreach($stdQuestions as $q)
                             @php
                             $ans = $answers[$q->id] ?? null;
@@ -397,13 +397,13 @@
                             $catColor = $catColors[$ptkKat ?? ''] ?? 'bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600';
                             $rowBg = match(true) {
                             $ket === 'sesuai' => '',
-                            $ket === 'sebagian_sesuai' => 'bg-yellow-50/30',
-                            !empty($ket) && str_starts_with($ket, 'tidak') => 'bg-red-50/30',
-                            !empty($ket) => 'bg-orange-50/30',
+                            $ket === 'sebagian_sesuai' => 'bg-yellow-50/30 dark:bg-yellow-900/10',
+                            !empty($ket) && str_starts_with($ket, 'tidak') => 'bg-red-50/30 dark:bg-red-900/10',
+                            !empty($ket) => 'bg-orange-50/30 dark:bg-orange-900/10',
                             default => ''
                             };
                             @endphp
-                            <tr class="hover:bg-gray-50 {{ $rowBg }}">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 {{ $rowBg }}">
                                 {{-- No --}}
                                 <td class="px-3 py-3 text-gray-400 dark:text-gray-500 text-center align-top">{{ $no++ }}</td>
 
@@ -442,7 +442,7 @@
                                         {{ $ketLabel }}
                                     </span>
                                     @else
-                                    <span class="text-gray-300 italic">Belum diisi</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Not Answered</span>
                                     @endif
                                 </td>
 
@@ -468,6 +468,9 @@
                                         @if($ptk->corrective_plan)
                                         <div><span class="font-semibold text-gray-500 dark:text-gray-400">Plan:</span> {{ $ptk->corrective_plan }}</div>
                                         @endif
+                                        @if($ptk->pic)
+                                        <div><span class="font-semibold text-gray-500 dark:text-gray-400">PIC:</span> {{ $ptk->pic }}</div>
+                                        @endif
                                         <div class="flex flex-wrap gap-1 mt-1">
                                             @if($ptk->start_date)
                                             <span class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 text-[10px]">
@@ -481,9 +484,10 @@
                                             @endif
                                             @php
                                             $tlColor = match($ptk->tl_status) {
-                                            'Close' => 'bg-green-100 text-green-800 border-green-200',
-                                            'Open' => 'bg-red-100 text-red-800 border-red-200',
-                                            default => 'bg-orange-100 text-orange-800 border-orange-200'
+                                            'Close' => 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border-green-200 dark:border-green-700',
+                                            'On Progress' => 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-700',
+                                            'Open' => 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 border-red-200 dark:border-red-700',
+                                            default => 'bg-orange-100 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-700'
                                             };
                                             @endphp
                                             <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold {{ $tlColor }}">

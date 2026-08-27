@@ -13,8 +13,12 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             AuditAreaSeeder::class,
             StandardSeeder::class,
+            StandardRoleSeeder::class,
             AccreditationYearSeeder::class,
             RoleSeeder::class,
+            FoskCriteriaSeeder::class,
+            AmiChecklistSeeder::class,
+            ProdiSeeder::class,
         ]);
     }
 }

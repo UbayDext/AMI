@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('assessor_id')->constrained('users')->cascadeOnDelete();
             $table->string('unit_name');
             $table->enum('status', ['draft', 'submitted', 'reviewed'])->default('draft');
+            $table->json('submitted_standards')->nullable();
             $table->timestamps();
         });
     }

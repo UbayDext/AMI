@@ -14,7 +14,10 @@ class ProfileController extends Controller
     public function update(\App\Http\Requests\ProfileUpdateRequest $request)
     {
         $user = $request->user();
-        $user->fill($request->validated());
+        $validated = $request->validated();
+        unset($validated['password'], $validated['current_password']);
+
+        $user->fill($validated);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;

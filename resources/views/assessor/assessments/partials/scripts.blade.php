@@ -101,19 +101,66 @@
         }
     }
 
+    // Auto-sync Keterangan when Bukti (evidence) answer changes for select/radio questions
+    function syncKeterangan(qid, buktiValue) {
+        const ketSelect = document.querySelector(`.ket-select[data-qid="${qid}"]`);
+        if (!ketSelect) return;
+
+        // Normalize the bukti value to lowercase for comparison
+        const val = (buktiValue || '').toLowerCase().trim();
+
+        let newKet = '';
+        let isNegative = false;
+
+        if (!val) {
+            // Empty / not selected → reset to sesuai
+            newKet = 'sesuai';
+        } else if (val === 'ya' || val === 'ada' || val === 'sudah' || val === 'lengkap' || val === 'baik' || val === 'memenuhi') {
+            // Positive answers → Sesuai
+            newKet = 'sesuai';
+        } else if (val === 'sebagian' || val === 'kurang' || val === 'belum_sepenuhnya' || val === 'cukup') {
+            // Partial answers → Sebagian Sesuai
+            newKet = 'sebagian_sesuai';
+            isNegative = true;
+        } else if (val === 'tidak' || val === 'tidak_ada' || val === 'belum' || val === 'tidak_lengkap' || val === 'tidak_memenuhi' || val === 'kurang_baik') {
+            // Negative answers → Tidak Sesuai
+            newKet = 'tidak_sesuai_tidak_ada_bukti';
+            isNegative = true;
+        } else {
+            // Unknown value — don't auto-change
+            return;
+        }
+
+        // Disable/enable "Sesuai" option based on bukti answer
+        const sesuaiOption = ketSelect.querySelector('option[value="sesuai"]');
+        if (sesuaiOption) {
+            sesuaiOption.disabled = isNegative;
+        }
+
+        // Set the keterangan dropdown value
+        ketSelect.value = newKet;
+
+        // Trigger PTK row update
+        togglePtkRow(qid, newKet);
+    }
+
 
 
     // Style TL Status dropdown color
     function styleTlStatus(el) {
         el.classList.remove(
-            'bg-teal-600', 'text-white', 'border-teal-700',
-            'bg-yellow-100', 'text-yellow-800', 'border-yellow-300',
+            'bg-teal-600', 'text-white', 'border-teal-700', 'dark:bg-teal-900/40', 'dark:text-teal-300', 'dark:border-teal-800',
+            'bg-blue-100', 'text-blue-800', 'border-blue-300', 'dark:bg-blue-900/40', 'dark:text-blue-300', 'dark:border-blue-800',
+            'bg-yellow-100', 'text-yellow-800', 'border-yellow-300', 'dark:bg-yellow-900/40', 'dark:text-yellow-300', 'dark:border-yellow-800',
             'bg-orange-100', 'text-orange-800', 'border-orange-300', 'dark:bg-orange-900/40', 'dark:text-orange-300', 'dark:border-orange-800',
             'border-gray-300', 'dark:border-gray-600', 'dark:bg-gray-900', 'dark:text-gray-300'
         );
         switch (el.value) {
             case 'Close':
                 el.classList.add('bg-teal-600', 'text-white', 'border-teal-700', 'dark:bg-teal-900/40', 'dark:text-teal-300', 'dark:border-teal-800');
+                break;
+            case 'On Progress':
+                el.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-300', 'dark:bg-blue-900/40', 'dark:text-blue-300', 'dark:border-blue-800');
                 break;
             case 'Open':
                 el.classList.add('bg-yellow-100', 'text-yellow-800', 'border-yellow-300', 'dark:bg-yellow-900/40', 'dark:text-yellow-300', 'dark:border-yellow-800');

@@ -35,6 +35,7 @@ return new class extends Migration
             $table->text('realisasi')->nullable();
             $table->string('efektifitas')->nullable();
             $table->string('tl_status')->nullable();
+            $table->string('pic')->nullable();
 
             $table->timestamps();
 

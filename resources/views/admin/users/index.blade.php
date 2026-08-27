@@ -230,8 +230,8 @@
                                         @php
                                         $roleCls = match($role) {
                                         'admin' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-                                        'asesor' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
-                                        'standar' => 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400',
+                                        'auditor' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
+                                        'auditee' => 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400',
                                         default => 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300',
                                         };
                                         @endphp

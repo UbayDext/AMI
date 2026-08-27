@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Assessor;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Assessment;
+use App\Models\PreparationStage;
 use App\Models\Ptk;
 use App\Models\Question;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AssessmentFillController extends Controller
 {
     public function edit(Request $request, Assessment $assessment)
     {
-        abort_unless($assessment->assessor_id === auth()->id(), 403);
+        $this->authorize('view', $assessment);
 
         if ($assessment->status === 'submitted') {
             return redirect()->route('assessor.assessments.index')
@@ -58,13 +58,28 @@ class AssessmentFillController extends Controller
 
         $ptks = Ptk::where('assessment_id', $assessment->id)->get()->keyBy('question_id');
 
+        $users = \App\Models\User::where('is_active', true)->orderBy('name')->select(['id', 'name'])->get();
+
+        // Build a map of "Stage – Task" title => link URL — select only needed columns
+        $taskLinkMap = PreparationStage::select(['id', 'title'])
+            ->with(['tasks:id,stage_id,title,link'])
+            ->get()
+            ->flatMap(fn($stage) => $stage->tasks->map(fn($task) => [
+                'key'  => $stage->title . ' – ' . $task->title,
+                'link' => $task->link,
+            ]))
+            ->keyBy('key')
+            ->map(fn($t) => $t['link']);
+
         return view('assessor.assessments.fill-v2', compact(
             'assessment',
             'groupedQuestions',
             'answers',
             'standards',
             'areas',
-            'ptks'
+            'ptks',
+            'users',
+            'taskLinkMap'
         ));
     }
 
@@ -82,7 +97,12 @@ class AssessmentFillController extends Controller
         $questionIds = $keys->filter(fn($k) => str_starts_with($k, 'ket_'))
             ->map(fn($k) => str_replace('ket_', '', $k));
 
-        \Log::info("Derived Question IDs:", $questionIds->toArray());
+        // Only process questions that actually belong to this assessment's scope
+        $validQuestionIds = Question::whereIn('id', $questionIds)
+            ->where('is_active', true)
+            ->pluck('id')
+            ->map(fn($id) => (string) $id);
+        $questionIds = $questionIds->intersect($validQuestionIds);
 
         // Pre-fetch questions to get standard_id and other details efficiently
         $questions = Question::whereIn('id', $questionIds)->get()->keyBy('id');
@@ -120,12 +140,6 @@ class AssessmentFillController extends Controller
             // Handle PTK logic - save PTK if category is present (includes "Sesuai" -> "Observasi")
             $ptkCategory = $request->input("ptk_kategori_$qid");
 
-            \Log::info("Processing question $qid", [
-                'status' => $status,
-                'ptk_category' => $ptkCategory,
-                'question_standard_id' => $question?->standard_id ?? 'null',
-            ]);
-
             // Check if there is a category OR if status indicates non-compliance
             // We trust the category logic mostly, but as a fallback, if not 'sesuai', we generally expect a PTK.
             // However, relying on ptkCategory is safer given the new "Sesuai -> Observasi" rule.
@@ -145,9 +159,8 @@ class AssessmentFillController extends Controller
                     'realisasi' => $request->input("ptk_realisasi_$qid"),
                     'efektifitas' => $request->input("ptk_efektifitas_$qid"),
                     'tl_status' => $request->input("ptk_tl_status_$qid"),
+                    'pic' => $request->input("ptk_pic_$qid"),
                 ];
-
-                \Log::info("Saving PTK for $qid", $ptkData);
 
                 Ptk::updateOrCreate(
                     ['assessment_id' => $assessment->id, 'question_id' => $qid],

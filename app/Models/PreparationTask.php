@@ -3,32 +3,73 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PreparationTask extends Model
 {
     protected $fillable = [
-        'stage_id','title','description','is_required','sort_order',
-        'is_done','done_at','done_by',
+        'stage_id',
+        'prodi_id',
+        'title',
+        'description',
+        'link',
+        'category',
+        'is_required',
+        'sort_order',
+        'created_by',
     ];
 
     protected $casts = [
-        'is_done' => 'boolean',
-        'done_at' => 'datetime',
         'is_required' => 'boolean',
     ];
 
-    public function stage()
+    public const CATEGORIES = [
+        'kebijakan',
+        'pelaksanaan',
+        'evaluasi',
+        'pendukung_digital',
+    ];
+
+    public function stage(): BelongsTo
     {
         return $this->belongsTo(PreparationStage::class, 'stage_id');
     }
 
-    public function files()
+    public function files(): HasMany
     {
         return $this->hasMany(PreparationTaskFile::class, 'task_id');
     }
 
-    public function doneBy()
+    public function filesForProdi(int $prodiId): HasMany
     {
-        return $this->belongsTo(User::class, 'done_by');
+        return $this->hasMany(PreparationTaskFile::class, 'task_id')
+            ->where('prodi_id', $prodiId);
+    }
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(ProdiTaskProgress::class, 'task_id');
+    }
+
+    public function progressForProdi(int $prodiId): ?ProdiTaskProgress
+    {
+        return $this->progress()->where('prodi_id', $prodiId)->first();
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function prodi(): BelongsTo
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_id');
+    }
+
+    public function prodis(): BelongsToMany
+    {
+        return $this->belongsToMany(Prodi::class, 'preparation_task_prodi')->withTimestamps();
     }
 }

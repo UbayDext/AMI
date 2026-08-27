@@ -2,15 +2,15 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Kategori Soal</h1>
-                <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Kelola struktur kategori dan sub-kategori pertanyaan.</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Prodi</h1>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Kelola struktur Prodi dan sub-kategori pertanyaan.</p>
             </div>
             <a href="{{ route('admin.question-categories.create') }}"
                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-150">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                 </svg>
-                Buat Kategori Baru
+                Buat Prodi Baru
             </a>
         </div>
     </x-slot>
@@ -33,7 +33,7 @@
                         <thead class="bg-gray-50 dark:bg-gray-900/50">
                             <tr>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
-                                    Nama Kategori
+                                    Nama Prodi
                                 </th>
                                 <th scope="col" class="relative px-6 py-4">
                                     <span class="sr-only">Actions</span>
@@ -49,8 +49,8 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                         </svg>
                                     </div>
-                                    <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada kategori.</p>
-                                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Coba buat kategori baru untuk memulai.</p>
+                                    <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada Prodi.</p>
+                                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Coba buat Prodi baru untuk memulai.</p>
                                 </td>
                             </tr>
                             @else
@@ -65,7 +65,7 @@
         </div>
         {{-- Delete Confirmation Modal --}}
         <x-delete-modal title="Hapus Kategori?">
-            Anda yakin ingin menghapus kategori <span class="text-white font-medium" x-text="deleteTargetName"></span> secara permanen?
+            Anda yakin ingin menghapus Prodi <span class="text-white font-medium" x-text="deleteTargetName"></span> secara permanen?
         </x-delete-modal>
     </div>
 </x-app-layout>

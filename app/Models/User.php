@@ -2,24 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -32,37 +27,46 @@ class User extends Authenticatable
         'login_end_time',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'         => 'hashed',
-            'is_active'            => 'boolean',
-            'is_blocked'           => 'boolean',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
+            'is_blocked' => 'boolean',
             'last_failed_login_at' => 'datetime',
             'login_start_time' => 'datetime:H:i',
-            'login_end_time'   => 'datetime:H:i',
+            'login_end_time' => 'datetime:H:i',
         ];
+    }
+
+    public function roleRequests(): HasMany
+    {
+        return $this->hasMany(RoleRequest::class);
+    }
+
+    public function pendingRoleRequest(): HasOne
+    {
+        return $this->hasOne(RoleRequest::class)->where('status', 'pending')->latestOfMany();
+    }
+
+    public function amiAssignments(): HasMany
+    {
+        return $this->hasMany(AmiAuditeeAssignment::class);
+    }
+
+    public function ownedAmiSubmissions(): HasMany
+    {
+        return $this->hasMany(AmiSubmission::class, 'owner_id');
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // admin bisa masuk panel admin
         if ($panel->getId() === 'admin') {
             return $this->hasRole('admin');
         }

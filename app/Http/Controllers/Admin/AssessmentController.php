@@ -21,7 +21,7 @@ class AssessmentController extends Controller
     public function create()
     {
         $years = AccreditationYear::orderBy('year', 'desc')->get();
-        $assessors = User::role('asesor')->orderBy('name')->get();
+        $assessors = User::role('auditor')->orderBy('name')->get();
         $categories = \App\Models\QuestionCategory::orderBy('name')->get();
         $standards = \App\Models\Standard::orderByRaw('LENGTH(code), code')->get();
 

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('My Assessments (Updated)') }}
+            {{ __('My Assessments') }}
         </h2>
     </x-slot>
 
@@ -151,8 +151,8 @@
                                         <thead class="bg-gray-50 dark:bg-gray-900/50">
                                             <tr>
                                                 <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-12">No</th>
-                                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Unit</th>
-                                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Year</th>
+                                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Study Program</th>
+                                                <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Accreditation Year</th>
                                                 <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Last Finding</th>
                                                 <th class="px-4 py-2.5 text-left text-xs font-medium text-gray-400 dark:text-gray-500 uppercase">Status</th>
                                                 <th class="px-4 py-2.5 text-right text-xs font-medium text-gray-400 dark:text-gray-500 uppercase w-28">Actions</th>

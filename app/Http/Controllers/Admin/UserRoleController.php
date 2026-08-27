@@ -34,14 +34,12 @@ class UserRoleController extends Controller
         $users = $query->paginate(20)->appends($request->query());
         $roles = Role::query()->whereNotIn('name', \App\Models\Standard::pluck('code'))->orderBy('name')->pluck('name');
 
-        // Stats (from ALL users, not paginated)
-        $all = User::with('roles')->get();
         $stats = [
-            'total'   => $all->count(),
-            'active'  => $all->where('is_active', true)->count(),
-            'pending' => $all->where('is_active', false)->where('is_blocked', false)->count(),
-            'blocked' => $all->where('is_blocked', true)->count(),
-            'admin'   => $all->filter(fn($u) => $u->hasRole('admin'))->count(),
+            'total'   => User::count(),
+            'active'  => User::where('is_active', true)->where('is_blocked', false)->count(),
+            'pending' => User::where('is_active', false)->where('is_blocked', false)->count(),
+            'blocked' => User::where('is_blocked', true)->count(),
+            'admin'   => User::role('admin')->count(),
         ];
 
         return view('admin.users.index', compact('users', 'roles', 'stats'));
@@ -62,7 +60,8 @@ class UserRoleController extends Controller
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', 'string', 'exists:roles,name'],
-            'assigned_standard' => ['nullable', 'string', 'exists:roles,name'],
+            'assigned_standards'   => ['nullable', 'array', 'max:20'],
+            'assigned_standards.*' => ['string', 'exists:roles,name'],
             'login_start_time' => ['nullable', 'date_format:H:i'],
             'login_end_time'   => ['nullable', 'date_format:H:i'],
         ]);
@@ -78,8 +77,8 @@ class UserRoleController extends Controller
         ]);
 
         $rolesToSync = [$data['role']];
-        if ($data['role'] === 'standar' && !empty($data['assigned_standard'])) {
-            $rolesToSync[] = $data['assigned_standard'];
+        if ($data['role'] === 'auditee' && !empty($data['assigned_standards'])) {
+            $rolesToSync = array_merge($rolesToSync, $data['assigned_standards']);
         }
         $user->syncRoles($rolesToSync);
 
@@ -91,10 +90,10 @@ class UserRoleController extends Controller
     {
         $roles = Role::query()->whereNotIn('name', \App\Models\Standard::pluck('code'))->orderBy('name')->pluck('name');
         $standards = \App\Models\Standard::orderByRaw('LENGTH(code), code')->get();
-        // Get user's current roles that match standard codes
-        $userAssignedStandard = $user->roles()->whereIn('name', $standards->pluck('code'))->pluck('name')->first();
+        $userAssignedStandards = $user->roles()->whereIn('name', $standards->pluck('code'))->pluck('name')->toArray();
+        $roleRequests = $user->roleRequests()->with('reviewer')->latest()->limit(5)->get();
 
-        return view('admin.users.edit', compact('user', 'roles', 'standards', 'userAssignedStandard'));
+        return view('admin.users.edit', compact('user', 'roles', 'standards', 'userAssignedStandards', 'roleRequests'));
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -104,7 +103,8 @@ class UserRoleController extends Controller
             'email'    => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', 'string', 'exists:roles,name'],
-            'assigned_standard' => ['nullable', 'string', 'exists:roles,name'],
+            'assigned_standards'   => ['nullable', 'array', 'max:20'],
+            'assigned_standards.*' => ['string', 'exists:roles,name'],
             'login_start_time' => ['nullable', 'date_format:H:i'],
             'login_end_time'   => ['nullable', 'date_format:H:i'],
         ]);
@@ -121,8 +121,8 @@ class UserRoleController extends Controller
         $user->save();
 
         $rolesToSync = [$data['role']];
-        if ($data['role'] === 'standar' && !empty($data['assigned_standard'])) {
-            $rolesToSync[] = $data['assigned_standard'];
+        if ($data['role'] === 'auditee' && !empty($data['assigned_standards'])) {
+            $rolesToSync = array_merge($rolesToSync, $data['assigned_standards']);
         }
         $user->syncRoles($rolesToSync);
 

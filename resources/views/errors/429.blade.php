@@ -24,8 +24,8 @@
         </div>
 
         <div class="space-y-3 mt-4">
-            <h1 class="text-2xl sm:text-3xl font-semibold tracking-wide text-white">Account anda telah Teblokir</h1>
-            <p class="text-[#848d9a] tracking-wide">Anda telah merigirim terlalu banyak pernnintaan</p>
+            <h1 class="text-2xl sm:text-3xl font-semibold tracking-wide text-white">Account Anda Telah Terblokir</h1>
+            <p class="text-[#848d9a] tracking-wide">Anda telah merigirim terlalu banyak permintaan</p>
         </div>
 
         <button onclick="window.history.back()" class="mt-4 px-6 py-2.5 bg-[#1c2130] hover:bg-[#252b3e] border border-gray-700/50 text-gray-300 text-sm font-medium rounded-xl transition-colors shadow-sm">

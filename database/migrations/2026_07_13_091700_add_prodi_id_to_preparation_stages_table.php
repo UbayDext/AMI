@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Prodi;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -9,19 +10,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('preparation_stages', function (Blueprint $table) {
-            $table->foreignId('standard_id')
-                ->nullable()
-                ->after('accreditation_year_id')
-                ->constrained('standards')
-                ->nullOnDelete();
+            $table->foreignId('prodi_id')->nullable()->after('standard_id')
+                ->constrained('prodis')->nullOnDelete();
         });
     }
 
     public function down(): void
     {
         Schema::table('preparation_stages', function (Blueprint $table) {
-            $table->dropForeignIdFor(\App\Models\Standard::class);
-            $table->dropColumn('standard_id');
+            $table->dropForeignIdFor(Prodi::class, 'prodi_id');
+            $table->dropColumn('prodi_id');
         });
     }
 };

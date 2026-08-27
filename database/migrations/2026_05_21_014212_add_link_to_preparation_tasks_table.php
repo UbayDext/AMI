@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->time('login_start_time')->nullable()->after('last_failed_login_at');
-            $table->time('login_end_time')->nullable()->after('login_start_time');
+        Schema::table('preparation_tasks', function (Blueprint $table) {
+            $table->string('link')->nullable()->after('description');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['login_start_time', 'login_end_time']);
+        Schema::table('preparation_tasks', function (Blueprint $table) {
+            $table->dropColumn('link');
         });
     }
 };

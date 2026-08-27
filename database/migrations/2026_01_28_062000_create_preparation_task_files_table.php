@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('original_name');
             $table->string('mime_type')->nullable();
             $table->unsignedBigInteger('size')->nullable();
+            $table->string('link_url')->nullable();
 
             $table->timestamps();
         });

@@ -13,8 +13,8 @@
                 <div class="text-sm font-bold">{{ config('app.name', 'SPMI') }}</div>
                 <div class="text-xs text-gray-400 dark:text-gray-500">
                     @if(auth()->user()->hasRole('admin')) Admin Panel
-                    @elseif(auth()->user()->hasRole('asesor')) Asesor Panel
-                    @else Standar Panel
+                    @elseif(auth()->user()->hasRole('auditor')) Auditor Panel
+                    @else Auditee Panel
                     @endif
                 </div>
             </a>
@@ -52,7 +52,14 @@
             <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.standard-preparations.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            <span>{{ __('Persiapan Standar') }}</span>
+            <span>{{ __('Evidence Indikator Standar') }}</span>
+        </x-sidebar-link>
+
+        <x-sidebar-link :href="route('admin.fosk.index')" :active="request()->routeIs('admin.fosk.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.fosk.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span>{{ __('FOSK Akreditasi') }}</span>
         </x-sidebar-link>
         @endcan
 
@@ -68,7 +75,7 @@
             <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.question-categories.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <span>{{ __('Kategori Soal') }}</span>
+            <span>{{ __('Prodi') }}</span>
         </x-sidebar-link>
         @endcan
 
@@ -86,30 +93,57 @@
             </svg>
             <span>{{ __('Tahun Akreditasi') }}</span>
         </x-sidebar-link>
+
+        <x-sidebar-link :href="route('admin.ami.cycles.index')" :active="request()->routeIs('admin.ami.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.ami.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span>AMI</span>
+        </x-sidebar-link>
         @endcan
 
         @can('manage users')
-        <x-sidebar-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.users.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <x-sidebar-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index') || request()->routeIs('admin.users.create') || request()->routeIs('admin.users.edit')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.users.index') || request()->routeIs('admin.users.create') || request()->routeIs('admin.users.edit') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             <span>{{ __('Users') }}</span>
         </x-sidebar-link>
+
+        @php $pendingRoleRequests = \App\Models\RoleRequest::where('status', 'pending')->count(); @endphp
+        <x-sidebar-link :href="route('admin.role-requests.index')" :active="request()->routeIs('admin.role-requests.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('admin.role-requests.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            <span>Pengajuan Standar</span>
+            @if($pendingRoleRequests > 0)
+            <span class="ml-auto inline-flex items-center justify-center min-w-[1.1rem] h-[1.1rem] px-1 text-[10px] font-bold bg-amber-400 text-white rounded-full">
+                {{ $pendingRoleRequests > 9 ? '9+' : $pendingRoleRequests }}
+            </span>
+            @endif
+        </x-sidebar-link>
         @endcan
         @endif
 
-        <!-- Assessor & Standar -->
-        @if(auth()->user()->hasRole('asesor') || auth()->user()->hasRole('standar'))
+        <!-- Auditor & Auditee -->
+        @if(auth()->user()->hasRole('auditor') || auth()->user()->hasRole('auditee'))
         <div class="mt-6 mb-2 px-3 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
-            {{ auth()->user()->hasRole('asesor') ? 'Asesor' : 'Standar' }}
+            {{ auth()->user()->hasRole('auditor') ? 'Auditor' : 'Auditee' }}
         </div>
 
-        @if(auth()->user()->hasRole('asesor'))
-        <x-sidebar-link :href="route('assessor.assessments.index')" :active="request()->routeIs('assessor.*')">
-            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('assessor.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        @if(auth()->user()->hasRole('auditor'))
+        <x-sidebar-link :href="route('assessor.assessments.index')" :active="request()->routeIs('assessor.assessments.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('assessor.assessments.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
             <span>{{ __('My Assessments') }}</span>
+        </x-sidebar-link>
+
+        <x-sidebar-link :href="route('assessor.ami.index')" :active="request()->routeIs('assessor.ami.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('assessor.ami.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span>AMI Review</span>
         </x-sidebar-link>
         @endif
 
@@ -117,7 +151,26 @@
             <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('internal.standard-preparations.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            <span>{{ __('Persiapan Standar') }}</span>
+            <span>{{ __('Evidence Indikator Standar') }}</span>
+        </x-sidebar-link>
+        @endif
+
+        @if(auth()->user()->hasRole('auditee'))
+        <x-sidebar-link :href="route('internal.ami.index')" :active="request()->routeIs('internal.ami.*')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('internal.ami.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span>AMI</span>
+        </x-sidebar-link>
+
+        <x-sidebar-link :href="route('role-requests.create')" :active="request()->routeIs('role-requests.create')">
+            <svg class="flex-shrink-0 w-5 h-5 {{ request()->routeIs('role-requests.create') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <span>Ajukan Standar</span>
+            @if(auth()->user()->pendingRoleRequest)
+            <span class="ml-auto inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold bg-amber-400 text-white rounded-full">1</span>
+            @endif
         </x-sidebar-link>
         @endif
 
@@ -135,7 +188,7 @@
                     </svg>
                     <span class="text-xs font-semibold text-gray-600 dark:text-gray-300" x-text="darkMode ? 'Dark Mode' : 'Light Mode'"></span>
                 </div>
-                <button @click="darkMode = !darkMode" type="button" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-colors duration-200 ease-in-out" :class="darkMode ? 'bg-indigo-600' : 'bg-gray-200'" role="switch" aria-checked="false">
+                <button @click="toggleTheme($event)" type="button" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-colors duration-200 ease-in-out" :class="darkMode ? 'bg-indigo-600' : 'bg-gray-200'" role="switch" :aria-checked="darkMode.toString()">
                     <span class="sr-only">Toggle dark mode</span>
                     <span aria-hidden="true" class="pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" :class="darkMode ? 'translate-x-2' : '-translate-x-2'"></span>
                 </button>

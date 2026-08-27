@@ -155,7 +155,8 @@
                                         'ptk' => $ptk,
                                         'no' => $no,
                                         'areas' => $areas,
-                                        'assessment' => $assessment
+                                        'assessment' => $assessment,
+                                        'taskLinkMap' => $taskLinkMap ?? collect()
                                         ])
                                         @php $no++; @endphp
                                         @endforeach
@@ -232,6 +233,7 @@
             </form>
         </div>
     </div>
+
 
     @include('assessor.assessments.partials.scripts')
 </x-app-layout>

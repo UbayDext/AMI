@@ -126,21 +126,27 @@
 
                     <div class="mt-4 space-y-3">
                         @forelse($tasks as $t)
-                        <div class="border rounded p-4 {{ $t->is_done ? 'bg-emerald-50 border-emerald-200' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' }}">
+                        <div class="border rounded p-4 {{ $t->is_done ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' }}">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2">
+                                        @if($t->link)
+                                        <a href="{{ $t->link }}" target="_blank" rel="noopener noreferrer"
+                                            class="font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                                            {{ $t->title }}
+                                            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                            </svg>
+                                        </a>
+                                        @else
                                         <div class="font-medium">{{ $t->title }}</div>
+                                        @endif
                                         @if($t->is_required)
                                         <span class="text-xs px-2 py-1 rounded bg-gray-900 text-white">Wajib</span>
                                         @else
                                         <span class="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Opsional</span>
                                         @endif
                                     </div>
-
-                                    @if($t->description)
-                                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-line">{{ $t->description }}</div>
-                                    @endif
 
                                     @if($t->is_done && $t->done_at)
                                     <div class="text-xs text-emerald-800 mt-2">

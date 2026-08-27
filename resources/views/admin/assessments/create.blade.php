@@ -42,7 +42,7 @@
 
                         <!-- Standard Filter -->
                         <div>
-                            <x-input-label for="standard_filter" :value="__('Filter berdasarkan Standar (opsional)')" />
+                            <x-input-label for="standard_filter" :value="__('Standard (Optional)')" />
                             <select id="standard_filter" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                 <option value="">-- Semua Standar --</option>
                                 @foreach($standards as $std)
@@ -53,9 +53,9 @@
 
                         <!-- Unit (Kategori Soal) -->
                         <div>
-                            <x-input-label for="unit_name" :value="__('Kategori Soal')" />
+                            <x-input-label for="unit_name" :value="__('Study Program')" />
                             <select id="unit_name" name="unit_name" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                <option value="" disabled selected>Pilih Kategori Soal</option>
+                                <option value="" disabled selected>Select Study Program</option>
                                 @foreach($categories as $cat)
                                 <option value="{{ $cat->name }}"
                                     data-cat-id="{{ $cat->id }}"

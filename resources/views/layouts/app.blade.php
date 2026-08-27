@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) }"
+    x-data="{
+        darkMode: localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+        toggleTheme(event) {
+            const button = event.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            const radius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+
+            document.documentElement.style.setProperty('--theme-wave-x', `${x}px`);
+            document.documentElement.style.setProperty('--theme-wave-y', `${y}px`);
+            document.documentElement.style.setProperty('--theme-wave-radius', `${radius}px`);
+
+            const applyTheme = () => {
+                this.darkMode = !this.darkMode;
+                return this.$nextTick();
+            };
+
+            if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                applyTheme();
+                return;
+            }
+
+            document.startViewTransition(applyTheme);
+        }
+    }"
     x-init="$watch('darkMode', val => { localStorage.setItem('darkMode', val); window.dispatchEvent(new CustomEvent('theme-changed', { detail: val })); })"
     :class="{ 'dark': darkMode }">
 

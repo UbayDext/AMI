@@ -22,8 +22,8 @@ class RolePermissionSeeder extends Seeder
         foreach ($perms as $p) Permission::firstOrCreate(['name' => $p]);
 
         $admin = Role::firstOrCreate(['name' => 'admin']);
-        $asesor = Role::firstOrCreate(['name' => 'asesor']);
-        $standar = Role::firstOrCreate(['name' => 'standar']);
+        $auditor = Role::firstOrCreate(['name' => 'auditor']);
+        $auditee = Role::firstOrCreate(['name' => 'auditee']);
 
         $admin->syncPermissions([
             'manage users',
@@ -32,7 +32,7 @@ class RolePermissionSeeder extends Seeder
             'manage preparations',
             'view dashboard',
         ]);
-        $asesor->syncPermissions(['fill assessment', 'view dashboard']);
-        $standar->syncPermissions(['view dashboard']);
+        $auditor->syncPermissions(['fill assessment', 'view dashboard']);
+        $auditee->syncPermissions(['view dashboard']);
     }
 }

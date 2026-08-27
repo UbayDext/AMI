@@ -68,14 +68,34 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
 
     {{-- Referensi --}}
     <td class="px-3 py-4 text-sm text-gray-600 dark:text-gray-400 align-top border-r min-w-[100px]">
-        {{ $question->reference ?? '-' }}
+        @php
+            $ref = $question->reference ?? null;
+            $refLink = $ref ? ($taskLinkMap[$ref] ?? null) : null;
+        @endphp
+        @if($ref)
+            @if($refLink)
+                <a href="{{ $refLink }}" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline font-medium transition-colors">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    {{ $ref }}
+                </a>
+            @else
+                {{ $ref }}
+            @endif
+        @else
+            <span class="text-gray-400 dark:text-gray-600">-</span>
+        @endif
     </td>
 
     {{-- Bukti --}}
     <td class="px-3 py-4 text-sm align-top border-r space-y-2 min-w-[200px]">
         <!-- Evidence Input -->
         @if ($question->type === 'select' || $question->type === 'radio')
-        <select name="bukti_{{ $id }}" class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs">
+        <select name="bukti_{{ $id }}" class="bukti-select block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-xs"
+            data-qid="{{ $id }}" onchange="syncKeterangan({{ $id }}, this.value)">
             <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="">Select option...</option>
             @foreach ($question->options->sortBy('sort_order') as $opt)
             <option class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value="{{ $opt->value }}" @selected((string)$bukti===(string)$opt->value)>{{ $opt->label }}</option>
@@ -213,6 +233,18 @@ $showPtk = !empty($ket) && $ket !== 'sesuai';
                             <input type="date" name="ptk_end_date_{{ $id }}"
                                 value="{{ old("ptk_end_date_$id", optional($ptk?->end_date)->format('Y-m-d')) }}"
                                 class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Penanggung Jawab (PIC)</label>
+                            <select name="ptk_pic_{{ $id }}"
+                                class="block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs">
+                                <option value="">-- Pilih Penanggung Jawab --</option>
+                                @foreach($users ?? [] as $u)
+                                    <option value="{{ $u->name }}" @selected(old("ptk_pic_$id", $ptk?->pic) == $u->name)>
+                                        {{ $u->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>

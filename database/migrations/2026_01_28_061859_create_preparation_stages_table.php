@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('accreditation_year_id')->nullable()
                 ->constrained('accreditation_years')->nullOnDelete();
+            $table->foreignId('standard_id')->nullable()
+                ->constrained('standards')->nullOnDelete();
 
             $table->string('title');
             $table->text('description')->nullable();
