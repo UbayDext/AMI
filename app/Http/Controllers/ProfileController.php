@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -42,11 +44,44 @@ class ProfileController extends Controller
 
         \Illuminate\Support\Facades\Auth::logout();
 
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+        }
+
         $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return \Illuminate\Support\Facades\Redirect::to('/');
+    }
+
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+        $path = $data['avatar']->store("avatars/{$user->id}", 'public');
+
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+        }
+
+        $user->update(['avatar_path' => $path]);
+
+        return back()->with('status', 'avatar-updated');
+    }
+
+    public function destroyAvatar(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+            $user->update(['avatar_path' => null]);
+        }
+
+        return back()->with('status', 'avatar-deleted');
     }
 }

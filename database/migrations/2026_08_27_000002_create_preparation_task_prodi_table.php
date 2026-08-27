@@ -19,13 +19,16 @@ return new class extends Migration {
         DB::table('preparation_tasks')
             ->whereNotNull('prodi_id')
             ->orderBy('id')
-            ->each(function ($task): void {
-                DB::table('preparation_task_prodi')->insertOrIgnore([
-                    'preparation_task_id' => $task->id,
-                    'prodi_id' => $task->prodi_id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            ->chunkById(500, function ($tasks): void {
+                $now = now();
+                DB::table('preparation_task_prodi')->insertOrIgnore(
+                    $tasks->map(fn ($task) => [
+                        'preparation_task_id' => $task->id,
+                        'prodi_id' => $task->prodi_id,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ])->all()
+                );
             });
     }
 

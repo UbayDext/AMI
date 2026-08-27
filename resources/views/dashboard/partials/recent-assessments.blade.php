@@ -1,5 +1,5 @@
 {{-- ── Recent Assessments ───────────────────────────────── --}}
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+<section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Assessment Terbaru</h3>
         @can('manage assessments')
@@ -51,4 +51,4 @@
         </table>
     </div>
     @endif
-</div>
+</section>

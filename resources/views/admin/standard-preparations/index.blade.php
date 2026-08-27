@@ -122,25 +122,6 @@
                                     placeholder="e.g. Pengumpulan Dokumen">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Kategori Jenis Dokumen *</label>
-                                <select name="category" required class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
-                                    <option value="">Pilih kategori dokumen</option>
-                                    <option value="kebijakan">Dokumen Kebijakan</option>
-                                    <option value="pelaksanaan">Dokumen Pelaksanaan</option>
-                                    <option value="evaluasi">Dokumen Evaluasi</option>
-                                    <option value="pendukung_digital">Dokumen Pendukung Digital</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Prodi Tujuan</label>
-                                <select name="prodi_ids[]" multiple size="4" class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
-                                    @foreach($prodis as $optionProdi)
-                                    <option value="{{ $optionProdi->id }}" @selected($prodi?->id === $optionProdi->id || $activeStage->prodi_id === $optionProdi->id)>{{ $optionProdi->name }}</option>
-                                    @endforeach
-                                </select>
-                                <p class="mt-1 text-xs text-gray-400">Ctrl/Cmd untuk memilih beberapa. Kosong berarti semua prodi.</p>
-                            </div>
-                            <div>
                                 <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Deskripsi</label>
                                 <textarea name="description" rows="2"
                                     class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none"
@@ -218,8 +199,12 @@
                                         @else
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">Opsional</span>
                                         @endif
-                                        @if($t->prodi_id)
+                                        @if($t->prodis->isNotEmpty())
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{{ $t->prodis->pluck('name')->join(', ') }}</span>
+                                        @elseif($t->prodi_id)
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{{ $t->prodi?->name }}</span>
+                                        @else
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">Semua Prodi</span>
                                         @endif
                                         @if($isDone)
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✓ Selesai</span>
@@ -287,13 +272,31 @@
                             @csrf
                             @if($prodi)
                             <input type="hidden" name="prodi" value="{{ $prodi->id }}">
-                            <input type="hidden" name="prodi_id" value="{{ $prodi->id }}">
                             @endif
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Judul Dokumen / Task *</label>
                                 <input type="text" name="title" required
                                     class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none"
                                     placeholder="e.g. Surat Pernyataan Dekan">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Kategori Jenis Dokumen *</label>
+                                <select name="category" required class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
+                                    <option value="">Pilih kategori dokumen</option>
+                                    <option value="kebijakan">Dokumen Kebijakan</option>
+                                    <option value="pelaksanaan">Dokumen Pelaksanaan</option>
+                                    <option value="evaluasi">Dokumen Evaluasi</option>
+                                    <option value="pendukung_digital">Dokumen Pendukung Digital</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Prodi Tujuan</label>
+                                <select name="prodi_ids[]" multiple size="4" class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
+                                    @foreach($prodis as $optionProdi)
+                                    <option value="{{ $optionProdi->id }}" @selected($prodi?->id === $optionProdi->id || $activeStage->prodi_id === $optionProdi->id)>{{ $optionProdi->name }}</option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-xs text-gray-400">Ctrl/Cmd untuk memilih beberapa. Kosong berarti semua prodi.</p>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Link URL Dokumen</label>

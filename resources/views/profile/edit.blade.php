@@ -1,198 +1,61 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Profile') }}
-            </h2>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Kelola informasi dan keamanan akun Anda
-            </p>
-        </div>
+        <div><div class="mb-1 text-xs font-medium text-slate-400">Akun / <span class="text-blue-600 dark:text-blue-400">Profil</span></div><h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Profil Saya</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Kelola informasi pribadi dan keamanan akun Anda.</p></div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
-            <div class="p-6 sm:p-10 bg-white dark:bg-[#151b2b] shadow-lg sm:rounded-xl border border-gray-100 dark:border-gray-800">
-                <header class="mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                        Profile
-                    </h2>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Kelola informasi dan keamanan akun Anda
-                    </p>
-                </header>
-
-                <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
-                    @csrf
-                    @method('patch')
-
-                    {{-- Name --}}
-                    <div>
-                        <div class="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Nama
+    <div class="min-h-screen bg-slate-50/70 py-8 dark:bg-slate-950/30">
+        <div class="mx-auto grid w-full max-w-6xl grid-cols-1 items-start gap-6 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
+            <div class="space-y-6 lg:col-span-8">
+                <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                    <div class="border-t-4 border-sky-500 px-5 py-5 sm:px-7"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Informasi & Verifikasi Email</h3><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Perbarui nama akun dan alamat email yang digunakan.</p></div>
+                    <form method="POST" action="{{ route('profile.update') }}" class="space-y-5 border-t border-slate-100 px-5 py-6 sm:px-7 dark:border-slate-700">
+                        @csrf @method('PATCH')
+                        <label class="block"><span class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">Nama Lengkap <span class="text-rose-500">*</span></span><input name="name" value="{{ old('name', $user->name) }}" required autocomplete="name" class="w-full rounded-xl border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-600 dark:bg-slate-900 dark:text-white"><x-input-error class="mt-2" :messages="$errors->get('name')" /></label>
+                        <label class="block"><span class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">Email Pribadi <span class="text-rose-500">*</span></span><input name="email" type="email" value="{{ old('email', $user->email) }}" required autocomplete="username" class="w-full rounded-xl border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200"><x-input-error class="mt-2" :messages="$errors->get('email')" /></label>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            @if($user->email_verified_at)<span class="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Email sudah diverifikasi</span>@else<span class="text-sm font-medium text-amber-600 dark:text-amber-400">Email belum diverifikasi</span>@endif
+                            <button type="submit" class="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20">Simpan Profil</button>
                         </div>
-                        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" class="block w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required autofocus autocomplete="name" />
-                        <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                    </div>
-
-                    {{-- Email --}}
-                    <div>
-                        <div class="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                            Email
-                        </div>
-                        <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="block w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required autocomplete="username" />
-                        <x-input-error class="mt-2" :messages="$errors->get('email')" />
-                    </div>
-
-                    {{-- Current Password --}}
-                    <div x-data="{ show: false }">
-                        <div class="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                            Password Saat Ini
-                        </div>
-                        <div class="relative">
-                            <input id="current_password" name="current_password" :type="show ? 'text' : 'password'" class="block w-full pl-3 pr-10 py-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="••••••••" autocomplete="current-password" />
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                                <button type="button" @click="show = !show" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
-                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    <svg x-show="show" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <x-input-error class="mt-2" :messages="$errors->get('current_password')" />
-                    </div>
-
-                    {{-- New Password --}}
-                    <div x-data="{ show: false }">
-                        <div class="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                            Password Baru
-                        </div>
-                        <div class="relative">
-                            <input id="password" name="password" :type="show ? 'text' : 'password'" class="block w-full pl-3 pr-10 py-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="••••••••" autocomplete="new-password" />
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                                <button type="button" @click="show = !show" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
-                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    <svg x-show="show" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <x-input-error class="mt-2" :messages="$errors->get('password')" />
-                    </div>
-
-                    {{-- Confirm Password --}}
-                    <div x-data="{ show: false }">
-                        <div class="flex items-center gap-2 mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                            Konfirmasi Password
-                        </div>
-                        <div class="relative">
-                            <input id="password_confirmation" name="password_confirmation" :type="show ? 'text' : 'password'" class="block w-full pl-3 pr-10 py-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="••••••••" autocomplete="new-password" />
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                                <button type="button" @click="show = !show" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
-                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>                                       
-                                    </svg>
-                                    <svg x-show="show" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <x-input-error class="mt-2" :messages="$errors->get('password_confirmation')" />
-                    </div>
-
-                    <div class="pt-4 flex items-center gap-4">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Simpan Perubahan
-                        </button>
-
-                        @if (session('status') === 'profile-updated')
-                        <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)" class="text-sm font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Berhasil Disimpan.
-                        </p>
-                        @endif
-                    </div>
-                </form>
-
-                <hr class="my-8 border-gray-200 dark:border-gray-700">
-
-                {{-- Delete Account Section --}}
-                <section>
-                    <header>
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            Hapus Akun
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            Menghapus akun Anda akan menghapus semua data Anda secara permanen. Pastikan untuk menyimpan informasi yang dikendari sebelum melanjutkan.
-                        </p>
-                    </header>
-                    <div class="mt-6 flex flex-wrap gap-4 items-center">
-                        <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            Hapus Akun
-                        </button>
-                    </div>
-
-                    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-                        <form method="post" action="{{ route('profile.destroy') }}" class="p-6 bg-white dark:bg-[#151b2b]">
-                            @csrf
-                            @method('delete')
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                Apakah Anda yakin ingin menghapus akun?
-                            </h2>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                Setelah akun dihapus, semua datanya akan hilang dan tidak dapat dipulihkan. Masukkan password Anda untuk mengonfirmasi.
-                            </p>
-                            <div class="mt-6">
-                                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
-                                <x-text-input id="password" name="password" type="password" class="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1423] text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="{{ __('Password Saat Ini') }}" required />
-                                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
-                            </div>
-                            <div class="mt-6 flex justify-end gap-3 text-sm">
-                                <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent rounded-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-gray-700 transition" x-on:click="$dispatch('close')">
-                                    Batal
-                                </button>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-lg font-semibold text-white uppercase tracking-widest hover:bg-red-700 transition">
-                                    Hapus Akun Permanen
-                                </button>
-                            </div>
-                        </form>
-                    </x-modal>
+                        @if(session('status') === 'profile-updated')<p class="text-sm font-medium text-emerald-600">Perubahan profil berhasil disimpan.</p>@endif
+                    </form>
                 </section>
+
+                <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                    <div class="border-t-4 border-amber-500 px-5 py-5 sm:px-7"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Keamanan Akun</h3><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Gunakan kata sandi panjang dan unik untuk menjaga akun.</p></div>
+                    <form method="POST" action="{{ route('password.update') }}" class="space-y-5 border-t border-slate-100 px-5 py-6 sm:px-7 dark:border-slate-700">
+                        @csrf @method('PUT')
+                        <div class="grid gap-5 md:grid-cols-2">
+                            <label class="block md:col-span-2"><span class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">Kata Sandi Saat Ini</span><input name="current_password" type="password" autocomplete="current-password" class="w-full rounded-xl border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-white"><x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" /></label>
+                            <label class="block"><span class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">Kata Sandi Baru</span><input name="password" type="password" autocomplete="new-password" class="w-full rounded-xl border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-white"><x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" /></label>
+                            <label class="block"><span class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">Konfirmasi Kata Sandi</span><input name="password_confirmation" type="password" autocomplete="new-password" class="w-full rounded-xl border-slate-300 bg-white px-4 py-3 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-white"><x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" /></label>
+                        </div>
+                        <div class="flex items-center justify-between gap-3"><p class="text-xs text-slate-400">Disarankan mengganti kata sandi secara berkala.</p><button class="rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600">Ganti Kata Sandi</button></div>
+                        @if(session('status') === 'password-updated')<p class="text-sm font-medium text-emerald-600">Kata sandi berhasil diperbarui.</p>@endif
+                    </form>
+                </section>
+
+                <section class="rounded-2xl border border-rose-200 bg-white p-5 shadow-sm dark:border-rose-900/50 dark:bg-slate-800 sm:p-7">@include('profile.partials.delete-user-form')</section>
             </div>
+
+            <aside class="lg:sticky lg:top-6 lg:col-span-4">
+                <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                    <div class="border-t-4 border-sky-500 px-5 py-5 text-center"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Foto Profil</h3><p class="mt-1 text-xs text-slate-400">JPG, PNG, atau WebP · maksimal 2 MB</p></div>
+                    <div class="border-t border-slate-100 px-5 py-7 text-center dark:border-slate-700">
+                        <div class="mx-auto flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-gradient-to-br from-blue-100 to-indigo-200 text-4xl font-extrabold text-blue-700 shadow-xl ring-1 ring-slate-200 dark:border-slate-800 dark:from-slate-700 dark:to-slate-600 dark:text-blue-300 dark:ring-slate-600">
+                            @if($user->avatar_path)<img src="{{ Storage::url($user->avatar_path) }}" alt="Foto {{ $user->name }}" class="h-full w-full object-cover">@else{{ strtoupper(substr($user->name, 0, 2)) }}@endif
+                        </div>
+                        <h4 class="mt-5 text-base font-bold text-slate-900 dark:text-white">{{ $user->name }}</h4><p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $user->roles->pluck('name')->join(', ') ?: 'User' }}</p>
+                        <form method="POST" action="{{ route('profile.avatar.update') }}" enctype="multipart/form-data" class="mt-6" x-data="{ fileName: '' }">
+                            @csrf
+                            <label class="block cursor-pointer rounded-xl border-2 border-dashed border-slate-300 p-4 transition hover:border-blue-400 hover:bg-blue-50/50 dark:border-slate-600 dark:hover:border-blue-500 dark:hover:bg-blue-900/10"><input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" required class="sr-only" @change="fileName = $event.target.files[0]?.name || ''"><span class="text-sm font-semibold text-blue-600 dark:text-blue-400" x-text="fileName || '{{ $user->avatar_path ? 'Pilih foto pengganti' : 'Pilih foto profil' }}'"></span></label>
+                            <x-input-error :messages="$errors->get('avatar')" class="mt-2 text-left" />
+                            <button type="submit" class="mt-3 w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">{{ $user->avatar_path ? 'Ganti Foto' : 'Unggah Foto' }}</button>
+                        </form>
+                        @if($user->avatar_path)<form method="POST" action="{{ route('profile.avatar.destroy') }}" class="mt-2">@csrf @method('DELETE')<button type="submit" onclick="return confirm('Hapus foto profil?')" class="w-full rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-rose-900 dark:text-rose-400 dark:hover:bg-rose-900/20">Hapus Foto</button></form>@endif
+                        @if(in_array(session('status'), ['avatar-updated', 'avatar-deleted']))<p class="mt-3 text-sm font-medium text-emerald-600">Foto profil berhasil diperbarui.</p>@endif
+                    </div>
+                </section>
+            </aside>
         </div>
     </div>
 </x-app-layout>

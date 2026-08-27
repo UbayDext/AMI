@@ -244,8 +244,12 @@
                                         @else
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400">Opsional</span>
                                         @endif
-                                        @if($t->prodi_id)
+                                        @if($t->prodis->isNotEmpty())
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{{ $t->prodis->pluck('name')->join(', ') }}</span>
+                                        @elseif($t->prodi_id)
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{{ $t->prodi?->name }}</span>
+                                        @else
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">Semua Prodi</span>
                                         @endif
                                         @if($t->created_by === auth()->id() || auth()->user()->hasRole('admin'))
                                         <div class="ml-2 flex items-center gap-2">
@@ -494,64 +498,27 @@
 
     {{-- Modals Dokumen (Task) --}}
     @if($activeStage)
-    <x-modal name="create-task" :show="false" maxWidth="md">
-        <form method="POST" action="{{ route('internal.standard-preparations.tasks.store', [$standard, $activeStage]) }}" class="relative overflow-hidden">
+    <x-modal name="create-task" :show="false" maxWidth="lg">
+        <form method="POST" action="{{ route('internal.standard-preparations.tasks.store', [$standard, $activeStage]) }}" class="relative overflow-hidden bg-white dark:bg-slate-800">
             @csrf
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
-            <div class="p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2.5 bg-emerald-50 dark:bg-emerald-900/40 rounded-xl text-emerald-600 dark:text-emerald-400">
+            <div class="flex items-center gap-4 border-b border-slate-200 px-5 py-5 sm:px-7 dark:border-slate-700">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Tambah Dokumen</h2>
-                </div>
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Judul Dokumen <span class="text-rose-500">*</span></label>
-                        <input type="text" name="title" required placeholder="Contoh: SK Rektor"
-                            class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all text-sm px-4 py-2.5" />
+                    <div class="min-w-0">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Tambah Dokumen</h2>
+                        <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Lengkapi informasi dan tentukan prodi tujuan.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Kategori Jenis Dokumen <span class="text-rose-500">*</span></label>
-                        <select name="category" required class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm px-4 py-2.5">
-                            <option value="">Pilih kategori dokumen</option>
-                            <option value="kebijakan">Dokumen Kebijakan</option>
-                            <option value="pelaksanaan">Dokumen Pelaksanaan</option>
-                            <option value="evaluasi">Dokumen Evaluasi</option>
-                            <option value="pendukung_digital">Dokumen Pendukung Digital</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Prodi Tujuan</label>
-                        <select name="prodi_ids[]" multiple size="4" class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm px-4 py-2.5">
-                            @foreach($prodis as $optionProdi)
-                            <option value="{{ $optionProdi->id }}" @selected($prodi?->id === $optionProdi->id || $activeStage->prodi_id === $optionProdi->id)>{{ $optionProdi->name }}</option>
-                            @endforeach
-                        </select>
-                        <p class="mt-1 text-xs text-gray-400">Gunakan Ctrl/Cmd untuk memilih beberapa prodi. Kosongkan untuk semua prodi.</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Deskripsi <span class="text-rose-500">*</span></label>
-                        <textarea name="description" required rows="3" placeholder="Jelaskan secara singkat..."
-                            class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all text-sm px-4 py-2.5"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Link Referensi <span class="text-rose-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                            </div>
-                            <input type="url" name="link" required placeholder="https://..."
-                                class="w-full pl-9 rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900/50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all text-sm py-2.5" />
-                        </div>
-                    </div>
-                </div>
             </div>
-            <div class="px-8 py-5 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+            <div class="max-h-[calc(100vh-13rem)] overflow-y-auto px-5 py-6 sm:px-7">
+                <x-document-task-fields :prodis="$prodis" :current-prodi="$prodi" :stage="$activeStage" />
+            </div>
+            <div class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:px-7 dark:border-slate-700 dark:bg-slate-900/40">
                 <button type="button" x-on:click="$dispatch('close')"
-                    class="px-5 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm">Batal</button>
+                    class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 focus:ring-4 focus:ring-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-700">Batal</button>
                 <button type="submit"
-                    class="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-all shadow-md hover:-translate-y-0.5">Simpan Dokumen</button>
+                    class="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-500/25">Simpan Dokumen</button>
             </div>
         </form>
     </x-modal>

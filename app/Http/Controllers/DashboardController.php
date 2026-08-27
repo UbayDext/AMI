@@ -12,16 +12,41 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $totalAssessments = Assessment::count();
-        $submittedAssessments = Assessment::where('status', 'submitted')->count();
-        $totalFindings = Finding::count();
+        $filters = $request->validate([
+            'year_id' => ['nullable', 'integer', 'exists:accreditation_years,id'],
+            'unit' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $assessmentQuery = Assessment::query()
+            ->when($filters['year_id'] ?? null, fn ($query, $yearId) => $query->where('accreditation_year_id', $yearId))
+            ->when($filters['unit'] ?? null, fn ($query, $unit) => $query->where('unit_name', $unit));
+
+        $totalAssessments = (clone $assessmentQuery)->count();
+        $submittedAssessments = (clone $assessmentQuery)->where('status', 'submitted')->count();
+
+        $totalFindings = Finding::query()
+            ->whereHas('assessment', fn ($query) => $query
+                ->when($filters['year_id'] ?? null, fn ($q, $yearId) => $q->where('accreditation_year_id', $yearId))
+                ->when($filters['unit'] ?? null, fn ($q, $unit) => $q->where('unit_name', $unit)))
+            ->count();
+
+        $totalPtks = Ptk::query()
+            ->whereHas('assessment', fn ($query) => $query
+                ->when($filters['year_id'] ?? null, fn ($q, $yearId) => $q->where('accreditation_year_id', $yearId))
+                ->when($filters['unit'] ?? null, fn ($q, $unit) => $q->where('unit_name', $unit)))
+            ->count();
 
         $recentAssessments = Assessment::with(['accreditationYear', 'assessor'])
+            ->when($filters['year_id'] ?? null, fn ($query, $yearId) => $query->where('accreditation_year_id', $yearId))
+            ->when($filters['unit'] ?? null, fn ($query, $unit) => $query->where('unit_name', $unit))
             ->latest()
             ->take(5)
             ->get();
+
+        $years = AccreditationYear::orderByDesc('year')->get(['id', 'year']);
+        $units = Assessment::query()->whereNotNull('unit_name')->distinct()->orderBy('unit_name')->pluck('unit_name');
 
         $blockedUsers = collect();
         if (auth()->user()?->hasRole('admin')) {
@@ -32,23 +57,31 @@ class DashboardController extends Controller
             'totalAssessments',
             'submittedAssessments',
             'totalFindings',
+            'totalPtks',
             'recentAssessments',
-            'blockedUsers'
+            'blockedUsers',
+            'years',
+            'units',
+            'filters',
         ));
     }
 
-    public function data(): JsonResponse
+    public function data(Request $request): JsonResponse
     {
-        $years = AccreditationYear::orderBy('year')->get(['id', 'year']);
+        $yearId = $request->integer('year_id') ?: null;
+        $unit = $request->string('unit')->trim()->toString();
+        $years = AccreditationYear::query()->when($yearId, fn ($query) => $query->whereKey($yearId))->orderBy('year')->get(['id', 'year']);
 
         $assCounts = Assessment::query()
             ->selectRaw('accreditation_year_id, COUNT(*) as total')
             ->where('status', 'submitted')
+            ->when($unit, fn ($query) => $query->where('unit_name', $unit))
             ->groupBy('accreditation_year_id')
             ->pluck('total', 'accreditation_year_id');
 
         $findingCounts = Finding::query()
             ->join('assessments', 'findings.assessment_id', '=', 'assessments.id')
+            ->when($unit, fn ($query) => $query->where('assessments.unit_name', $unit))
             ->selectRaw('assessments.accreditation_year_id, COUNT(findings.id) as total')
             ->groupBy('assessments.accreditation_year_id')
             ->pluck('total', 'assessments.accreditation_year_id');
@@ -67,6 +100,7 @@ class DashboardController extends Controller
     public function kategoriData(Request $request): JsonResponse
     {
         $yearId = $request->query('year_id');
+        $unit = $request->string('unit')->trim()->toString();
 
         $years        = AccreditationYear::orderBy('year')->get(['id', 'year']);
         $kategoriList = ['Sesuai', 'Observasi', 'KTS Minor', 'KTS Mayor', 'OFI'];
@@ -81,6 +115,7 @@ class DashboardController extends Controller
 
         $baseQuery = Ptk::query()
             ->join('assessments', 'ptks.assessment_id', '=', 'assessments.id')
+            ->when($unit, fn ($query) => $query->where('assessments.unit_name', $unit))
             ->whereIn('ptks.category', $kategoriList);
 
         if ($yearId) {

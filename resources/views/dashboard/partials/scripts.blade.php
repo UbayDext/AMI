@@ -70,10 +70,11 @@
     let globalAssessmentsData = null;
     let globalKategoriData = {}; // keyed by yearId
     let currentKategoriYearId = '';
+    const dashboardFilters = @json($filters);
 
     document.addEventListener('DOMContentLoaded', function() {
         loadCharts();
-        initKategoriChart();
+        initKategoriChart(dashboardFilters.year_id || '');
     });
 
     // Listen for Dark Mode toggles globally
@@ -91,7 +92,10 @@
     // ── Assessments & Findings chart ──────────────────────────────────
     async function loadCharts() {
         try {
-            const res = await fetch("{{ route('dashboard.data') }}");
+            const params = new URLSearchParams();
+            if (dashboardFilters.year_id) params.set('year_id', dashboardFilters.year_id);
+            if (dashboardFilters.unit) params.set('unit', dashboardFilters.unit);
+            const res = await fetch("{{ route('dashboard.data') }}" + (params.toString() ? '?' + params.toString() : ''));
             globalAssessmentsData = await res.json();
             renderAssessmentsChart();
         } catch (err) {
@@ -136,7 +140,11 @@
         currentKategoriYearId = yearId;
         try {
             if (!globalKategoriData[yearId]) {
-                const url = "{{ route('dashboard.kategori') }}" + (yearId ? '?year_id=' + yearId : '');
+                const params = new URLSearchParams();
+                const activeYear = yearId || dashboardFilters.year_id || '';
+                if (activeYear) params.set('year_id', activeYear);
+                if (dashboardFilters.unit) params.set('unit', dashboardFilters.unit);
+                const url = "{{ route('dashboard.kategori') }}" + (params.toString() ? '?' + params.toString() : '');
                 const res = await fetch(url);
                 globalKategoriData[yearId] = await res.json();
             }

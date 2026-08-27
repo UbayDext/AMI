@@ -55,36 +55,25 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
 
-        <!-- Sidebar (Navigation) -->
+        <!-- Top Navigation -->
         @include('layouts.navigation')
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100 dark:bg-gray-900">
-
-            <!-- Mobile Header (Hamburger) -->
-            <div class="sm:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between transition-colors">
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 dark:text-gray-400 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                <div class="font-semibold text-lg text-gray-800 dark:text-gray-100">{{ config('app.name') }}</div>
-                <div class="w-6"></div> <!-- Spacer for centering if needed -->
-            </div>
+        <div class="flex min-h-0 flex-col bg-gray-100 dark:bg-gray-900">
 
             <!-- Page Heading -->
             @isset($header)
             <header class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-900/50 transition-colors">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
             </header>
             @endisset
 
             <!-- Scrollable Page Content -->
-            <main class="flex-1 overflow-y-auto">
+            <main class="min-h-0 flex-1">
                 {{ $slot }}
             </main>
         </div>

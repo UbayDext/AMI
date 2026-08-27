@@ -10,12 +10,41 @@ use Illuminate\Http\Request;
 
 class AssessmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $assessments = Assessment::with(['accreditationYear', 'assessor'])
-            ->latest()->paginate(20);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:draft,submitted,reviewed'],
+            'year' => ['nullable', 'integer', 'exists:accreditation_years,id'],
+        ]);
 
-        return view('admin.assessments.index', compact('assessments'));
+        $assessmentQuery = Assessment::query();
+        $stats = [
+            'total' => (clone $assessmentQuery)->count(),
+            'draft' => (clone $assessmentQuery)->where('status', 'draft')->count(),
+            'submitted' => (clone $assessmentQuery)->where('status', 'submitted')->count(),
+            'reviewed' => (clone $assessmentQuery)->where('status', 'reviewed')->count(),
+        ];
+
+        $assessments = $assessmentQuery
+            ->with(['accreditationYear', 'assessor'])
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('unit_name', 'like', "%{$search}%")
+                        ->orWhereHas('assessor', fn ($query) => $query
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%"));
+                });
+            })
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($filters['year'] ?? null, fn ($query, $year) => $query->where('accreditation_year_id', $year))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        $years = AccreditationYear::orderByDesc('year')->get(['id', 'year']);
+
+        return view('admin.assessments.index', compact('assessments', 'years', 'stats', 'filters'));
     }
 
     public function create()

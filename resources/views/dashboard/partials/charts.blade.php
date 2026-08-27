@@ -1,8 +1,10 @@
 {{-- ── Charts Row ───────────────────────────────────────── --}}
-<div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+<section>
+<div class="mb-3"><h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Analitik Audit</h3><p class="text-xs text-slate-400">Perbandingan assessment dan distribusi kategori tindak lanjut.</p></div>
+<div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
 
     {{-- Radar: Assessments & Findings per Year (3/5) --}}
-    <div class="lg:col-span-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-7 dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Assessments & Temuan per Tahun</h3>
@@ -16,7 +18,7 @@
     </div>
 
     {{-- Kategori PTK Radar (2/5) --}}
-    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-5 dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between mb-4">
             <div>
                 <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Distribusi Kategori PTK</h3>
@@ -45,3 +47,4 @@
         </div>
     </div>
 </div>
+</section>
