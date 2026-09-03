@@ -11,7 +11,7 @@ class AmiSubmission extends Model
 {
     protected $fillable = [
         'cycle_id', 'prodi_id', 'standard_id',
-        'owner_id', 'assignment_id', 'submitted_by', 'status', 'submitted_at',
+        'owner_id', 'assignment_id', 'assignment_group_id', 'submitted_by', 'status', 'submitted_at',
     ];
 
     protected $casts = [
@@ -46,6 +46,11 @@ class AmiSubmission extends Model
     public function assignment(): BelongsTo
     {
         return $this->belongsTo(AmiAuditeeAssignment::class, 'assignment_id');
+    }
+
+    public function assignmentGroup(): BelongsTo
+    {
+        return $this->belongsTo(AmiAuditeeAssignmentGroup::class, 'assignment_group_id');
     }
 
     public function answers(): HasMany

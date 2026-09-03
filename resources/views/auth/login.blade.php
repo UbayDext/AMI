@@ -32,8 +32,17 @@
         </div>
 
         <!-- Right Side: Login Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 p-8">
+        <div class="w-full lg:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 px-5 py-8 sm:p-8">
             <div class="w-full max-w-md space-y-8">
+                <div class="flex items-center justify-center gap-3 lg:hidden">
+                    <span class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white p-2 shadow-md ring-1 ring-gray-200 dark:ring-gray-700">
+                        <x-application-logo class="h-full w-full object-contain" />
+                    </span>
+                    <span class="min-w-0">
+                        <span class="block text-xs font-medium text-indigo-600 dark:text-indigo-400">Sistem Penjaminan Mutu Internal</span>
+                        <span class="mt-1 block text-lg font-bold leading-tight text-gray-900 dark:text-white">STIT Hidayatunnajah Bekasi</span>
+                    </span>
+                </div>
                 <div class="text-center lg:text-left">
                     <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome back</h2>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Please enter your details to sign in.</p>

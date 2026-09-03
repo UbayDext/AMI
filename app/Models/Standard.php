@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Standard extends Model
 {
@@ -22,5 +23,11 @@ class Standard extends Model
     public function findings(): HasMany
     {
         return $this->hasMany(Finding::class);
+    }
+
+    public function auditAreas(): BelongsToMany
+    {
+        return $this->belongsToMany(AuditArea::class, 'standard_audit_areas')
+            ->withPivot(['auditee', 'sort_order'])->withTimestamps();
     }
 }

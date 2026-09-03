@@ -2,23 +2,30 @@
     <x-slot name="header">
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h2 class="font-semibold text-xl">Persiapan Dokumen Internal</h2>
+                <h2 class="font-semibold text-xl">Evidence {{ $standard->code }} — {{ $standard->name }}</h2>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Upload dokumen + checklist progres per tahap.
                 </p>
             </div>
 
             <div class="flex items-center gap-2">
-                {{-- Filter tahun (opsional kalau kamu pakai query ?year=ID) --}}
-                <form method="GET" action="{{ route('admin.preparations.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('internal.preparations.show', $standard) }}" class="flex items-center gap-2">
                     <input type="hidden" name="stage" value="{{ request('stage') }}">
-                    <input
-                        name="year"
-                        value="{{ request('year') }}"
-                        placeholder="Year ID (opsional)"
-                        class="border rounded px-3 py-2 text-sm w-40" />
+                    <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    <select name="year" class="border rounded px-3 py-2 text-sm dark:bg-gray-800">
+                        <option value="">Semua tahun</option>
+                        @foreach($years as $yearOption)
+                            <option value="{{ $yearOption->id }}" @selected((string) request('year') === (string) $yearOption->id)>{{ $yearOption->name ?? $yearOption->year ?? ('Tahun #'.$yearOption->id) }}</option>
+                        @endforeach
+                    </select>
+                    <select name="prodi" class="border rounded px-3 py-2 text-sm dark:bg-gray-800" required>
+                        <option value="">Pilih prodi</option>
+                        @foreach($prodis as $prodiOption)
+                            <option value="{{ $prodiOption->id }}" @selected((string) request('prodi') === (string) $prodiOption->id)>{{ $prodiOption->name }}</option>
+                        @endforeach
+                    </select>
                     <button class="px-3 py-2 text-sm border rounded">Terapkan</button>
-                    <a href="{{ route('admin.preparations.index') }}" class="px-3 py-2 text-sm border rounded">Reset</a>
+                    <a href="{{ route('internal.preparations.show', $standard) }}" class="px-3 py-2 text-sm border rounded">Reset</a>
                 </form>
             </div>
         </div>
@@ -38,7 +45,7 @@
     ->sortByDesc('created_at')
     ->first();
 
-    $previewUrl = $latestFile ? asset('storage/' . $latestFile->file_path) : null;
+    $previewUrl = $latestFile ? ($latestFile->link_url ?: asset('storage/' . $latestFile->file_path)) : null;
     $previewName = $latestFile?->original_name;
     $previewMime = $latestFile?->mime_type;
 
@@ -70,12 +77,13 @@
                         $isActive = $active && $active->id === $s->id;
                         $linkParams = array_filter([
                         'year' => request('year'),
+                        'prodi' => request('prodi'),
                         'stage' => $s->id,
                         ]);
                         @endphp
 
                         <a
-                            href="{{ route('admin.preparations.index', $linkParams) }}"
+                            href="{{ route('internal.preparations.show', array_merge([$standard], $linkParams)) }}"
                             class="block border rounded p-3 hover:bg-gray-50 {{ $isActive ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 dark:border-gray-700' }}">
                             <div class="flex items-center justify-between gap-3">
                                 <div class="font-medium">
@@ -127,6 +135,9 @@
                     <div class="mt-4 space-y-3">
                         @forelse($tasks as $t)
                         <div class="border rounded p-4 {{ $t->is_done ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' }}">
+                            @if(!$prodi)
+                                <div class="mb-3 rounded bg-amber-50 p-2 text-xs text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">Pilih prodi terlebih dahulu untuk mengelola evidence.</div>
+                            @endif
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2">
@@ -156,10 +167,12 @@
                                 </div>
 
                                 {{-- Toggle done --}}
-                                <form method="POST" action="{{ route('admin.preparations.toggle', $t) }}" class="shrink-0">
+                                <form method="POST" action="{{ route('internal.preparations.toggle', $t) }}" class="shrink-0">
                                     @csrf
+                                    <input type="hidden" name="prodi_id" value="{{ $prodi?->id }}">
                                     <input type="hidden" name="done" value="{{ $t->is_done ? 0 : 1 }}">
                                     <button
+                                        @disabled(!$prodi)
                                         class="px-3 py-2 text-sm rounded border {{ $t->is_done ? 'bg-white dark:bg-gray-800' : 'bg-gray-900 text-white border-gray-900' }}"
                                         type="submit">
                                         {{ $t->is_done ? 'Buka' : 'Selesai' }}
@@ -169,14 +182,16 @@
 
                             {{-- Upload --}}
                             <div class="mt-3">
-                                <form method="POST" action="{{ route('admin.preparations.upload', $t) }}" enctype="multipart/form-data" class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('internal.preparations.upload', $t) }}" enctype="multipart/form-data" class="flex items-center gap-2">
                                     @csrf
+                                    <input type="hidden" name="prodi_id" value="{{ $prodi?->id }}">
                                     <input
                                         type="file"
                                         name="file"
                                         class="block w-full text-sm border rounded p-2 bg-white dark:bg-gray-800"
+                                        @disabled(!$prodi)
                                         required />
-                                    <button class="px-3 py-2 text-sm bg-emerald-600 text-white rounded">
+                                    <button @disabled(!$prodi) class="px-3 py-2 text-sm bg-emerald-600 text-white rounded disabled:cursor-not-allowed disabled:opacity-50">
                                         Upload
                                     </button>
                                 </form>
@@ -189,7 +204,7 @@
                                 <div class="flex items-center justify-between gap-3 text-sm border rounded p-2 bg-white dark:bg-gray-800">
                                     <div class="min-w-0">
                                         <a
-                                            href="{{ asset('storage/' . $f->file_path) }}"
+                                            href="{{ $f->link_url ?: asset('storage/' . $f->file_path) }}"
                                             target="_blank"
                                             class="underline break-all">
                                             {{ $f->original_name }}
@@ -199,7 +214,7 @@
                                         </div>
                                     </div>
 
-                                    <form method="POST" action="{{ route('admin.preparations.files.destroy', $f) }}" onsubmit="return confirm('Hapus file ini?')">
+                                    <form method="POST" action="{{ route('internal.preparations.files.destroy', $f) }}" onsubmit="return confirm('Hapus file ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="px-3 py-2 text-xs rounded border bg-white dark:bg-gray-800 hover:bg-gray-50">

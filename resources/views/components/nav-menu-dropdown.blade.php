@@ -1,6 +1,11 @@
 @props(['label', 'active' => false])
 
-<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @click.outside="open = false" class="relative">
+<div {{ $attributes->merge(['class' => 'relative']) }}
+    x-data="{ open: false, guided: false }"
+    @onboarding-open-menu.window="guided = ($event.detail === $el.dataset.onboarding); open = guided"
+    @mouseenter="open = true"
+    @mouseleave="if (!guided) open = false"
+    @click.outside="if (!guided) open = false">
     <button @click="open = !open" type="button"
         class="{{ $active ? 'relative flex h-14 items-center gap-1.5 px-3 text-sm font-bold text-white after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-white' : 'flex h-14 items-center gap-1.5 px-3 text-sm font-medium text-blue-100 transition hover:text-white' }}">
         {{ $label }}

@@ -6,7 +6,9 @@ use App\Models\AccreditationYear;
 use App\Models\Assessment;
 use App\Models\Finding;
 use App\Models\Ptk;
+use App\Models\Prodi;
 use App\Models\User;
+use App\Models\OnboardingProgress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -46,11 +48,37 @@ class DashboardController extends Controller
             ->get();
 
         $years = AccreditationYear::orderByDesc('year')->get(['id', 'year']);
-        $units = Assessment::query()->whereNotNull('unit_name')->distinct()->orderBy('unit_name')->pluck('unit_name');
+        // The dashboard filter must follow the Prodi master data. Keep distinct
+        // historical assessment units as a fallback for records whose prodi has
+        // since been renamed or deactivated.
+        $units = Prodi::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->pluck('name')
+            ->merge(Assessment::query()
+                ->whereNotNull('unit_name')
+                ->where('unit_name', '!=', '')
+                ->distinct()
+                ->pluck('unit_name'))
+            ->unique()
+            ->sort()
+            ->values();
 
         $blockedUsers = collect();
+        $adminOnboarding = null;
+        $auditeeOnboarding = null;
         if (auth()->user()?->hasRole('admin')) {
             $blockedUsers = User::where('is_blocked', true)->latest()->get();
+            $adminOnboarding = OnboardingProgress::firstOrCreate(
+                ['user_id' => auth()->id(), 'onboarding_key' => 'dashboard_admin', 'version' => 3],
+                ['current_step' => 0, 'status' => 'started', 'started_at' => now(), 'last_seen_at' => now()]
+            );
+        }
+        if (auth()->user()?->hasRole('auditee') && ! auth()->user()?->hasRole('admin')) {
+            $auditeeOnboarding = OnboardingProgress::firstOrCreate(
+                ['user_id' => auth()->id(), 'onboarding_key' => 'dashboard_auditee', 'version' => 1],
+                ['current_step' => 0, 'status' => 'started', 'started_at' => now(), 'last_seen_at' => now()]
+            );
         }
 
         return view('dashboard', compact(
@@ -63,6 +91,8 @@ class DashboardController extends Controller
             'years',
             'units',
             'filters',
+            'adminOnboarding',
+            'auditeeOnboarding',
         ));
     }
 

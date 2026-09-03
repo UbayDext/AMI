@@ -6,7 +6,6 @@ use App\Http\Controllers\Assessor\AssessmentListController;
 use App\Http\Controllers\Assessor\AssessmentShowController;
 use App\Http\Controllers\Admin\StandardPreparationController;
 use App\Http\Controllers\Internal\PreparationController;
-use App\Http\Controllers\Internal\StandardPreparationViewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\AssessmentController as AdminAssessmentController;
@@ -23,6 +22,8 @@ use App\Http\Controllers\RoleRequestController;
 use App\Http\Controllers\Admin\AmiCycleController;
 use App\Http\Controllers\Internal\AmiSubmissionController;
 use App\Http\Controllers\Assessor\AmiReviewController;
+use App\Http\Controllers\Admin\AmiQuestionController;
+use App\Http\Controllers\OnboardingController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -37,6 +38,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/data', [DashboardController::class, 'data'])->name('dashboard.data');
         Route::get('/dashboard/kategori', [DashboardController::class, 'kategoriData'])->name('dashboard.kategori');
     });
+    Route::post('/onboarding/dashboard-admin/progress', [OnboardingController::class, 'update'])->name('onboarding.dashboard-admin.progress');
+    Route::post('/onboarding/dashboard-admin/restart', [OnboardingController::class, 'restart'])->name('onboarding.dashboard-admin.restart');
+    Route::post('/onboarding/admin-assessments/progress', [OnboardingController::class, 'assessmentUpdate'])->name('onboarding.admin-assessments.progress');
+    Route::post('/onboarding/admin-assessments/restart', [OnboardingController::class, 'assessmentRestart'])->name('onboarding.admin-assessments.restart');
+    Route::post('/onboarding/admin-ami-cycles/progress', [OnboardingController::class, 'amiCycleUpdate'])->name('onboarding.admin-ami-cycles.progress');
+    Route::post('/onboarding/admin-ami-cycles/restart', [OnboardingController::class, 'amiCycleRestart'])->name('onboarding.admin-ami-cycles.restart');
+    Route::post('/onboarding/admin-evidence-standards/progress', [OnboardingController::class, 'standardUpdate'])->name('onboarding.admin-evidence-standards.progress');
+    Route::post('/onboarding/admin-evidence-standards/restart', [OnboardingController::class, 'standardRestart'])->name('onboarding.admin-evidence-standards.restart');
+    Route::post('/onboarding/admin-ami-questions/progress', [OnboardingController::class, 'amiQuestionUpdate'])->name('onboarding.admin-ami-questions.progress');
+    Route::post('/onboarding/admin-ami-questions/restart', [OnboardingController::class, 'amiQuestionRestart'])->name('onboarding.admin-ami-questions.restart');
+    Route::post('/onboarding/dashboard-auditee/progress', [OnboardingController::class, 'auditeeDashboardUpdate'])->name('onboarding.dashboard-auditee.progress');
+    Route::post('/onboarding/dashboard-auditee/restart', [OnboardingController::class, 'auditeeDashboardRestart'])->name('onboarding.dashboard-auditee.restart');
+    Route::post('/onboarding/internal-preparations/progress', [OnboardingController::class, 'internalPreparationsUpdate'])->name('onboarding.internal-preparations.progress');
+    Route::post('/onboarding/internal-preparations/restart', [OnboardingController::class, 'internalPreparationsRestart'])->name('onboarding.internal-preparations.restart');
+    Route::post('/onboarding/internal-preparations-detail/progress', [OnboardingController::class, 'internalPreparationsDetailUpdate'])->name('onboarding.internal-preparations-detail.progress');
+    Route::post('/onboarding/internal-preparations-detail/restart', [OnboardingController::class, 'internalPreparationsDetailRestart'])->name('onboarding.internal-preparations-detail.restart');
 
     Route::prefix('admin')
         ->name('admin.')
@@ -92,6 +109,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::get('questions-checklist', [AdminQuestionController::class, 'checklistQuestions'])->name('questions.checklist');
                 Route::get('questions/import-checklist', [AdminQuestionController::class, 'importChecklistForm'])->name('questions.import-checklist.form');
                 Route::post('questions/import-checklist', [AdminQuestionController::class, 'importChecklist'])->name('questions.import-checklist');
+                Route::get('ami/questions', [AmiQuestionController::class, 'index'])->name('ami.questions.index');
+                Route::get('ami/questions/data', [AmiQuestionController::class, 'data'])->name('ami.questions.data');
+                Route::post('ami/questions/import', [AmiQuestionController::class, 'upload'])->name('ami.questions.import');
+                Route::post('ami/questions/import/{batch}/generate', [AmiQuestionController::class, 'generate'])->name('ami.questions.generate');
+                Route::get('ami/questions/template', [AmiQuestionController::class, 'template'])->name('ami.questions.template');
             });
 
             Route::middleware('permission:manage users')->group(function () {
@@ -129,23 +151,17 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/assessments/{assessment}', [AssessmentShowController::class, 'show'])->name('assessments.show');
         });
 
-    // Admin, Assessor & Standar: Preparation per Standard (read + upload + toggle)
-    Route::prefix('internal/standards')->name('internal.standard-preparations.')
-        ->middleware('role:admin|auditor|auditee')
-        ->group(function () {
-            Route::get('/', [StandardPreparationViewController::class, 'index'])->name('index');
-            Route::get('/{standard}', [StandardPreparationViewController::class, 'show'])->name('show');
-            Route::post('/{standard}/stages', [StandardPreparationViewController::class, 'storeStage'])->name('stages.store');
-            Route::put('/{standard}/stages/{stage}', [StandardPreparationViewController::class, 'updateStage'])->name('stages.update');
-            Route::delete('/{standard}/stages/{stage}', [StandardPreparationViewController::class, 'destroyStage'])->name('stages.destroy');
-            Route::post('/{standard}/stages/{stage}/tasks', [StandardPreparationViewController::class, 'storeTask'])->name('tasks.store');
-            Route::put('/{standard}/stages/{stage}/tasks/{task}', [StandardPreparationViewController::class, 'updateTask'])->name('tasks.update');
-            Route::delete('/{standard}/stages/{stage}/tasks/{task}', [StandardPreparationViewController::class, 'destroyTask'])->name('tasks.destroy');
-        });
-
     Route::prefix('internal/preparations')->name('internal.preparations.')
         ->middleware('role:auditor|auditee')
         ->group(function () {
+            Route::get('/', [PreparationController::class, 'index'])->name('index');
+            Route::get('/standards/{standard}', [PreparationController::class, 'show'])->name('show');
+            Route::post('/standards/{standard}/stages', [PreparationController::class, 'storeStage'])->name('stages.store');
+            Route::put('/standards/{standard}/stages/{stage}', [PreparationController::class, 'updateStage'])->name('stages.update');
+            Route::delete('/standards/{standard}/stages/{stage}', [PreparationController::class, 'destroyStage'])->name('stages.destroy');
+            Route::post('/standards/{standard}/stages/{stage}/tasks', [PreparationController::class, 'storeTask'])->name('tasks.store');
+            Route::put('/standards/{standard}/stages/{stage}/tasks/{task}', [PreparationController::class, 'updateTask'])->name('tasks.update');
+            Route::delete('/standards/{standard}/stages/{stage}/tasks/{task}', [PreparationController::class, 'destroyTask'])->name('tasks.destroy');
             Route::post('/tasks/{task}/upload', [PreparationController::class, 'upload'])->name('upload');
             Route::post('/tasks/{task}/link', [PreparationController::class, 'storeLink'])->name('storeLink');
             Route::post('/tasks/{task}/toggle', [PreparationController::class, 'toggle'])->name('toggle');
@@ -173,7 +189,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{submission}/references/{reference}', [AmiSubmissionController::class, 'destroyReference'])->name('references.destroy');
         Route::post('/{submission}/evidences', [AmiSubmissionController::class, 'storeEvidence'])->name('evidences.store');
         Route::delete('/{submission}/evidences/{evidence}', [AmiSubmissionController::class, 'destroyEvidence'])->name('evidences.destroy');
-        Route::post('/{submission}/statuses', [AmiSubmissionController::class, 'saveStatuses'])->name('statuses.save');
         Route::post('/{submission}/submit', [AmiSubmissionController::class, 'submit'])->name('submit');
     });
 

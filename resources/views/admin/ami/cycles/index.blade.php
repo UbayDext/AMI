@@ -1,5 +1,6 @@
 <x-app-layout>
     <div class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
+        @onboarding-cycle-form.window="showForm = $event.detail"
         x-data="{
             showForm: {{ $errors->any() ? 'true' : 'false' }},
             deleteModal: false,
@@ -20,16 +21,16 @@
             <span>/</span><span class="font-medium text-slate-800 dark:text-slate-200">Audit Mutu Internal</span>
         </nav>
 
-        <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div data-onboarding-cycle="intro" class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">Sistem Penjaminan Mutu</p>
                 <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">Siklus Audit Mutu Internal</h1>
                 <p class="mt-2 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Kelola periode audit, submission program studi, dan penugasan auditor dalam satu tempat.</p>
             </div>
-            <button type="button" @click="showForm = !showForm" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700">
+            <div class="flex gap-2"><button type="button" onclick="window.dispatchEvent(new CustomEvent('restart-cycle-onboarding'))" class="h-11 rounded-xl border border-blue-200 px-4 text-sm font-bold text-blue-600 dark:border-blue-800 dark:text-blue-400">Lihat Panduan</button><button data-onboarding-cycle="new-button" type="button" @click="showForm = !showForm" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700">
                 <svg class="h-5 w-5 transition" :class="showForm && 'rotate-45'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Siklus Baru
-            </button>
+            </button></div>
         </div>
 
         <x-alert-success :message="session('success')" />
@@ -41,7 +42,7 @@
             </div>
         @endif
 
-        <div x-show="showForm" x-collapse class="mb-6">
+        <div data-onboarding-cycle="form" x-show="showForm" x-collapse class="mb-6">
             <form method="POST" action="{{ route('admin.ami.cycles.store') }}" class="overflow-hidden rounded-2xl border border-blue-200 bg-white shadow-lg shadow-blue-900/5 dark:border-blue-900 dark:bg-slate-800">
                 @csrf
                 <div class="flex items-center gap-3 border-b border-slate-200 bg-blue-50/60 px-5 py-4 dark:border-slate-700 dark:bg-blue-500/5">
@@ -57,7 +58,7 @@
             </form>
         </div>
 
-        <div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
+        <div data-onboarding-cycle="stats" class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
             @foreach([
                 ['label' => 'Total Siklus', 'value' => $cycles->count(), 'class' => 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'],
                 ['label' => 'Siklus Aktif', 'value' => $activeCount, 'class' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
@@ -68,7 +69,7 @@
             @endforeach
         </div>
 
-        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <section data-onboarding-cycle="history" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-700"><div><h2 class="font-bold text-slate-900 dark:text-white">Riwayat Siklus</h2><p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ $draftCount }} siklus masih berstatus draf</p></div><span class="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300">{{ $cycles->count() }} data</span></div>
             <div class="grid gap-4 p-4 md:grid-cols-2 xl:grid-cols-3 lg:p-5">
                 @forelse($cycles as $cycle)
@@ -96,4 +97,9 @@
             <div x-show="deleteModal" x-transition @click.outside="deleteModal = false" class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl dark:border-slate-700 dark:bg-slate-800"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.1 19h13.8a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.37 16a2 2 0 001.73 3z"/></svg></span><h3 class="mt-4 text-xl font-bold">Hapus Siklus AMI?</h3><p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400"><span class="font-semibold" x-text="deleteName"></span> beserta seluruh submission dan data terkait akan dihapus permanen.</p><div class="mt-6 flex gap-3"><button @click="deleteModal = false" type="button" class="h-11 flex-1 rounded-xl bg-slate-100 text-sm font-bold dark:bg-slate-700">Batal</button><button @click="confirmDelete" type="button" class="h-11 flex-1 rounded-xl bg-rose-600 text-sm font-bold text-white hover:bg-rose-700">Ya, Hapus</button></div></div>
         </div>
     </div>
+    @if(auth()->user()->hasRole('admin'))
+        @push('scripts')
+            @include('admin.ami.cycles.partials.onboarding')
+        @endpush
+    @endif
 </x-app-layout>

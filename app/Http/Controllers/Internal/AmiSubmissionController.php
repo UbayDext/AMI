@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 use App\Models\AmiAuditeeAssignment;
+use App\Models\AmiAuditeeAssignmentGroup;
 use App\Models\AmiChecklistQuestion;
 use App\Models\AmiCycle;
 use App\Models\AmiSubmission;
-use App\Models\AmiSubmissionAnswer;
 use App\Models\PreparationTask;
 use App\Models\Prodi;
 use App\Models\Standard;
@@ -17,8 +17,8 @@ use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AmiSubmissionController extends Controller
 {
@@ -27,6 +27,7 @@ class AmiSubmissionController extends Controller
         $prodis = Prodi::where('is_active', true)->orderBy('name')->get();
         $prodi = $prodis->firstWhere('id', $request->integer('prodi'));
         $user = $request->user();
+        $this->syncAllAuditeeMemberships($user);
         $standardIds = $this->accessibleStandardIds($user);
 
         $query = AmiSubmission::with(['cycle', 'standard', 'owner', 'evidences', 'references'])
@@ -85,8 +86,16 @@ class AmiSubmissionController extends Controller
             'cycle', 'prodi', 'standard', 'owner', 'answers', 'review.answers',
             'references', 'evidences.preparationTask',
         ]);
-        $questions = AmiChecklistQuestion::where('standard_code', $this->standardCode($submission))
-            ->orderBy('question_number')->get();
+        $questions = AmiChecklistQuestion::where(function ($query) use ($submission) {
+                $query->where('standard_id', $submission->standard_id)
+                    ->orWhere('standard_code', $this->standardCode($submission));
+            })
+            ->where('is_active', true)
+            ->where(function ($query) use ($submission) {
+                $query->whereDoesntHave('prodis')
+                    ->orWhereHas('prodis', fn ($prodi) => $prodi->whereKey($submission->prodi_id));
+            })
+            ->orderBy('sort_order')->orderBy('question_number')->get();
         $refMap = $submission->references->groupBy('ami_question_id');
         $evidenceMap = $submission->evidences->groupBy('ami_question_id')
             ->map(fn ($items) => $items->groupBy('category'));
@@ -169,40 +178,31 @@ class AmiSubmissionController extends Controller
         return back()->with('success', 'Bukti dihapus.');
     }
 
-    public function saveStatuses(Request $request, AmiSubmission $submission): RedirectResponse
-    {
-        $this->authorizeEdit($request->user(), $submission);
-        $data = $request->validate([
-            'statuses' => 'nullable|array',
-            'statuses.*.status' => 'required|in:sesuai,sebagian,tidak_bukti_tidak_memadai,tidak_ada_bukti_tidak_dilaksanakan,tidak_bukti_tidak_memadai_tidak_konsisten,tidak_tidak_ada_bukti,tidak_dilaksanakan_tidak_ada_bukti',
-            'statuses.*.notes' => 'nullable|string|max:500',
-        ]);
-        $validIds = AmiChecklistQuestion::where('standard_code', $this->standardCode($submission))
-            ->pluck('id')->map(fn ($id) => (int) $id)->all();
-
-        DB::transaction(function () use ($data, $submission, $request, $validIds) {
-            foreach ($data['statuses'] ?? [] as $questionId => $answer) {
-                abort_unless(in_array((int) $questionId, $validIds, true), 422,
-                    'Pertanyaan tidak termasuk standar submission.');
-                AmiSubmissionAnswer::updateOrCreate(
-                    ['submission_id' => $submission->id, 'question_id' => (int) $questionId],
-                    ['status' => $answer['status'], 'notes' => $answer['notes'] ?? null, 'answered_by' => $request->user()->id]
-                );
-            }
-        });
-
-        return back()->with('success', 'Keterangan disimpan.');
-    }
-
     public function submit(Request $request, AmiSubmission $submission): RedirectResponse
     {
         $this->authorizeEdit($request->user(), $submission);
-        if ($submission->references()->count() === 0 && $submission->evidences()->count() === 0) {
+
+        $submitted = DB::transaction(function () use ($request, $submission) {
+            $locked = AmiSubmission::whereKey($submission->id)->lockForUpdate()->firstOrFail();
+            if (! in_array($locked->status, ['draft', 'revision'], true)) {
+                return false;
+            }
+            if ($locked->references()->count() === 0 && $locked->evidences()->count() === 0) {
+                return null;
+            }
+            $locked->update([
+                'status' => 'submitted', 'submitted_at' => now(), 'submitted_by' => $request->user()->id,
+            ]);
+
+            return true;
+        });
+
+        if ($submitted === null) {
             return back()->with('error', 'Tambahkan minimal satu referensi atau bukti sebelum submit.');
         }
-        $submission->update([
-            'status' => 'submitted', 'submitted_at' => now(), 'submitted_by' => $request->user()->id,
-        ]);
+        if ($submitted === false) {
+            return back()->with('error', 'Submission sudah dikirim oleh auditee lain.');
+        }
 
         return back()->with('success', 'Submission berhasil dikirim ke auditor.');
     }
@@ -214,13 +214,20 @@ class AmiSubmissionController extends Controller
         }
         $codes = $user->roles()->whereIn('name', Standard::pluck('code'))->pluck('name');
 
+        $groupStandardIds = DB::table('ami_auditee_assignment_members as members')
+            ->join('ami_auditee_assignment_groups as groups', 'groups.id', '=', 'members.assignment_group_id')
+            ->where('members.user_id', $user->id)
+            ->pluck('groups.standard_id');
+
         return Standard::whereIn('code', $codes)->pluck('id')
-            ->merge($user->amiAssignments()->pluck('standard_id'))->unique()
+            ->merge($user->amiAssignments()->pluck('standard_id'))
+            ->merge($groupStandardIds)->unique()
             ->map(fn ($id) => (int) $id)->values()->all();
     }
 
     private function authorizeView(User $user, AmiSubmission $submission): void
     {
+        $this->syncAllAuditeeMemberships($user);
         abort_unless($user->hasRole('admin') || in_array($submission->standard_id, $this->accessibleStandardIds($user), true), 403);
     }
 
@@ -231,6 +238,13 @@ class AmiSubmissionController extends Controller
         }
         if ($user->hasRole('admin')) {
             return true;
+        }
+        if ($submission->assignment_group_id) {
+            return DB::table('ami_auditee_assignment_members')
+                ->where('assignment_group_id', $submission->assignment_group_id)
+                ->where('user_id', $user->id)
+                ->where('can_edit', true)
+                ->exists();
         }
         if ($submission->owner_id !== $user->id) {
             return false;
@@ -291,5 +305,29 @@ class AmiSubmissionController extends Controller
         $code = $submission->standard->code;
 
         return preg_replace_callback('/^([A-Z]+)(\d+)$/', fn ($match) => $match[1].str_pad($match[2], 2, '0', STR_PAD_LEFT), $code) ?? $code;
+    }
+
+    private function syncAllAuditeeMemberships(User $user): void
+    {
+        if (! $user->is_active || ! $user->hasRole('auditee')) {
+            return;
+        }
+
+        $now = now();
+        $rows = AmiAuditeeAssignmentGroup::query()
+            ->where('assignment_mode', 'all_auditees')
+            ->whereHas('cycle', fn ($query) => $query->whereIn('status', ['active', 'closed']))
+            ->get(['id', 'can_edit', 'assigned_by'])
+            ->map(fn ($group) => [
+                'assignment_group_id' => $group->id,
+                'user_id' => $user->id,
+                'can_edit' => $group->can_edit,
+                'assigned_by' => $group->assigned_by,
+                'joined_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])->all();
+
+        DB::table('ami_auditee_assignment_members')->insertOrIgnore($rows);
     }
 }

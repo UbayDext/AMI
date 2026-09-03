@@ -7,6 +7,7 @@ use App\Models\PreparationStage;
 use App\Models\PreparationTask;
 use App\Models\Prodi;
 use App\Models\Standard;
+use App\Models\OnboardingProgress;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -44,8 +45,13 @@ class StandardPreparationController extends Controller
             });
 
         $prodis = Prodi::where('is_active', true)->orderBy('name')->get();
+        $standardOnboarding = $request->user()->hasRole('admin')
+            ? OnboardingProgress::firstOrCreate(
+                ['user_id' => $request->user()->id, 'onboarding_key' => 'admin_evidence_standards', 'version' => 1],
+                ['current_step' => 0, 'status' => 'started', 'started_at' => now(), 'last_seen_at' => now()]
+            ) : null;
 
-        return view('admin.standard-preparations.landing', compact('standards', 'prodi', 'prodis'));
+        return view('admin.standard-preparations.landing', compact('standards', 'prodi', 'prodis', 'standardOnboarding'));
     }
 
     public function index(Standard $standard, Request $request)

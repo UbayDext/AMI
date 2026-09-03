@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             AccreditationYearSeeder::class,
             RoleSeeder::class,
             FoskCriteriaSeeder::class,
-            AmiChecklistSeeder::class,
+            // AmiChecklistSeeder::class,
             ProdiSeeder::class,
         ]);
     }

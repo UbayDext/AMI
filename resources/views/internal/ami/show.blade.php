@@ -29,8 +29,10 @@
             // Backend menentukan ownership dan penugasan ST; view hanya mengikuti hasilnya.
             $canEdit    = $canEditSubmission;
             $isLocked   = !$canEdit;
-            $isAuditee  = !$canEdit; // submission auditee lain ditampilkan read-only
-            $canEditKet = $canEdit;
+            // Keterangan adalah hasil review auditor; seluruh pengguna pada
+            // halaman internal hanya boleh melihatnya.
+            $isAuditee  = true;
+            $canEditKet = false;
 
             $categoryConfig = [
                 'kebijakan'         => ['label' => 'Dokumen Kebijakan',        'desc' => 'SK, Pedoman, SOP',                    'color' => 'blue',   'icon' => '📋'],
@@ -56,7 +58,7 @@
             } }}
         </div>
 
-        <form method="POST" action="{{ route('internal.ami.statuses.save', $submission) }}">
+        <form method="POST" action="#" onsubmit="return false">
         @csrf
 
         @forelse($questions as $q)

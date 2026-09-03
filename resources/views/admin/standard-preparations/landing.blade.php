@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div data-onboarding-standard="intro" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Persiapan Data per Standar</h2>
                 <p class="text-[13px] text-gray-500 dark:text-gray-400 mt-1">Lihat dan upload dokumen persiapan untuk setiap standar.</p>
             </div>
 
             {{-- Prodi Selector --}}
-            @if($prodis->isNotEmpty())
-            <form method="GET" action="{{ route('admin.standard-preparations.landing') }}" class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2"><button type="button" onclick="window.dispatchEvent(new CustomEvent('restart-standard-onboarding'))" class="rounded-xl border border-indigo-200 px-4 py-2 text-xs font-bold text-indigo-600 dark:border-indigo-800 dark:text-indigo-400">Lihat Panduan</button>@if($prodis->isNotEmpty())
+            <form data-onboarding-standard="prodi-filter" method="GET" action="{{ route('admin.standard-preparations.landing') }}" class="flex items-center gap-2">
                 <label class="text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">Filter Prodi:</label>
                 <select name="prodi" onchange="this.form.submit()"
                     class="rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-sm py-1.5 pr-8 focus:border-indigo-500 focus:ring-indigo-500">
@@ -20,7 +20,7 @@
                     @endforeach
                 </select>
             </form>
-            @endif
+            @endif</div>
         </div>
     </x-slot>
 
@@ -39,7 +39,7 @@
         @endphp
 
         @if($prodi)
-        <div class="mb-6 relative overflow-hidden bg-indigo-600 rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-sm">
+        <div data-onboarding-standard="progress" class="mb-6 relative overflow-hidden bg-indigo-600 rounded-2xl p-6 md:p-8 flex items-center justify-between shadow-sm">
             <div class="relative z-10 text-white">
                 <div class="text-indigo-100 text-[13px] font-medium mb-1.5">
                     Progress Keseluruhan — {{ $prodi->name }}
@@ -58,12 +58,12 @@
             </div>
         </div>
         @else
-        <div class="mb-4 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 rounded-xl text-sm">
+        <div data-onboarding-standard="progress" class="mb-4 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/60 text-amber-700 dark:text-amber-400 rounded-xl text-sm">
             Pilih prodi di atas untuk melihat progress per prodi. Template task dapat dikelola tanpa memilih prodi.
         </div>
         @endif
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div data-onboarding-standard="standard-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach($standards as $s)
             @php
             $showUrl = route('admin.standard-preparations.index', $s) . ($prodi ? '?prodi=' . $prodi->id : '');
@@ -113,4 +113,9 @@
         </div>
         @endif
     </div>
+    @if(auth()->user()->hasRole('admin'))
+        @push('scripts')
+            @include('admin.standard-preparations.partials.onboarding')
+        @endpush
+    @endif
 </x-app-layout>

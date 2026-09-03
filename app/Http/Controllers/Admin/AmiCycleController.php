@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AmiAuditeeAssignment;
+use App\Models\AmiAuditeeAssignmentGroup;
 use App\Models\AmiCycle;
 use App\Models\AmiReview;
 use App\Models\AmiSubmission;
@@ -11,17 +11,24 @@ use App\Models\AuditorDecree;
 use App\Models\Prodi;
 use App\Models\Standard;
 use App\Models\User;
+use App\Models\OnboardingProgress;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AmiCycleController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $cycles = AmiCycle::withCount('submissions')->latest()->get();
+        $amiCycleOnboarding = $request->user()->hasRole('admin')
+            ? OnboardingProgress::firstOrCreate(
+                ['user_id' => $request->user()->id, 'onboarding_key' => 'admin_ami_cycles', 'version' => 1],
+                ['current_step' => 0, 'status' => 'started', 'started_at' => now(), 'last_seen_at' => now()]
+            ) : null;
 
-        return view('admin.ami.cycles.index', compact('cycles'));
+        return view('admin.ami.cycles.index', compact('cycles', 'amiCycleOnboarding'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -78,10 +85,7 @@ class AmiCycleController extends Controller
         $data = $request->validate([
             'prodi_id' => 'required|exists:prodis,id',
             'standard_id' => 'required|exists:standards,id',
-            'owner_id' => 'required|exists:users,id',
         ]);
-        $owner = User::findOrFail($data['owner_id']);
-        abort_unless($owner->hasRole('auditee'), 422, 'Pemilik submission harus memiliki role auditee.');
 
         $exists = AmiSubmission::where('cycle_id', $cycle->id)
             ->where('prodi_id', $data['prodi_id'])
@@ -92,21 +96,29 @@ class AmiCycleController extends Controller
             return back()->with('error', 'Submission untuk prodi + standar ini sudah ada.');
         }
 
-        $assignment = AmiAuditeeAssignment::updateOrCreate(
-            ['cycle_id' => $cycle->id, 'user_id' => $owner->id, 'standard_id' => $data['standard_id']],
-            ['prodi_scope' => 'all', 'can_create' => true, 'can_edit' => true, 'assigned_by' => auth()->id(), 'assigned_at' => now()]
-        );
+        DB::transaction(function () use ($cycle, $data) {
+            $group = AmiAuditeeAssignmentGroup::create([
+                'cycle_id' => $cycle->id, 'standard_id' => $data['standard_id'],
+                'prodi_id' => $data['prodi_id'], 'assignment_mode' => 'all_auditees',
+                'can_create' => true, 'can_edit' => true,
+                'assigned_by' => auth()->id(), 'assigned_at' => now(),
+            ]);
+            $now = now();
+            $members = User::role('auditee')->where('is_active', true)->pluck('id')->map(fn ($userId) => [
+                'assignment_group_id' => $group->id, 'user_id' => $userId,
+                'can_edit' => true, 'assigned_by' => auth()->id(), 'joined_at' => $now,
+                'created_at' => $now, 'updated_at' => $now,
+            ])->all();
+            DB::table('ami_auditee_assignment_members')->insertOrIgnore($members);
 
-        AmiSubmission::create([
-            'cycle_id' => $cycle->id,
-            'prodi_id' => $data['prodi_id'],
-            'standard_id' => $data['standard_id'],
-            'owner_id' => $owner->id,
-            'assignment_id' => $assignment->id,
-            'status' => 'draft',
-        ]);
+            AmiSubmission::create([
+                'cycle_id' => $cycle->id, 'prodi_id' => $data['prodi_id'],
+                'standard_id' => $data['standard_id'], 'assignment_group_id' => $group->id,
+                'status' => 'draft',
+            ]);
+        });
 
-        return back()->with('success', 'Submission berhasil ditambahkan.');
+        return back()->with('success', 'Submission berhasil ditugaskan kepada semua auditee aktif.');
     }
 
     public function destroySubmission(AmiCycle $cycle, AmiSubmission $submission): RedirectResponse

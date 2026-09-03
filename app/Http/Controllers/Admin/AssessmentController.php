@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AccreditationYear;
 use App\Models\Assessment;
 use App\Models\User;
+use App\Models\OnboardingProgress;
 use Illuminate\Http\Request;
 
 class AssessmentController extends Controller
@@ -43,8 +44,13 @@ class AssessmentController extends Controller
             ->withQueryString();
 
         $years = AccreditationYear::orderByDesc('year')->get(['id', 'year']);
+        $assessmentOnboarding = $request->user()->hasRole('admin')
+            ? OnboardingProgress::firstOrCreate(
+                ['user_id' => $request->user()->id, 'onboarding_key' => 'admin_assessments', 'version' => 1],
+                ['current_step' => 0, 'status' => 'started', 'started_at' => now(), 'last_seen_at' => now()]
+            ) : null;
 
-        return view('admin.assessments.index', compact('assessments', 'years', 'stats', 'filters'));
+        return view('admin.assessments.index', compact('assessments', 'years', 'stats', 'filters', 'assessmentOnboarding'));
     }
 
     public function create()

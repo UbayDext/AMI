@@ -2,6 +2,7 @@
 
 use App\Models\AmiCycle;
 use App\Models\AmiSubmission;
+use App\Models\AmiAuditeeAssignmentGroup;
 use App\Models\Prodi;
 use App\Models\Standard;
 use App\Models\User;
@@ -75,4 +76,30 @@ test('auditee can open AMI index for all prodis when no submission exists', func
         ->get(route('internal.ami.index'))
         ->assertOk()
         ->assertSee('Belum ada submission untuk standar yang ditugaskan kepada Anda.');
+});
+
+test('new auditee automatically joins an all-auditees assignment group', function () {
+    $ctx = makeAmiContext();
+    $group = AmiAuditeeAssignmentGroup::create([
+        'cycle_id' => $ctx['cycle']->id,
+        'standard_id' => $ctx['standard']->id,
+        'prodi_id' => $ctx['prodi']->id,
+        'assignment_mode' => 'all_auditees',
+        'can_create' => true,
+        'can_edit' => true,
+    ]);
+    $ctx['submission']->update(['assignment_group_id' => $group->id]);
+
+    $newAuditee = User::factory()->create(['is_active' => true]);
+    $newAuditee->syncRoles(['auditee']);
+
+    $this->actingAs($newAuditee)
+        ->get(route('internal.ami.show', $ctx['submission']))
+        ->assertOk();
+
+    $this->assertDatabaseHas('ami_auditee_assignment_members', [
+        'assignment_group_id' => $group->id,
+        'user_id' => $newAuditee->id,
+        'can_edit' => true,
+    ]);
 });

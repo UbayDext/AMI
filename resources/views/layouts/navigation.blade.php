@@ -5,8 +5,8 @@
         : 'flex h-14 items-center px-3 text-sm font-medium text-blue-100 transition hover:text-white';
     $dropdownLink = 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white';
     $isAudit = request()->routeIs('admin.assessments.*', 'admin.ami.*', 'assessor.assessments.*', 'assessor.ami.*', 'internal.ami.*');
-    $isDocuments = request()->routeIs('admin.standard-preparations.*', 'admin.fosk.*', 'internal.standard-preparations.*');
-    $isReferences = request()->routeIs('admin.questions.*', 'admin.question-categories.*', 'admin.accreditation-years.*', 'admin.auditor-decrees.*');
+    $isDocuments = request()->routeIs('admin.standard-preparations.*', 'admin.fosk.*', 'internal.preparations.*');
+    $isReferences = request()->routeIs('admin.questions.*', 'admin.ami.questions.*', 'admin.question-categories.*', 'admin.accreditation-years.*', 'admin.auditor-decrees.*');
     $isUsers = request()->routeIs('admin.users.*', 'admin.role-requests.*', 'role-requests.*');
 @endphp
 
@@ -67,40 +67,84 @@
 
     <nav class="relative border-t border-white/10">
         <div class="mx-auto hidden w-full max-w-[1600px] items-center gap-1 px-4 sm:flex sm:px-6 lg:px-8">
-            <a href="{{ route('dashboard') }}" class="{{ $navLink(request()->routeIs('dashboard')) }}">Dashboard</a>
+            <a href="{{ route('dashboard') }}" data-onboarding="dashboard-menu" class="{{ $navLink(request()->routeIs('dashboard')) }}">Dashboard</a>
 
-            <x-nav-menu-dropdown label="Audit & AMI" :active="$isAudit">
-                @can('manage assessments')<a href="{{ route('admin.assessments.index') }}" class="{{ $dropdownLink }}">Kelola Assessment</a><a href="{{ route('admin.ami.cycles.index') }}" class="{{ $dropdownLink }}">Siklus AMI</a>@endcan
+            <x-nav-menu-dropdown label="Audit & AMI" :active="$isAudit" data-onboarding="ami-menu">
+                @can('manage assessments')<a href="{{ route('admin.assessments.index') }}" data-onboarding="assessment-submenu" class="{{ $dropdownLink }}">Kelola Assessment</a><a href="{{ route('admin.ami.cycles.index') }}" data-onboarding="cycle-submenu" class="{{ $dropdownLink }}">Siklus AMI</a>@endcan
                 @if($user->hasRole('auditor'))<a href="{{ route('assessor.assessments.index') }}" class="{{ $dropdownLink }}">Assessment Saya</a><a href="{{ route('assessor.ami.index') }}" class="{{ $dropdownLink }}">Review AMI</a>@endif
-                @if($user->hasRole('auditee'))<a href="{{ route('internal.ami.index') }}" class="{{ $dropdownLink }}">Pengisian AMI</a>@endif
+                @if($user->hasRole('auditee'))<a href="{{ route('internal.ami.index') }}" data-onboarding="auditee-ami-submenu" class="{{ $dropdownLink }}">Pengisian AMI</a>@endif
             </x-nav-menu-dropdown>
 
-            <x-nav-menu-dropdown label="Dokumen" :active="$isDocuments">
-                @can('manage preparations')<a href="{{ route('admin.standard-preparations.landing') }}" class="{{ $dropdownLink }}">Evidence Standar</a><a href="{{ route('admin.fosk.index') }}" class="{{ $dropdownLink }}">FOSK Akreditasi</a>@endcan
-                @if($user->hasAnyRole(['admin', 'auditor', 'auditee']))<a href="{{ route('internal.standard-preparations.index') }}" class="{{ $dropdownLink }}">Persiapan Standar</a>@endif
+            @if($user->can('manage preparations') || $user->hasRole('auditee'))
+            <x-nav-menu-dropdown label="Dokumen" :active="$isDocuments" data-onboarding="document-menu">
+                @can('manage preparations')<a href="{{ route('admin.standard-preparations.landing') }}" data-onboarding="evidence-submenu" class="{{ $dropdownLink }}">Evidence Standar</a><a href="{{ route('admin.fosk.index') }}" data-onboarding="fosk-submenu" class="{{ $dropdownLink }}">FOSK Akreditasi</a>@endcan
+                @if($user->hasRole('auditee'))<a href="{{ route('internal.preparations.index') }}" data-onboarding="auditee-evidence-submenu" class="{{ $dropdownLink }}">Evidence Standar</a>@endif
             </x-nav-menu-dropdown>
+            @endif
 
             @if($user->can('manage questions') || $user->can('manage assessments'))
-            <x-nav-menu-dropdown label="Referensi" :active="$isReferences">
-                @can('manage questions')<a href="{{ route('admin.questions.index') }}" class="{{ $dropdownLink }}">Bank Soal</a><a href="{{ route('admin.question-categories.index') }}" class="{{ $dropdownLink }}">Program Studi</a>@endcan
-                @can('manage assessments')<a href="{{ route('admin.accreditation-years.index') }}" class="{{ $dropdownLink }}">Tahun Akreditasi</a><a href="{{ route('admin.auditor-decrees.index') }}" class="{{ $dropdownLink }}">SK Auditor</a>@endcan
+            <x-nav-menu-dropdown label="Referensi" :active="$isReferences" data-onboarding="reference-menu">
+                @can('manage questions')<a href="{{ route('admin.questions.index') }}" data-onboarding="question-bank-submenu" class="{{ $dropdownLink }}">Bank Soal Assessment</a><a href="{{ route('admin.ami.questions.index') }}" data-onboarding="ami-question-submenu" class="{{ $dropdownLink }}">Pertanyaan AMI</a><a href="{{ route('admin.question-categories.index') }}" data-onboarding="prodi-submenu" class="{{ $dropdownLink }}">Program Studi</a>@endcan
+                @can('manage assessments')<a href="{{ route('admin.accreditation-years.index') }}" data-onboarding="year-submenu" class="{{ $dropdownLink }}">Tahun Akreditasi</a><a href="{{ route('admin.auditor-decrees.index') }}" data-onboarding="decree-submenu" class="{{ $dropdownLink }}">SK Auditor</a>@endcan
             </x-nav-menu-dropdown>
             @endif
 
             @if($user->can('manage users') || $user->hasRole('auditee'))
-            <x-nav-menu-dropdown label="Pengguna" :active="$isUsers">
-                @can('manage users')<a href="{{ route('admin.users.index') }}" class="{{ $dropdownLink }}">Kelola Pengguna</a><a href="{{ route('admin.role-requests.index') }}" class="{{ $dropdownLink }}">Pengajuan Standar</a>@endcan
-                @if($user->hasRole('auditee'))<a href="{{ route('role-requests.create') }}" class="{{ $dropdownLink }}">Ajukan Standar</a>@endif
+            <x-nav-menu-dropdown label="Pengguna" :active="$isUsers" data-onboarding="user-menu">
+                @can('manage users')<a href="{{ route('admin.users.index') }}" data-onboarding="users-submenu" class="{{ $dropdownLink }}">Kelola Pengguna</a><a href="{{ route('admin.role-requests.index') }}" data-onboarding="role-request-submenu" class="{{ $dropdownLink }}">Pengajuan Standar</a>@endcan
+                @if($user->hasRole('auditee'))<a href="{{ route('role-requests.create') }}" data-onboarding="auditee-request-submenu" class="{{ $dropdownLink }}">Ajukan Standar</a>@endif
             </x-nav-menu-dropdown>
             @endif
         </div>
 
-        <div x-show="mobileOpen" x-collapse class="border-t border-white/10 px-4 py-3 sm:hidden">
+        <div x-show="mobileOpen" x-collapse class="max-h-[calc(100vh-7.5rem)] overflow-y-auto border-t border-white/10 px-4 py-3 sm:hidden">
             <a href="{{ route('dashboard') }}" class="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-white/10">Dashboard</a>
+
+            @if($user->can('manage assessments') || $user->hasRole('auditor') || $user->hasRole('auditee'))
+            <div class="mt-2 border-t border-white/10 pt-2">
+                <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-200">Audit &amp; AMI</div>
             @can('manage assessments')<a href="{{ route('admin.assessments.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Kelola Assessment</a><a href="{{ route('admin.ami.cycles.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Siklus AMI</a>@endcan
             @if($user->hasRole('auditor'))<a href="{{ route('assessor.assessments.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Assessment Saya</a><a href="{{ route('assessor.ami.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Review AMI</a>@endif
             @if($user->hasRole('auditee'))<a href="{{ route('internal.ami.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Pengisian AMI</a>@endif
-            <a href="{{ route('internal.standard-preparations.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Persiapan Standar</a>
+            </div>
+            @endif
+
+            @if($user->can('manage preparations') || $user->hasRole('auditee'))
+            <div class="mt-2 border-t border-white/10 pt-2">
+                <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-200">Dokumen</div>
+                @can('manage preparations')
+                <a href="{{ route('admin.standard-preparations.landing') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Evidence Standar</a>
+                <a href="{{ route('admin.fosk.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">FOSK Akreditasi</a>
+                @endcan
+                @if($user->hasRole('auditee'))<a href="{{ route('internal.preparations.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Evidence Standar</a>@endif
+            </div>
+            @endif
+
+            @if($user->can('manage questions') || $user->can('manage assessments'))
+            <div class="mt-2 border-t border-white/10 pt-2">
+                <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-200">Referensi</div>
+                @can('manage questions')
+                <a href="{{ route('admin.questions.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Bank Soal Assessment</a>
+                <a href="{{ route('admin.ami.questions.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Pertanyaan AMI</a>
+                <a href="{{ route('admin.question-categories.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Program Studi</a>
+                @endcan
+                @can('manage assessments')
+                <a href="{{ route('admin.accreditation-years.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Tahun Akreditasi</a>
+                <a href="{{ route('admin.auditor-decrees.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">SK Auditor</a>
+                @endcan
+            </div>
+            @endif
+
+            @if($user->can('manage users') || $user->hasRole('auditee'))
+            <div class="mt-2 border-t border-white/10 pt-2">
+                <div class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-200">Pengguna</div>
+                @can('manage users')
+                <a href="{{ route('admin.users.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Kelola Pengguna</a>
+                <a href="{{ route('admin.role-requests.index') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Pengajuan Standar</a>
+                @endcan
+                @if($user->hasRole('auditee'))<a href="{{ route('role-requests.create') }}" class="block rounded-lg px-3 py-2.5 text-sm hover:bg-white/10">Ajukan Standar</a>@endif
+            </div>
+            @endif
             <div class="mt-2 flex items-center gap-2 border-t border-white/10 pt-3"><button @click="toggleTheme($event)" class="rounded-lg px-3 py-2 text-sm hover:bg-white/10">Ganti Tema</button><a href="{{ route('profile.edit') }}" class="rounded-lg px-3 py-2 text-sm hover:bg-white/10">Profil</a><form method="POST" action="{{ route('logout') }}">@csrf<button class="rounded-lg px-3 py-2 text-sm text-rose-200 hover:bg-white/10">Keluar</button></form></div>
         </div>
     </nav>

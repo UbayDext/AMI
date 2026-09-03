@@ -12,13 +12,19 @@ class RoleRequestController extends Controller
     /** Daftar semua request (default: pending dulu) */
     public function index(Request $request)
     {
-        $status = $request->get('status', 'pending');
+        $status = in_array($request->get('status'), ['pending', 'approved', 'rejected', 'all'], true)
+            ? $request->get('status')
+            : 'pending';
+        $search = mb_substr($request->string('search')->trim()->toString(), 0, 100);
 
         $requests = RoleRequest::with(['user.roles', 'reviewer'])
             ->when($status !== 'all', fn($q) => $q->where('status', $status))
+            ->when($search, fn ($q) => $q->whereHas('user', fn ($user) => $user
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")))
             ->latest()
             ->paginate(20)
-            ->appends($request->query());
+            ->withQueryString();
 
         $counts = [
             'pending'  => RoleRequest::where('status', 'pending')->count(),
@@ -26,7 +32,7 @@ class RoleRequestController extends Controller
             'rejected' => RoleRequest::where('status', 'rejected')->count(),
         ];
 
-        return view('admin.role-requests.index', compact('requests', 'counts', 'status'));
+        return view('admin.role-requests.index', compact('requests', 'counts', 'status', 'search'));
     }
 
     /** Setujui permintaan: assign role + aktifkan user */

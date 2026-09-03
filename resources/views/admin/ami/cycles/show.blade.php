@@ -67,9 +67,10 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Pemilik/Auditee *</label>
-                    <select name="owner_id" required
-                        class="min-w-[220px] border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:bg-gray-800 focus:ring-2 focus:ring-indigo-300 focus:outline-none">
+                    <label class="block text-xs font-medium text-indigo-600 dark:text-indigo-300 mb-1">Penugasan Auditee</label>
+                    <div class="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-700 dark:border-indigo-800 dark:bg-indigo-950/30 dark:text-indigo-300">Semua auditee aktif, termasuk auditee baru</div>
+                    <select name="owner_id" disabled
+                        class="hidden">
                         <option value="">— Pilih Auditee —</option>
                         @foreach($auditees as $auditee)
                         <option value="{{ $auditee->id }}">{{ $auditee->name }}</option>
@@ -112,7 +113,7 @@
                                 @endif
                             </div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Pemilik: <strong>{{ $sub->owner?->name ?? 'Belum ditetapkan' }}</strong>
+                                Auditee: <strong>{{ $sub->assignment_group_id ? 'Semua auditee aktif' : ($sub->owner?->name ?? 'Belum ditetapkan') }}</strong>
                             </div>
                             @if($sub->review)
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
